@@ -1,8 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
   provider = "prisma-client"
   output   = "../src/generated/prisma"
@@ -10,4 +5,668 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+}
+
+// ============================================================
+// ENUMS
+// ============================================================
+
+enum Role {
+  CUSTOMER
+  PROVIDER
+  ADMIN
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+}
+
+enum AuthProvider {
+  PASSWORD
+  GOOGLE
+  PHONE
+}
+
+enum VerificationStatus {
+  PENDING
+  VERIFIED
+  REJECTED
+  SUSPENDED
+}
+
+enum EventType {
+  WEDDING
+  ENGAGEMENT
+  BIRTHDAY
+  BABY_SHOWER
+  ANNIVERSARY
+  HOUSEWARMING
+  FESTIVAL
+  CORPORATE
+  OTHER
+}
+
+enum EventStatus {
+  DRAFT
+  PUBLISHED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum LeadStatus {
+  PENDING
+  ACCEPTED
+  EXPIRED
+  CANCELLED
+}
+
+enum LeadProviderStatus {
+  PENDING
+  VIEWED
+  ACCEPTED
+  DECLINED
+  EXPIRED
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  NOT_REQUIRED
+  PENDING
+  PARTIAL
+  PAID
+  REFUNDED
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  EXPIRED
+  CANCELLED
+  PAST_DUE
+}
+
+enum SubscriptionInterval {
+  MONTHLY
+  YEARLY
+}
+
+enum InvitationChannel {
+  WHATSAPP
+  SMS
+  EMAIL
+}
+
+enum InvitationStatus {
+  PENDING
+  SENT
+  DELIVERED
+  FAILED
+}
+
+enum NotificationType {
+  LEAD
+  BOOKING
+  EVENT
+  SUBSCRIPTION
+  REVIEW
+  SYSTEM
+}
+
+enum NotificationChannel {
+  PUSH
+  EMAIL
+  SMS
+  WHATSAPP
+}
+
+enum NotificationStatus {
+  PENDING
+  SENT
+  DELIVERED
+  FAILED
+}
+
+enum DayOfWeek {
+  MONDAY
+  TUESDAY
+  WEDNESDAY
+  THURSDAY
+  FRIDAY
+  SATURDAY
+  SUNDAY
+}
+
+// ============================================================
+// USER
+// ============================================================
+
+model User {
+  id           String       @id @default(uuid())
+
+  name         String
+  email        String?      @unique
+  phone        String?      @unique
+
+  passwordHash String?
+  authProvider AuthProvider @default(PASSWORD)
+
+  role         Role         @default(CUSTOMER)
+  status       UserStatus   @default(ACTIVE)
+
+  emailVerified Boolean     @default(false)
+  phoneVerified Boolean     @default(false)
+
+  lastLoginAt  DateTime?
+
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
+  provider     Provider?
+  events       Event[]
+  bookings     Booking[]    @relation("CustomerBookings")
+  subscriptions Subscription[]
+  reviews      Review[]     @relation("ReviewAuthor")
+  notifications Notification[]
+  sessions     UserSession[]
+
+  @@index([role])
+  @@index([status])
+  @@map("users")
+}
+
+// ============================================================
+// PROVIDER
+// ============================================================
+
+model Provider {
+  id       String @id @default(uuid())
+  userId   String @unique
+
+  // Business information
+  businessName String
+  description  String?
+
+  // Pricing
+  pricingMin Int?
+  pricingMax Int?
+  currency   String @default("INR")
+
+  // Location
+  serviceArea String?
+  latitude    Decimal? @db.Decimal(10, 7)
+  longitude   Decimal? @db.Decimal(10, 7)
+
+  // Verification
+  verificationStatus VerificationStatus @default(PENDING)
+  verificationNotes  String?
+  verifiedAt         DateTime?
+
+  // Rating
+  ratingAvg   Decimal @default(0) @db.Decimal(3, 2)
+  ratingCount Int     @default(0)
+
+  // Account state
+  isAvailable Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  categories   ProviderCategory[]
+  images       ProviderImage[]
+  availability ProviderAvailability[]
+
+  leadProviders LeadProvider[]
+  bookings      Booking[]
+  reviews       Review[]
+
+  @@index([verificationStatus])
+  @@index([isAvailable])
+  @@map("providers")
+}
+
+// ============================================================
+// PROVIDER IMAGES
+// ============================================================
+
+model ProviderImage {
+  id         String @id @default(uuid())
+  providerId String
+
+  url       String
+  sortOrder Int @default(0)
+
+  createdAt DateTime @default(now())
+
+  provider Provider @relation(fields: [providerId], references: [id], onDelete: Cascade)
+
+  @@index([providerId])
+  @@map("provider_images")
+}
+
+// ============================================================
+// SERVICE CATEGORIES
+// ============================================================
+
+model ServiceCategory {
+  id       String @id @default(uuid())
+
+  name     String @unique
+  slug     String @unique
+  icon     String?
+
+  isActive Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  providers ProviderCategory[]
+  eventServices EventService[]
+
+  @@index([isActive])
+  @@map("service_categories")
+}
+
+// ============================================================
+// PROVIDER <-> CATEGORY
+// ============================================================
+
+model ProviderCategory {
+  id         String @id @default(uuid())
+
+  providerId String
+  categoryId String
+
+  provider Provider @relation(fields: [providerId], references: [id], onDelete: Cascade)
+  category ServiceCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@unique([providerId, categoryId])
+  @@index([categoryId])
+  @@map("provider_categories")
+}
+
+// ============================================================
+// PROVIDER AVAILABILITY
+// ============================================================
+
+model ProviderAvailability {
+  id         String @id @default(uuid())
+
+  providerId String
+  dayOfWeek  DayOfWeek
+
+  startTime String
+  endTime   String
+
+  isAvailable Boolean @default(true)
+
+  provider Provider @relation(fields: [providerId], references: [id], onDelete: Cascade)
+
+  @@unique([providerId, dayOfWeek, startTime, endTime])
+  @@index([providerId, dayOfWeek])
+  @@map("provider_availability")
+}
+
+// ============================================================
+// EVENTS
+// ============================================================
+
+model Event {
+  id         String @id @default(uuid())
+  customerId String
+
+  type  EventType
+  title String?
+
+  eventDate DateTime
+  startTime String?
+  endTime   String?
+  timezone  String @default("Asia/Kolkata")
+
+  location  String
+  latitude  Decimal? @db.Decimal(10, 7)
+  longitude Decimal? @db.Decimal(10, 7)
+
+  guestCount Int?
+
+  budgetMin Int?
+  budgetMax Int?
+  currency  String @default("INR")
+
+  requirements String?
+
+  status EventStatus @default(DRAFT)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  customer User @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  services EventService[]
+  guests   Guest[]
+
+  @@index([customerId])
+  @@index([eventDate])
+  @@index([status])
+  @@map("events")
+}
+
+// ============================================================
+// EVENT SERVICES
+// ============================================================
+
+model EventService {
+  id         String @id @default(uuid())
+
+  eventId    String
+  categoryId String
+
+  requirements String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  event    Event           @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  category ServiceCategory @relation(fields: [categoryId], references: [id])
+
+  lead Lead?
+
+  @@unique([eventId, categoryId])
+  @@index([categoryId])
+  @@map("event_services")
+}
+
+// ============================================================
+// LEAD
+// ============================================================
+
+model Lead {
+  id             String @id @default(uuid())
+  eventServiceId String @unique
+
+  status LeadStatus @default(PENDING)
+
+  acceptedProviderId String?
+  acceptedAt         DateTime?
+
+  expiresAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  eventService EventService @relation(fields: [eventServiceId], references: [id], onDelete: Cascade)
+
+  providers LeadProvider[]
+  booking   Booking?
+
+  @@index([status])
+  @@index([acceptedProviderId])
+  @@index([expiresAt])
+  @@map("leads")
+}
+
+// ============================================================
+// LEAD -> PROVIDERS
+// ============================================================
+
+model LeadProvider {
+  id String @id @default(uuid())
+
+  leadId     String
+  providerId String
+
+  status LeadProviderStatus @default(PENDING)
+
+  notifiedAt  DateTime?
+  viewedAt    DateTime?
+  respondedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  lead     Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  provider Provider @relation(fields: [providerId], references: [id], onDelete: Cascade)
+
+  @@unique([leadId, providerId])
+  @@index([providerId, status])
+  @@index([leadId, status])
+  @@map("lead_providers")
+}
+
+// ============================================================
+// BOOKING
+// ============================================================
+
+model Booking {
+  id String @id @default(uuid())
+
+  leadId     String @unique
+  customerId String
+  providerId String
+
+  status        BookingStatus @default(PENDING)
+  paymentStatus PaymentStatus @default(NOT_REQUIRED)
+
+  agreedPrice Int?
+  currency    String @default("INR")
+
+  notes String?
+
+  confirmedAt DateTime?
+  startedAt   DateTime?
+  completedAt DateTime?
+  cancelledAt DateTime?
+
+  cancellationReason String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  lead     Lead     @relation(fields: [leadId], references: [id])
+  customer User     @relation("CustomerBookings", fields: [customerId], references: [id])
+  provider Provider @relation(fields: [providerId], references: [id])
+
+  review Review?
+
+  @@index([customerId, status])
+  @@index([providerId, status])
+  @@index([status])
+  @@map("bookings")
+}
+
+// ============================================================
+// REVIEW
+// ============================================================
+
+model Review {
+  id String @id @default(uuid())
+
+  bookingId  String @unique
+  authorId   String
+  providerId String
+
+  rating  Int
+  comment String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  booking  Booking  @relation(fields: [bookingId], references: [id])
+  author   User     @relation("ReviewAuthor", fields: [authorId], references: [id])
+  provider Provider @relation(fields: [providerId], references: [id])
+
+  @@index([providerId])
+  @@index([authorId])
+  @@map("reviews")
+}
+
+// ============================================================
+// SUBSCRIPTION PLANS
+// ============================================================
+
+model SubscriptionPlan {
+  id String @id @default(uuid())
+
+  name String
+  slug String @unique
+
+  description String?
+
+  price    Int
+  currency String @default("INR")
+
+  interval SubscriptionInterval
+
+  isActive Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  subscriptions Subscription[]
+
+  @@map("subscription_plans")
+}
+
+// ============================================================
+// SUBSCRIPTIONS
+// ============================================================
+
+model Subscription {
+  id     String @id @default(uuid())
+  userId String
+  planId String
+
+  status SubscriptionStatus @default(ACTIVE)
+
+  startDate DateTime @default(now())
+  endDate   DateTime?
+
+  autoRenew Boolean @default(true)
+
+  paymentProvider String?
+  externalId      String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  plan SubscriptionPlan @relation(fields: [planId], references: [id])
+
+  @@index([userId, status])
+  @@index([planId])
+  @@index([endDate])
+  @@unique([paymentProvider, externalId])
+  @@map("subscriptions")
+}
+
+// ============================================================
+// GUESTS
+// ============================================================
+
+model Guest {
+  id      String @id @default(uuid())
+  eventId String
+
+  name  String
+  phone String?
+  email String?
+
+  invitationChannel InvitationChannel?
+  invitationStatus  InvitationStatus @default(PENDING)
+
+  invitedAt   DateTime?
+  respondedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@index([eventId])
+  @@map("guests")
+}
+
+// ============================================================
+// NOTIFICATIONS
+// ============================================================
+
+model Notification {
+  id     String @id @default(uuid())
+  userId String
+
+  title String
+  body  String
+
+  type NotificationType
+
+  isRead Boolean @default(false)
+  readAt DateTime?
+
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  deliveries NotificationDelivery[]
+
+  @@index([userId, isRead])
+  @@index([userId, createdAt])
+  @@map("notifications")
+}
+
+model NotificationDelivery {
+  id             String @id @default(uuid())
+  notificationId String
+
+  channel NotificationChannel
+  status  NotificationStatus @default(PENDING)
+
+  externalId String?
+  error      String?
+
+  sentAt      DateTime?
+  deliveredAt DateTime?
+  failedAt    DateTime?
+
+  createdAt DateTime @default(now())
+
+  notification Notification @relation(fields: [notificationId], references: [id], onDelete: Cascade)
+
+  @@index([notificationId])
+  @@index([channel, status])
+  @@map("notification_deliveries")
+}
+
+// ============================================================
+// AUTH SESSIONS
+// ============================================================
+
+model UserSession {
+  id     String @id @default(uuid())
+  userId String
+
+  refreshToken String @unique
+
+  expiresAt DateTime
+  revokedAt DateTime?
+
+  ipAddress String?
+  userAgent String?
+
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+  @@map("user_sessions")
 }

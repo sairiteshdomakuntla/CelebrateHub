@@ -172,7 +172,6 @@ export default function HomeScreen() {
         try {
           const res = await adminApi.listUsers({ page: 1 });
           setTotalUsers(res.pagination.total);
-          // Count roles in returned users
           const provs = res.users.filter((u) => u.role === "PROVIDER").length;
           const custs = res.users.filter((u) => u.role === "CUSTOMER").length;
           setProvidersCount(provs);
