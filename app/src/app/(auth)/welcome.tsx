@@ -15,13 +15,12 @@ import Animated, {
   withDelay,
   Easing,
 } from "react-native-reanimated";
-import { SymbolView } from "expo-symbols";
-import { BrandMark } from "@/components/ui/pro-icon";
+import { BrandMark, AppIcon } from "@/components/ui/pro-icon";
 
 const ROLES = [
   {
     key: "customer",
-    icon: "person.fill" as const,
+    icon: "user" as const,
     tone: "accent" as const,
     pill: "Public registration",
     title: "Plan an event",
@@ -34,7 +33,7 @@ const ROLES = [
   },
   {
     key: "provider",
-    icon: "briefcase.fill" as const,
+    icon: "briefcase" as const,
     tone: "warning" as const,
     pill: "Onboarded by admin",
     title: "Offer services",
@@ -47,7 +46,7 @@ const ROLES = [
   },
   {
     key: "admin",
-    icon: "lock.shield.fill" as const,
+    icon: "shield" as const,
     tone: "info" as const,
     pill: "Restricted",
     title: "Manage platform",
@@ -112,7 +111,7 @@ function RoleCard({ role, index }: { role: (typeof ROLES)[0]; index: number }) {
                 justifyContent: "center",
               }}
             >
-              <SymbolView name={role.icon} size={22} tintColor={TONE_ICON[role.tone]} />
+              <AppIcon name={role.icon} size={22} color={TONE_ICON[role.tone]} />
             </View>
             <View className="flex-1">
               <View className="bg-[#F4F2EE] self-start px-2.5 py-1 rounded-full mb-2 border border-[#E8E6E1]">
@@ -128,7 +127,7 @@ function RoleCard({ role, index }: { role: (typeof ROLES)[0]; index: number }) {
               </Text>
             </View>
             <View className="pt-1">
-              <SymbolView name="chevron.right" size={16} tintColor="#A7A7AB" />
+              <AppIcon name="chevron-right" size={16} color="#A7A7AB" />
             </View>
           </View>
           <Text className="text-[#A7A7AB] text-[12px] mt-3">
@@ -193,15 +192,15 @@ export default function WelcomeScreen() {
             </Text>
             <View className="flex-row items-center gap-4 mt-5">
               <View className="flex-row items-center gap-1.5">
-                <SymbolView name="checkmark.seal.fill" size={15} tintColor="#1E7A3C" />
+                <AppIcon name="check-circle" size={15} color="#1E7A3C" />
                 <Text className="text-[#3A3A3C] text-[12px] font-medium">Verified vendors</Text>
               </View>
               <View className="flex-row items-center gap-1.5">
-                <SymbolView name="star.fill" size={14} tintColor="#9A6A14" />
+                <AppIcon name="star" size={14} color="#9A6A14" />
                 <Text className="text-[#3A3A3C] text-[12px] font-medium">4.9 rated</Text>
               </View>
               <View className="flex-row items-center gap-1.5">
-                <SymbolView name="mappin.circle.fill" size={15} tintColor="#6E6E73" />
+                <AppIcon name="map-pin" size={15} color="#6E6E73" />
                 <Text className="text-[#3A3A3C] text-[12px] font-medium">Pan-India</Text>
               </View>
             </View>

@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { SymbolView } from "expo-symbols";
+import { AppIcon } from "@/components/ui/pro-icon";
 import { useAuthStore } from "@/store/auth.store";
 import { authApi, type AuthUser } from "@/lib/auth.api";
 
@@ -120,7 +120,7 @@ export default function ProfileScreen() {
           {profile?.provider && (
             <View className="bg-white border border-[#E8E6E1] rounded-2xl p-5 mb-3">
               <View className="flex-row items-center gap-2 mb-3">
-                <SymbolView name="briefcase.fill" size={15} tintColor="#6E6E73" />
+                <AppIcon name="briefcase" size={15} color="#6E6E73" />
                 <Text className="text-[#6E6E73] text-[12px] font-semibold uppercase tracking-widest">
                   Business
                 </Text>
@@ -133,7 +133,7 @@ export default function ProfileScreen() {
               )}
               <View className="flex-row items-center gap-3 mt-3">
                 <View className="flex-row items-center gap-1.5">
-                  <SymbolView name="star.fill" size={14} tintColor="#9A6A14" />
+                  <AppIcon name="star" size={14} color="#9A6A14" />
                   <Text className="text-[#1C1C1E] text-[14px] font-semibold">
                     {Number(profile.provider.ratingAvg).toFixed(1)}
                   </Text>
@@ -176,7 +176,7 @@ export default function ProfileScreen() {
               <ActivityIndicator color="#B3261E" size="small" />
             ) : (
               <View className="flex-row items-center gap-2">
-                <SymbolView name="rectangle.portrait.and.arrow.right" size={16} tintColor="#B3261E" />
+                <AppIcon name="log-out" size={16} color="#B3261E" />
                 <Text className="text-[#B3261E] text-[15px] font-semibold">Sign out</Text>
               </View>
             )}

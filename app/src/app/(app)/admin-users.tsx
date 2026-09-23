@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import {
   View,
   Text,
@@ -8,10 +8,13 @@ import {
   Alert,
   ActivityIndicator,
   RefreshControl,
+  Modal,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { SymbolView } from "expo-symbols";
+import { AppIcon } from "@/components/ui/pro-icon";
 import { adminApi, authApi, type AdminUserListItem, type CreateUserPayload } from "@/lib/auth.api";
 import { FormInput } from "@/components/ui/FormInput";
 import { Button } from "@/components/ui/Button";
@@ -94,18 +97,45 @@ function CreateUserSheet({
 
   if (!visible) return null;
 
-  return (
-    <View className="absolute inset-0 z-50 bg-black/40 justify-end">
-      <View className="bg-white rounded-t-3xl border-t border-[#E8E6E1]" style={{ maxHeight: "92%" }}>
-        <View className="items-center pt-3 pb-2">
-          <View className="w-10 h-1 rounded-full bg-[#E0DED8]" />
-        </View>
+  function handleClose() {
+    reset();
+    onClose();
+  }
 
-        <ScrollView
-          contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 40 }}
-          keyboardShouldPersistTaps="handled"
-          showsVerticalScrollIndicator={false}
-        >
+  return (
+    <Modal
+      visible={visible}
+      animationType="slide"
+      transparent
+      statusBarTranslucent
+      onRequestClose={handleClose}
+    >
+      {/* Backdrop. Plain View on purpose: a pressable backdrop swallows and
+          re-fires taps around the focused inputs, which fights the keyboard
+          for focus. Dismiss via X or the Android back button. */}
+      <View
+        style={{ flex: 1, justifyContent: "flex-end", backgroundColor: "rgba(0,0,0,0.45)" }}
+      >
+        <View style={{ maxHeight: "92%" }}>
+          {/* KeyboardAvoidingView is iOS-only here ON PURPOSE. On Android the
+              window soft-resize already lifts this flex-end sheet above the
+              keyboard in a single layout pass. Adding KAV height-adjustment on
+              top makes the layout bounce while the keyboard animates, and
+              Android chases the moving fields — the focus loop. */}
+          <KeyboardAvoidingView
+            enabled={Platform.OS === "ios"}
+            behavior="padding"
+          >
+            <View className="bg-white rounded-t-3xl border-t border-[#E8E6E1]">
+              <View className="items-center pt-3 pb-2">
+                <View className="w-10 h-1 rounded-full bg-[#E0DED8]" />
+              </View>
+
+              <ScrollView
+                contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 48 }}
+                keyboardShouldPersistTaps="handled"
+                showsVerticalScrollIndicator={false}
+              >
           <View className="flex-row justify-between items-start mb-5">
             <View className="flex-1 mr-3">
               <Text className="text-[#1C1C1E] text-[20px] font-bold tracking-tight">
@@ -120,10 +150,10 @@ function CreateUserSheet({
               </Text>
             </View>
             <TouchableOpacity
-              onPress={() => { reset(); onClose(); }}
+              onPress={handleClose}
               className="w-9 h-9 rounded-full bg-[#F4F2EE] items-center justify-center"
             >
-              <SymbolView name="xmark" size={15} tintColor="#3A3A3C" />
+              <AppIcon name="x" size={15} color="#3A3A3C" />
             </TouchableOpacity>
           </View>
 
@@ -132,9 +162,9 @@ function CreateUserSheet({
           </Text>
           <View className="flex-row gap-2 mb-5">
             {[
-              { r: "CUSTOMER", label: "Customer", icon: "person.fill" as const },
-              { r: "PROVIDER", label: "Provider", icon: "briefcase.fill" as const },
-              { r: "ADMIN", label: "Admin", icon: "lock.shield.fill" as const },
+              { r: "CUSTOMER", label: "Customer", icon: "user" as const },
+              { r: "PROVIDER", label: "Provider", icon: "briefcase" as const },
+              { r: "ADMIN", label: "Admin", icon: "shield" as const },
             ].map(({ r, label, icon }) => (
               <TouchableOpacity
                 key={r}
@@ -143,7 +173,7 @@ function CreateUserSheet({
                   role === r ? "bg-[#1C1C1E] border-[#1C1C1E]" : "bg-white border-[#E3E1DC]"
                 }`}
               >
-                <SymbolView name={icon} size={14} tintColor={role === r ? "#FFFFFF" : "#6E6E73"} />
+                <AppIcon name={icon} size={14} color={role === r ? "#FFFFFF" : "#6E6E73"} />
                 <Text className={`text-[13px] font-semibold ${role === r ? "text-white" : "text-[#6E6E73]"}`}>
                   {label}
                 </Text>
@@ -182,9 +212,12 @@ function CreateUserSheet({
             size="lg"
             loading={loading}
           />
-        </ScrollView>
+              </ScrollView>
+            </View>
+          </KeyboardAvoidingView>
+        </View>
       </View>
-    </View>
+    </Modal>
   );
 }
 
@@ -249,7 +282,7 @@ function UserCard({
           onPress={() => setMenuOpen(v => !v)}
           className="w-9 h-9 rounded-full bg-[#F4F2EE] items-center justify-center"
         >
-          <SymbolView name="ellipsis" size={15} tintColor="#3A3A3C" />
+          <AppIcon name="more-horizontal" size={15} color="#3A3A3C" />
         </TouchableOpacity>
       </View>
 
@@ -283,35 +316,66 @@ export default function AdminUsersScreen() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [search, setSearch] = useState("");
+  // Debounced query: typing only updates local state, so the keyboard never
+  // fights a network round-trip (or an error popup) on any keystroke.
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [roleFilter, setRoleFilter] = useState<RoleFilter>("ALL");
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [total, setTotal] = useState(0);
   const [showCreate, setShowCreate] = useState(false);
+  const mountedRef = useRef(false);
+
+  useEffect(() => {
+    const t = setTimeout(() => setDebouncedSearch(search.trim()), 400);
+    return () => clearTimeout(t);
+  }, [search]);
 
   const fetchUsers = useCallback(
     async (p = 1, append = false) => {
       try {
         const resp = await adminApi.listUsers({
           page: p,
-          search: search || undefined,
+          search: debouncedSearch || undefined,
           role: roleFilter === "ALL" ? undefined : roleFilter,
         });
         setUsers(prev => append ? [...prev, ...resp.users] : resp.users);
         setTotalPages(resp.pagination.totalPages);
         setTotal(resp.pagination.total);
         setPage(p);
-      } catch {
-        Alert.alert("Error", "Failed to load users");
+        setLoadError(null);
+      } catch (err: any) {
+        // Never Alert here: a popup steals TextInput focus and dismisses the
+        // keyboard. Surface failures inline with a retry action instead.
+        if (!append) {
+          setLoadError(
+            err?.response?.data?.message ??
+            "Could not load users. Check your connection and try again."
+          );
+        }
       }
     },
-    [search, roleFilter]
+    [debouncedSearch, roleFilter]
   );
 
   useEffect(() => {
-    setLoading(true);
-    fetchUsers(1).finally(() => setLoading(false));
+    // Full-screen spinner only on first mount. Filter/search changes refresh
+    // in the background so the list (and keyboard) never flash away.
+    if (!mountedRef.current) {
+      mountedRef.current = true;
+      setLoading(true);
+      fetchUsers(1).finally(() => setLoading(false));
+    } else {
+      void fetchUsers(1);
+    }
   }, [fetchUsers]);
+
+  function reload() {
+    setLoadError(null);
+    setLoading(users.length === 0);
+    fetchUsers(1).finally(() => setLoading(false));
+  }
 
   async function handleRefresh() {
     setRefreshing(true);
@@ -365,7 +429,7 @@ export default function AdminUsersScreen() {
               className="bg-[#1C1C1E] px-4 py-2.5 rounded-xl flex-row items-center gap-1.5"
               activeOpacity={0.85}
             >
-              <SymbolView name="plus" size={14} tintColor="#FFFFFF" />
+              <AppIcon name="plus" size={14} color="#FFFFFF" />
               <Text className="text-white text-[13px] font-semibold">New user</Text>
             </TouchableOpacity>
           </View>
@@ -376,7 +440,7 @@ export default function AdminUsersScreen() {
 
         <View className="px-5 mb-3">
           <View className="flex-row items-center bg-white border border-[#E3E1DC] rounded-xl px-3.5 gap-2">
-            <SymbolView name="magnifyingglass" size={16} tintColor="#A7A7AB" />
+            <AppIcon name="search" size={16} color="#A7A7AB" />
             <TextInput
               className="flex-1 text-[#1C1C1E] text-[14px] py-3"
               placeholder="Search name, email, phone"
@@ -384,11 +448,12 @@ export default function AdminUsersScreen() {
               value={search}
               onChangeText={setSearch}
               autoCapitalize="none"
+              autoCorrect={false}
               returnKeyType="search"
             />
             {search.length > 0 && (
               <TouchableOpacity onPress={() => setSearch("")}>
-                <SymbolView name="xmark.circle.fill" size={17} tintColor="#A7A7AB" />
+                <AppIcon name="x-circle" size={17} color="#A7A7AB" />
               </TouchableOpacity>
             )}
           </View>
@@ -419,14 +484,29 @@ export default function AdminUsersScreen() {
           ))}
         </View>
 
-        {loading ? (
+        {loading && users.length === 0 ? (
           <View className="flex-1 items-center justify-center">
             <ActivityIndicator color="#1C1C1E" size="large" />
+          </View>
+        ) : loadError && users.length === 0 ? (
+          <View className="flex-1 items-center justify-center gap-2 px-8">
+            <View className="w-14 h-14 rounded-2xl bg-[#FBECEB] border border-[#F2C7C3] items-center justify-center mb-1">
+              <AppIcon name="info" size={22} color="#B3261E" />
+            </View>
+            <Text className="text-[#1C1C1E] text-[16px] font-semibold text-center">Could not load users</Text>
+            <Text className="text-[#6E6E73] text-[13px] text-center mb-2">{loadError}</Text>
+            <TouchableOpacity
+              onPress={reload}
+              activeOpacity={0.8}
+              className="bg-[#1C1C1E] px-5 py-3 rounded-xl"
+            >
+              <Text className="text-white text-[14px] font-semibold">Retry</Text>
+            </TouchableOpacity>
           </View>
         ) : users.length === 0 ? (
           <View className="flex-1 items-center justify-center gap-2 px-8">
             <View className="w-14 h-14 rounded-2xl bg-white border border-[#E8E6E1] items-center justify-center mb-1">
-              <SymbolView name="person.fill" size={22} tintColor="#A7A7AB" />
+              <AppIcon name="user" size={22} color="#A7A7AB" />
             </View>
             <Text className="text-[#1C1C1E] text-[16px] font-semibold">No users found</Text>
             <Text className="text-[#6E6E73] text-[13px] text-center">Try a different search or filter.</Text>
@@ -439,6 +519,18 @@ export default function AdminUsersScreen() {
               <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor="#1C1C1E" />
             }
           >
+            {loadError && (
+              <TouchableOpacity
+                onPress={reload}
+                activeOpacity={0.8}
+                className="flex-row items-center justify-center gap-2 py-2.5 px-3 rounded-xl bg-[#FBECEB] border border-[#F2C7C3] mb-2.5"
+              >
+                <AppIcon name="info" size={14} color="#B3261E" />
+                <Text className="text-[#B3261E] text-[12px] font-semibold">
+                  Refresh failed — tap to retry
+                </Text>
+              </TouchableOpacity>
+            )}
             {users.map(u => (
               <UserCard
                 key={u.id}

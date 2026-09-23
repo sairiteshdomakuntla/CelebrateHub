@@ -17,7 +17,7 @@ import Animated, {
   withTiming,
   withDelay,
 } from "react-native-reanimated";
-import { SymbolView, type SymbolViewProps } from "expo-symbols";
+import { AppIcon, type AppIconName } from "@/components/ui/pro-icon";
 import { useAuthStore } from "@/store/auth.store";
 import { authApi, adminApi, type AuthUser } from "@/lib/auth.api";
 
@@ -34,7 +34,7 @@ const ROLE_META: Record<string, { label: string; bg: string; text: string; borde
   CUSTOMER: { label: "Customer", bg: "#EAF6EE", text: "#1E7A3C", border: "#CDE8D5" },
 };
 
-type IconName = SymbolViewProps["name"];
+type IconName = AppIconName;
 
 function ActionRow({
   icon,
@@ -90,7 +90,7 @@ function ActionRow({
             alignItems: "center", justifyContent: "center",
           }}
         >
-          <SymbolView name={icon} size={20} tintColor={t.icon} />
+          <AppIcon name={icon} size={20} color={t.icon} />
         </View>
 
         <View className="flex-1 ml-3.5">
@@ -109,7 +109,7 @@ function ActionRow({
           <Text className="text-[#6E6E73] text-[13px] leading-[18px] mt-0.5">{subtitle}</Text>
         </View>
 
-        <SymbolView name="chevron.right" size={15} tintColor="#C7C7CC" />
+        <AppIcon name="chevron-right" size={15} color="#C7C7CC" />
       </TouchableOpacity>
     </Animated.View>
   );
@@ -128,7 +128,7 @@ function StatCard({
 }) {
   return (
     <View className="flex-1 bg-white border border-[#E8E6E1] rounded-2xl p-4">
-      <SymbolView name={icon} size={18} tintColor="#6E6E73" />
+      <AppIcon name={icon} size={18} color="#6E6E73" />
       {loading ? (
         <ActivityIndicator size="small" color="#1C1C1E" style={{ marginTop: 10 }} />
       ) : (
@@ -294,7 +294,7 @@ export default function HomeScreen() {
                 {loggingOut ? (
                   <ActivityIndicator size="small" color="#1C1C1E" />
                 ) : (
-                  <SymbolView name="rectangle.portrait.and.arrow.right" size={17} tintColor="#3A3A3C" />
+                  <AppIcon name="log-out" size={17} color="#3A3A3C" />
                 )}
               </TouchableOpacity>
             </View>
@@ -339,21 +339,21 @@ export default function HomeScreen() {
           <View className="flex-row gap-2.5 mb-6">
             {role === "ADMIN" ? (
               <>
-                <StatCard icon="person.2.fill" value={totalUsers ?? "—"} label="Total users" loading={loadingStats} />
-                <StatCard icon="briefcase.fill" value={providersCount ?? "—"} label="Providers" loading={loadingStats} />
-                <StatCard icon="person.fill" value={customersCount ?? "—"} label="Customers" loading={loadingStats} />
+                <StatCard icon="users" value={totalUsers ?? "—"} label="Total users" loading={loadingStats} />
+                <StatCard icon="briefcase" value={providersCount ?? "—"} label="Providers" loading={loadingStats} />
+                <StatCard icon="user" value={customersCount ?? "—"} label="Customers" loading={loadingStats} />
               </>
             ) : role === "PROVIDER" ? (
               <>
-                <StatCard icon="tray.fill" value="12" label="New leads" />
-                <StatCard icon="checkmark.circle.fill" value="8" label="Bookings" />
-                <StatCard icon="star.fill" value="4.9" label="Rating" />
+                <StatCard icon="inbox" value="12" label="New leads" />
+                <StatCard icon="check-circle" value="8" label="Bookings" />
+                <StatCard icon="star" value="4.9" label="Rating" />
               </>
             ) : (
               <>
                 <StatCard icon="calendar" value="3" label="My events" />
-                <StatCard icon="ticket.fill" value="4" label="Bookings" />
-                <StatCard icon="envelope.fill" value="45" label="Invites sent" />
+                <StatCard icon="bookmark" value="4" label="Bookings" />
+                <StatCard icon="mail" value="45" label="Invites sent" />
               </>
             )}
           </View>
@@ -365,25 +365,25 @@ export default function HomeScreen() {
           {role === "ADMIN" && (
             <>
               <ActionRow
-                icon="person.2.fill" tone="dark" title="Manage users" badge="Admin"
+                icon="users" tone="dark" title="Manage users" badge="Admin"
                 subtitle="Search, create, suspend and delete accounts"
                 delay={80}
                 onPress={() => router.push("/admin-users" as any)}
               />
               <ActionRow
-                icon="person.fill" tone="neutral" title="My profile"
+                icon="user" tone="neutral" title="My profile"
                 subtitle="Account details and security"
                 delay={140}
                 onPress={() => router.push("/profile" as any)}
               />
               <ActionRow
-                icon="checkmark.seal.fill" tone="success" title="Provider verifications"
+                icon="check-circle" tone="success" title="Provider verifications"
                 subtitle="Review licences, KYC and documents"
                 delay={200}
                 onPress={() => Alert.alert("Verifications", "The verification queue is up to date.")}
               />
               <ActionRow
-                icon="chart.bar.fill" tone="info" title="Platform activity"
+                icon="bar-chart-2" tone="info" title="Platform activity"
                 subtitle="Leads, quotes and transactions"
                 delay={260}
                 onPress={() => Alert.alert("Activity", "All systems operating normally.")}
@@ -394,13 +394,13 @@ export default function HomeScreen() {
           {role === "PROVIDER" && (
             <>
               <ActionRow
-                icon="tray.fill" tone="dark" title="Qualified leads"
+                icon="inbox" tone="dark" title="Qualified leads"
                 subtitle="Review incoming event requests"
                 delay={80}
                 onPress={() => Alert.alert("Leads", "You have no pending enquiries right now.")}
               />
               <ActionRow
-                icon="briefcase.fill" tone="neutral" title="Business profile"
+                icon="briefcase" tone="neutral" title="Business profile"
                 subtitle="Pricing, services and portfolio"
                 delay={140}
                 onPress={() => router.push("/profile" as any)}
@@ -412,7 +412,7 @@ export default function HomeScreen() {
                 onPress={() => Alert.alert("Calendar", "Your upcoming bookings will appear here.")}
               />
               <ActionRow
-                icon="star.fill" tone="warning" title="Reviews"
+                icon="star" tone="warning" title="Reviews"
                 subtitle="Client feedback and ratings"
                 delay={260}
                 onPress={() => Alert.alert("Reviews", "Your profile holds a 4.9 rating.")}
@@ -423,25 +423,25 @@ export default function HomeScreen() {
           {role === "CUSTOMER" && (
             <>
               <ActionRow
-                icon="plus.circle.fill" tone="dark" title="Plan new event"
+                icon="plus-circle" tone="dark" title="Plan new event"
                 subtitle="Wedding, birthday, anniversary, corporate"
                 delay={80}
                 onPress={() => Alert.alert("Plan event", "Choose a category, location and guest count to begin.")}
               />
               <ActionRow
-                icon="magnifyingglass" tone="neutral" title="Find providers"
+                icon="search" tone="neutral" title="Find providers"
                 subtitle="Caterers, decorators, photographers"
                 delay={140}
                 onPress={() => Alert.alert("Providers", "Verified local providers matched to your budget.")}
               />
               <ActionRow
-                icon="person.fill" tone="neutral" title="Profile and security"
+                icon="user" tone="neutral" title="Profile and security"
                 subtitle="Contact details and password"
                 delay={200}
                 onPress={() => router.push("/profile" as any)}
               />
               <ActionRow
-                icon="envelope.fill" tone="neutral" title="Guest invitations"
+                icon="mail" tone="neutral" title="Guest invitations"
                 subtitle="WhatsApp, SMS and email RSVPs"
                 delay={260}
                 onPress={() => Alert.alert("Invitations", "Invitation templates are ready to send.")}
@@ -459,7 +459,7 @@ export default function HomeScreen() {
               <ActivityIndicator size="small" color="#B3261E" />
             ) : (
               <View className="flex-row items-center gap-2">
-                <SymbolView name="rectangle.portrait.and.arrow.right" size={16} tintColor="#B3261E" />
+                <AppIcon name="log-out" size={16} color="#B3261E" />
                 <Text className="text-[#B3261E] text-[14px] font-semibold">Sign out</Text>
               </View>
             )}

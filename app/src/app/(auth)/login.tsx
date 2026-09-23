@@ -11,7 +11,7 @@ import {
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter, useLocalSearchParams } from "expo-router";
-import { SymbolView } from "expo-symbols";
+import { AppIcon } from "@/components/ui/pro-icon";
 import { useAuthStore } from "@/store/auth.store";
 import { FormInput } from "@/components/ui/FormInput";
 import { Button } from "@/components/ui/Button";
@@ -102,7 +102,7 @@ export default function LoginScreen() {
               className="mb-6 self-start flex-row items-center gap-1 py-2"
               hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
             >
-              <SymbolView name="chevron.left" size={17} tintColor="#1C1C1E" />
+              <AppIcon name="chevron-left" size={17} color="#1C1C1E" />
               <Text className="text-[#1C1C1E] text-[15px] font-medium">Back</Text>
             </TouchableOpacity>
 
@@ -193,7 +193,7 @@ export default function LoginScreen() {
             {role === "provider" || role === "admin" ? (
               <View className="mt-5 p-4 bg-white border border-[#E8E6E1] rounded-2xl">
                 <View className="flex-row items-center gap-2 mb-1">
-                  <SymbolView name="info.circle.fill" size={15} tintColor="#6E6E73" />
+                  <AppIcon name="info" size={15} color="#6E6E73" />
                   <Text className="text-[#1C1C1E] font-semibold text-[13px]">
                     {role === "provider" ? "New service provider?" : "Need admin access?"}
                   </Text>

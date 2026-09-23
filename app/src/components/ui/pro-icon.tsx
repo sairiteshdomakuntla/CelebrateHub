@@ -1,27 +1,38 @@
 import React from "react";
-import { View, Text, ViewStyle } from "react-native";
-import { SymbolView, type SymbolViewProps } from "expo-symbols";
+import { View, Text, ViewStyle, StyleProp } from "react-native";
+import { Feather } from "@expo/vector-icons";
 
-type IconName = SymbolViewProps["name"];
+export type AppIconName = React.ComponentProps<typeof Feather>["name"];
 
 /**
- * Professional system icon wrapper. Uses SF Symbols / Material symbols
- * via expo-symbols — no emojis anywhere in the UI.
+ * App-wide icon component backed by bundled vector fonts.
+ * Renders identically on Android, iOS and web — no native symbol
+ * dependencies, no emojis.
  */
-export function ProIcon({
+export function AppIcon({
   name,
   size = 18,
   color = "#1C1C1E",
   style,
 }: {
-  name: IconName;
+  name: AppIconName;
   size?: number;
   color?: string;
-  style?: ViewStyle;
+  style?: StyleProp<ViewStyle>;
 }) {
   return (
-    <View style={[{ width: size + 4, height: size + 4, alignItems: "center", justifyContent: "center" }, style]}>
-      <SymbolView name={name} size={size} tintColor={color} />
+    <View
+      style={[
+        {
+          width: size + 4,
+          height: size + 4,
+          alignItems: "center",
+          justifyContent: "center",
+        },
+        style,
+      ]}
+    >
+      <Feather name={name} size={size} color={color} />
     </View>
   );
 }
@@ -32,7 +43,7 @@ export function IconTile({
   tone = "neutral",
   size = 44,
 }: {
-  name: IconName;
+  name: AppIconName;
   tone?: "neutral" | "dark" | "accent" | "success" | "warning" | "danger" | "info";
   size?: number;
 }) {
@@ -59,12 +70,12 @@ export function IconTile({
         justifyContent: "center",
       }}
     >
-      <SymbolView name={name} size={21} tintColor={t.icon} />
+      <Feather name={name} size={21} color={t.icon} />
     </View>
   );
 }
 
-/** Brand monogram — replaces the old "CH" glow box. */
+/** Brand monogram. */
 export function BrandMark({ size = 56 }: { size?: number }) {
   return (
     <View
