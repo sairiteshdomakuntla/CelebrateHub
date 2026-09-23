@@ -4,35 +4,32 @@ import {
   Text,
   ScrollView,
   TouchableOpacity,
-  StatusBar,
   TextInput,
   Alert,
   ActivityIndicator,
   RefreshControl,
 } from "react-native";
+import { StatusBar } from "expo-status-bar";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { SymbolView } from "expo-symbols";
 import { adminApi, authApi, type AdminUserListItem, type CreateUserPayload } from "@/lib/auth.api";
 import { FormInput } from "@/components/ui/FormInput";
 import { Button } from "@/components/ui/Button";
 
-// ─── Constants ───────────────────────────────────────────────────────────────
-
 const ROLE_FILTERS = ["ALL", "CUSTOMER", "PROVIDER", "ADMIN"] as const;
 type RoleFilter = (typeof ROLE_FILTERS)[number];
 
-const ROLE_BADGE: Record<string, string> = {
-  ADMIN:    "bg-purple-500/20 text-purple-400",
-  PROVIDER: "bg-amber-500/20 text-amber-400",
-  CUSTOMER: "bg-sky-500/20 text-sky-400",
+const ROLE_STYLE: Record<string, { bg: string; text: string }> = {
+  ADMIN: { bg: "#EAF0FB", text: "#2F54B8" },
+  PROVIDER: { bg: "#FDF3E3", text: "#8A5E10" },
+  CUSTOMER: { bg: "#EAF6EE", text: "#1E7A3C" },
 };
 
-const STATUS_BADGE: Record<string, string> = {
-  ACTIVE:    "bg-emerald-500/20 text-emerald-400",
-  INACTIVE:  "bg-slate-500/20 text-slate-400",
-  SUSPENDED: "bg-red-500/20 text-red-400",
+const STATUS_STYLE: Record<string, { bg: string; text: string }> = {
+  ACTIVE: { bg: "#EAF6EE", text: "#1E7A3C" },
+  INACTIVE: { bg: "#F1EFEC", text: "#6E6E73" },
+  SUSPENDED: { bg: "#FBECEB", text: "#B3261E" },
 };
-
-// ─── Create User Modal ────────────────────────────────────────────────────────
 
 function CreateUserSheet({
   visible,
@@ -49,21 +46,22 @@ function CreateUserSheet({
   const [password, setPassword] = useState("");
   const [role, setRole] = useState<"CUSTOMER" | "PROVIDER" | "ADMIN">("CUSTOMER");
   const [businessName, setBusinessName] = useState("");
+  const [serviceArea, setServiceArea] = useState("");
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   function reset() {
     setName(""); setEmail(""); setPhone(""); setPassword("");
-    setRole("CUSTOMER"); setBusinessName(""); setErrors({});
+    setRole("CUSTOMER"); setBusinessName(""); setServiceArea(""); setErrors({});
   }
 
   function validate() {
     const e: Record<string, string> = {};
     if (!name.trim()) e.name = "Name is required";
     if (!email.trim() && !phone.trim()) e.email = "Email or phone required";
-    if (!password || password.length < 8) e.password = "Min 8 characters";
-    if (!/[A-Z]/.test(password)) e.password = "Need 1 uppercase";
-    if (!/[0-9]/.test(password)) e.password = "Need 1 number";
+    if (!password || password.length < 8) e.password = "Minimum 8 characters";
+    if (!/[A-Z]/.test(password)) e.password = "Include one uppercase letter";
+    if (!/[0-9]/.test(password)) e.password = "Include one number";
     if (role === "PROVIDER" && !businessName.trim()) e.businessName = "Business name required";
     setErrors(e);
     return Object.keys(e).length === 0;
@@ -80,12 +78,13 @@ function CreateUserSheet({
         password,
         role,
         businessName: role === "PROVIDER" ? businessName.trim() : undefined,
+        serviceArea: role === "PROVIDER" && serviceArea.trim() ? serviceArea.trim() : undefined,
       };
       await authApi.createUser(payload);
       reset();
       onCreated();
       onClose();
-      Alert.alert("Success", `${role} account created successfully.`);
+      Alert.alert("Account created", "The new account is ready to use.");
     } catch (err: any) {
       Alert.alert("Error", err?.response?.data?.message ?? err.message ?? "Failed to create user");
     } finally {
@@ -96,45 +95,57 @@ function CreateUserSheet({
   if (!visible) return null;
 
   return (
-    <View className="absolute inset-0 z-50 bg-black/70 justify-end">
-      <View
-        className="bg-bg-muted rounded-t-3xl border-t border-border-subtle"
-        style={{ maxHeight: "90%" }}
-      >
-        {/* Handle */}
+    <View className="absolute inset-0 z-50 bg-black/40 justify-end">
+      <View className="bg-white rounded-t-3xl border-t border-[#E8E6E1]" style={{ maxHeight: "92%" }}>
         <View className="items-center pt-3 pb-2">
-          <View className="w-10 h-1 rounded-full bg-white/20" />
+          <View className="w-10 h-1 rounded-full bg-[#E0DED8]" />
         </View>
 
         <ScrollView
-          contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 40 }}
+          contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 40 }}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
-          <View className="flex-row justify-between items-center mb-6">
-            <Text className="text-text-primary text-xl font-bold">Create User</Text>
-            <TouchableOpacity onPress={() => { reset(); onClose(); }}>
-              <Text className="text-text-muted text-2xl leading-none">×</Text>
+          <View className="flex-row justify-between items-start mb-5">
+            <View className="flex-1 mr-3">
+              <Text className="text-[#1C1C1E] text-[20px] font-bold tracking-tight">
+                {role === "ADMIN" ? "New administrator" : role === "PROVIDER" ? "New provider" : "New customer"}
+              </Text>
+              <Text className="text-[#6E6E73] text-[13px] mt-1">
+                {role === "ADMIN"
+                  ? "Full platform access"
+                  : role === "PROVIDER"
+                  ? "Receives leads and bookings"
+                  : "Plans events and hires providers"}
+              </Text>
+            </View>
+            <TouchableOpacity
+              onPress={() => { reset(); onClose(); }}
+              className="w-9 h-9 rounded-full bg-[#F4F2EE] items-center justify-center"
+            >
+              <SymbolView name="xmark" size={15} tintColor="#3A3A3C" />
             </TouchableOpacity>
           </View>
 
-          {/* Role selector */}
-          <Text className="text-text-secondary text-[13px] font-semibold uppercase tracking-wider mb-2">
-            Role
+          <Text className="text-[#3A3A3C] text-[13px] font-semibold mb-2">
+            Account role
           </Text>
           <View className="flex-row gap-2 mb-5">
-            {(["CUSTOMER", "PROVIDER", "ADMIN"] as const).map((r) => (
+            {[
+              { r: "CUSTOMER", label: "Customer", icon: "person.fill" as const },
+              { r: "PROVIDER", label: "Provider", icon: "briefcase.fill" as const },
+              { r: "ADMIN", label: "Admin", icon: "lock.shield.fill" as const },
+            ].map(({ r, label, icon }) => (
               <TouchableOpacity
                 key={r}
-                onPress={() => setRole(r)}
-                className={`flex-1 py-2.5 rounded-xl items-center border ${
-                  role === r
-                    ? "bg-rose-brand border-rose-brand"
-                    : "bg-bg-input border-border-subtle"
+                onPress={() => setRole(r as any)}
+                className={`flex-1 py-3 rounded-xl items-center border flex-row justify-center gap-1.5 ${
+                  role === r ? "bg-[#1C1C1E] border-[#1C1C1E]" : "bg-white border-[#E3E1DC]"
                 }`}
               >
-                <Text className={`text-xs font-bold ${role === r ? "text-bg" : "text-text-muted"}`}>
-                  {r}
+                <SymbolView name={icon} size={14} tintColor={role === r ? "#FFFFFF" : "#6E6E73"} />
+                <Text className={`text-[13px] font-semibold ${role === r ? "text-white" : "text-[#6E6E73]"}`}>
+                  {label}
                 </Text>
               </TouchableOpacity>
             ))}
@@ -147,27 +158,35 @@ function CreateUserSheet({
             error={errors.email} />
           <FormInput label="Phone (optional)" placeholder="+91 98765 43210"
             keyboardType="phone-pad" value={phone} onChangeText={setPhone} />
-          <FormInput label="Password" placeholder="Min 8 chars, 1 uppercase, 1 number"
+          <FormInput label="Password" placeholder="Minimum 8 characters"
             isPassword value={password}
             onChangeText={(t) => { setPassword(t); setErrors(e => ({...e, password:""})); }}
             error={errors.password} />
 
           {role === "PROVIDER" && (
-            <FormInput label="Business name" placeholder="Meera Wedding Photography"
-              value={businessName}
-              onChangeText={(t) => { setBusinessName(t); setErrors(e => ({...e, businessName:""})); }}
-              error={errors.businessName} />
+            <>
+              <FormInput label="Business name" placeholder="Meera Wedding Photography"
+                value={businessName}
+                onChangeText={(t) => { setBusinessName(t); setErrors(e => ({...e, businessName:""})); }}
+                error={errors.businessName} />
+              <FormInput label="Service area (optional)" placeholder="e.g. Hyderabad, Telangana"
+                value={serviceArea}
+                onChangeText={setServiceArea} />
+            </>
           )}
 
-          <Button label="Create User" onPress={handleCreate} fullWidth size="lg" loading={loading}
-            style={{ marginTop: 8, shadowColor: "#E8956D", shadowOffset: {width:0,height:6}, shadowOpacity:0.35, shadowRadius:12, elevation:7 }} />
+          <Button
+            label={role === "ADMIN" ? "Create admin" : role === "PROVIDER" ? "Create provider" : "Create customer"}
+            onPress={handleCreate}
+            fullWidth
+            size="lg"
+            loading={loading}
+          />
         </ScrollView>
       </View>
     </View>
   );
 }
-
-// ─── User Card ────────────────────────────────────────────────────────────────
 
 function UserCard({
   user,
@@ -179,94 +198,85 @@ function UserCard({
   onDelete: (id: string, name: string) => void;
 }) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const roleStyle = ROLE_STYLE[user.role] ?? ROLE_STYLE.CUSTOMER;
+  const statusStyle = STATUS_STYLE[user.status] ?? STATUS_STYLE.ACTIVE;
 
   const statusActions = (["ACTIVE", "INACTIVE", "SUSPENDED"] as const).filter(
     (s) => s !== user.status
   );
 
   return (
-    <View className="bg-bg-card border border-border-subtle rounded-2xl p-4 mb-3">
+    <View className="bg-white border border-[#E8E6E1] rounded-2xl p-4 mb-2.5">
       <View className="flex-row items-start gap-3">
-        {/* Avatar */}
-        <View className="w-11 h-11 rounded-full bg-rose-dim items-center justify-center flex-shrink-0">
-          <Text className="text-rose-brand text-base font-black">
+        <View className="w-11 h-11 rounded-full bg-[#F1EFEC] border border-[#E8E6E1] items-center justify-center">
+          <Text className="text-[#1C1C1E] text-[16px] font-bold">
             {user.name?.[0]?.toUpperCase()}
           </Text>
         </View>
 
-        {/* Info */}
         <View className="flex-1 min-w-0">
           <View className="flex-row items-center gap-2 flex-wrap">
-            <Text className="text-text-primary text-[14px] font-semibold" numberOfLines={1}>
+            <Text className="text-[#1C1C1E] text-[15px] font-semibold" numberOfLines={1}>
               {user.name}
             </Text>
-            <View className={`px-2 py-0.5 rounded-full ${ROLE_BADGE[user.role]}`}>
-              <Text className={`text-[10px] font-bold ${ROLE_BADGE[user.role].split(" ")[1]}`}>
+            <View style={{ backgroundColor: roleStyle.bg }} className="px-2 py-0.5 rounded-full">
+              <Text style={{ color: roleStyle.text }} className="text-[10px] font-semibold uppercase tracking-wide">
                 {user.role}
               </Text>
             </View>
           </View>
-          <Text className="text-text-muted text-xs mt-0.5" numberOfLines={1}>
+          <Text className="text-[#6E6E73] text-[13px] mt-0.5" numberOfLines={1}>
             {user.email ?? user.phone ?? "—"}
           </Text>
           {user.provider?.businessName && (
-            <Text className="text-amber-400/80 text-xs mt-0.5" numberOfLines={1}>
-              🏢 {user.provider.businessName}
+            <Text className="text-[#6E6E73] text-[12px] mt-0.5" numberOfLines={1}>
+              {user.provider.businessName}
             </Text>
           )}
           <View className="flex-row items-center gap-2 mt-2">
-            <View className={`px-2 py-0.5 rounded-full ${STATUS_BADGE[user.status]}`}>
-              <Text className={`text-[10px] font-semibold ${STATUS_BADGE[user.status].split(" ")[1]}`}>
+            <View style={{ backgroundColor: statusStyle.bg }} className="px-2 py-0.5 rounded-full">
+              <Text style={{ color: statusStyle.text }} className="text-[10px] font-semibold uppercase tracking-wide">
                 {user.status}
               </Text>
             </View>
-            <Text className="text-text-dim text-[10px]">
+            <Text className="text-[#A7A7AB] text-[11px]">
               {new Date(user.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
             </Text>
           </View>
         </View>
 
-        {/* Action menu toggle */}
-        <TouchableOpacity onPress={() => setMenuOpen(v => !v)} className="p-1">
-          <Text className="text-text-muted text-xl leading-none">⋯</Text>
+        <TouchableOpacity
+          onPress={() => setMenuOpen(v => !v)}
+          className="w-9 h-9 rounded-full bg-[#F4F2EE] items-center justify-center"
+        >
+          <SymbolView name="ellipsis" size={15} tintColor="#3A3A3C" />
         </TouchableOpacity>
       </View>
 
-      {/* Action menu */}
       {menuOpen && (
-        <View className="mt-3 pt-3 border-t border-border-subtle gap-2">
+        <View className="mt-3 pt-3 border-t border-[#EFEEEA] gap-2">
           {statusActions.map((s) => (
             <TouchableOpacity
               key={s}
               onPress={() => { setMenuOpen(false); onStatusChange(user.id, s); }}
-              className={`py-2 px-3 rounded-xl items-center ${
-                s === "ACTIVE" ? "bg-emerald-500/10 border border-emerald-500/25"
-                : s === "SUSPENDED" ? "bg-red-500/10 border border-red-500/25"
-                : "bg-slate-500/10 border border-slate-500/25"
-              }`}
+              className="py-2.5 px-3 rounded-xl items-center bg-[#F7F7F5] border border-[#E8E6E1]"
             >
-              <Text className={`text-xs font-bold ${
-                s === "ACTIVE" ? "text-emerald-400"
-                : s === "SUSPENDED" ? "text-red-400"
-                : "text-slate-400"
-              }`}>
-                Set {s}
+              <Text className="text-[13px] font-semibold text-[#1C1C1E]">
+                Mark as {s.toLowerCase()}
               </Text>
             </TouchableOpacity>
           ))}
           <TouchableOpacity
             onPress={() => { setMenuOpen(false); onDelete(user.id, user.name); }}
-            className="py-2 px-3 rounded-xl items-center bg-red-500/10 border border-red-500/25"
+            className="py-2.5 px-3 rounded-xl items-center bg-[#FBECEB] border border-[#F2C7C3]"
           >
-            <Text className="text-xs font-bold text-red-400">Delete User</Text>
+            <Text className="text-[13px] font-semibold text-[#B3261E]">Delete user</Text>
           </TouchableOpacity>
         </View>
       )}
     </View>
   );
 }
-
-// ─── Main Screen ──────────────────────────────────────────────────────────────
 
 export default function AdminUsersScreen() {
   const [users, setUsers] = useState<AdminUserListItem[]>([]);
@@ -320,7 +330,7 @@ export default function AdminUsersScreen() {
 
   function handleDelete(id: string, name: string) {
     Alert.alert(
-      "Delete User",
+      "Delete user",
       `Permanently delete "${name}"? This cannot be undone.`,
       [
         { text: "Cancel", style: "cancel" },
@@ -342,37 +352,35 @@ export default function AdminUsersScreen() {
   }
 
   return (
-    <View className="flex-1 bg-bg">
-      <StatusBar barStyle="light-content" />
-
+    <View className="flex-1 bg-[#F7F7F5]">
+      <StatusBar style="dark" />
       <SafeAreaView className="flex-1">
-        {/* Header */}
-        <View className="px-6 pt-4 pb-3">
+        <View className="px-5 pt-4 pb-3">
           <View className="flex-row items-center justify-between mb-1">
-            <Text className="text-text-primary text-2xl font-extrabold tracking-tight">
-              User Management
+            <Text className="text-[#1C1C1E] text-[24px] font-bold tracking-tight">
+              Users
             </Text>
             <TouchableOpacity
               onPress={() => setShowCreate(true)}
-              className="bg-rose-brand px-4 py-2 rounded-xl"
+              className="bg-[#1C1C1E] px-4 py-2.5 rounded-xl flex-row items-center gap-1.5"
               activeOpacity={0.85}
             >
-              <Text className="text-bg text-sm font-bold">+ New</Text>
+              <SymbolView name="plus" size={14} tintColor="#FFFFFF" />
+              <Text className="text-white text-[13px] font-semibold">New user</Text>
             </TouchableOpacity>
           </View>
-          <Text className="text-text-muted text-sm">
-            {total} user{total !== 1 ? "s" : ""} registered
+          <Text className="text-[#6E6E73] text-[13px]">
+            {total} registered account{total !== 1 ? "s" : ""}
           </Text>
         </View>
 
-        {/* Search */}
-        <View className="px-6 mb-3">
-          <View className="flex-row items-center bg-bg-input border border-border-subtle rounded-xl px-4 gap-2">
-            <Text className="text-text-dim text-base">🔍</Text>
+        <View className="px-5 mb-3">
+          <View className="flex-row items-center bg-white border border-[#E3E1DC] rounded-xl px-3.5 gap-2">
+            <SymbolView name="magnifyingglass" size={16} tintColor="#A7A7AB" />
             <TextInput
-              className="flex-1 text-text-primary text-[14px] py-3"
-              placeholder="Search name, email, phone…"
-              placeholderTextColor="#4B5563"
+              className="flex-1 text-[#1C1C1E] text-[14px] py-3"
+              placeholder="Search name, email, phone"
+              placeholderTextColor="#A7A7AB"
               value={search}
               onChangeText={setSearch}
               autoCapitalize="none"
@@ -380,52 +388,55 @@ export default function AdminUsersScreen() {
             />
             {search.length > 0 && (
               <TouchableOpacity onPress={() => setSearch("")}>
-                <Text className="text-text-dim text-lg">×</Text>
+                <SymbolView name="xmark.circle.fill" size={17} tintColor="#A7A7AB" />
               </TouchableOpacity>
             )}
           </View>
         </View>
 
-        {/* Role filter pills */}
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={{ paddingHorizontal: 24, gap: 8, paddingBottom: 12 }}
-        >
+        {/* Role filter — fixed segmented row (4 equal pills, fixed height).
+            A horizontal ScrollView stretches its children vertically here,
+            which rendered the pills as giant clipped capsules. */}
+        <View className="px-5 mb-4 flex-row gap-2">
           {ROLE_FILTERS.map((r) => (
             <TouchableOpacity
               key={r}
               onPress={() => setRoleFilter(r)}
-              className={`px-4 py-2 rounded-full border ${
-                roleFilter === r
-                  ? "bg-rose-brand border-rose-brand"
-                  : "bg-transparent border-border-subtle"
-              }`}
               activeOpacity={0.8}
+              className={`flex-1 h-10 rounded-full border items-center justify-center ${
+                roleFilter === r ? "bg-[#1C1C1E] border-[#1C1C1E]" : "bg-white border-[#E3E1DC]"
+              }`}
             >
-              <Text className={`text-xs font-bold ${roleFilter === r ? "text-bg" : "text-text-muted"}`}>
-                {r}
+              <Text
+                className={`text-[12px] font-semibold capitalize ${
+                  roleFilter === r ? "text-white" : "text-[#6E6E73]"
+                }`}
+                numberOfLines={1}
+              >
+                {r.toLowerCase()}
               </Text>
             </TouchableOpacity>
           ))}
-        </ScrollView>
+        </View>
 
-        {/* List */}
         {loading ? (
           <View className="flex-1 items-center justify-center">
-            <ActivityIndicator color="#E8956D" size="large" />
+            <ActivityIndicator color="#1C1C1E" size="large" />
           </View>
         ) : users.length === 0 ? (
-          <View className="flex-1 items-center justify-center gap-2">
-            <Text className="text-4xl">👤</Text>
-            <Text className="text-text-muted text-base">No users found</Text>
+          <View className="flex-1 items-center justify-center gap-2 px-8">
+            <View className="w-14 h-14 rounded-2xl bg-white border border-[#E8E6E1] items-center justify-center mb-1">
+              <SymbolView name="person.fill" size={22} tintColor="#A7A7AB" />
+            </View>
+            <Text className="text-[#1C1C1E] text-[16px] font-semibold">No users found</Text>
+            <Text className="text-[#6E6E73] text-[13px] text-center">Try a different search or filter.</Text>
           </View>
         ) : (
           <ScrollView
-            contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 32 }}
+            contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 32 }}
             showsVerticalScrollIndicator={false}
             refreshControl={
-              <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor="#E8956D" />
+              <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor="#1C1C1E" />
             }
           >
             {users.map(u => (
@@ -437,20 +448,18 @@ export default function AdminUsersScreen() {
               />
             ))}
 
-            {/* Load more */}
             {page < totalPages && (
               <TouchableOpacity
                 onPress={() => fetchUsers(page + 1, true)}
-                className="mt-2 py-3 items-center border border-border-subtle rounded-2xl"
+                className="mt-2 py-3.5 items-center bg-white border border-[#E8E6E1] rounded-2xl"
               >
-                <Text className="text-rose-brand text-sm font-semibold">Load more</Text>
+                <Text className="text-[#1C1C1E] text-[14px] font-semibold">Load more</Text>
               </TouchableOpacity>
             )}
           </ScrollView>
         )}
       </SafeAreaView>
 
-      {/* Create user sheet */}
       <CreateUserSheet
         visible={showCreate}
         onClose={() => setShowCreate(false)}

@@ -6,20 +6,47 @@ import {
   TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
-  StatusBar,
   Alert,
 } from "react-native";
-import { useRouter } from "expo-router";
+import { StatusBar } from "expo-status-bar";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useRouter, useLocalSearchParams } from "expo-router";
+import { SymbolView } from "expo-symbols";
 import { useAuthStore } from "@/store/auth.store";
 import { FormInput } from "@/components/ui/FormInput";
 import { Button } from "@/components/ui/Button";
+import { BrandMark } from "@/components/ui/pro-icon";
 import axios from "axios";
 
 type LoginMethod = "email" | "phone";
 
+const PORTAL_META: Record<string, { pill: string; title: string; subtitle: string; icon: "person.fill" | "briefcase.fill" | "lock.shield.fill" }> = {
+  provider: {
+    pill: "Service provider",
+    title: "Provider sign in",
+    subtitle: "Access your leads, bookings and business profile.",
+    icon: "briefcase.fill",
+  },
+  admin: {
+    pill: "Administration",
+    title: "Admin sign in",
+    subtitle: "Restricted to authorised system administrators.",
+    icon: "lock.shield.fill",
+  },
+  customer: {
+    pill: "Customer",
+    title: "Welcome back",
+    subtitle: "Sign in to manage your events and bookings.",
+    icon: "person.fill",
+  },
+};
+
 export default function LoginScreen() {
   const router = useRouter();
+  const { role } = useLocalSearchParams<{ role?: string }>();
   const { login, isLoading } = useAuthStore();
+
+  const meta = PORTAL_META[role ?? "customer"] ?? PORTAL_META.customer;
 
   const [method, setMethod] = useState<LoginMethod>("email");
   const [email, setEmail] = useState("");
@@ -53,164 +80,148 @@ export default function LoginScreen() {
       let message = "Login failed. Please check your credentials.";
       if (axios.isAxiosError(err)) message = err.response?.data?.message ?? message;
       else if (err instanceof Error) message = err.message;
-      Alert.alert("Login Failed", message);
+      Alert.alert("Login failed", message);
     }
   }
 
   return (
-    <View className="flex-1 bg-bg">
-      <StatusBar barStyle="light-content" />
-
-      {/* Background blobs */}
-      <View
-        className="absolute rounded-full bg-rose-brand opacity-10"
-        style={{ width: 260, height: 260, top: -50, right: -60 }}
-      />
-      <View
-        className="absolute rounded-full bg-purple-brand opacity-10"
-        style={{ width: 200, height: 200, bottom: 80, left: -50 }}
-      />
-
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        className="flex-1"
-      >
-        <ScrollView
-          contentContainerStyle={{ paddingTop: 56, paddingBottom: 40, paddingHorizontal: 24 }}
-          keyboardShouldPersistTaps="handled"
-          showsVerticalScrollIndicator={false}
+    <View className="flex-1 bg-[#F7F7F5]">
+      <StatusBar style="dark" />
+      <SafeAreaView className="flex-1">
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          className="flex-1"
         >
-          {/* Back */}
-          <TouchableOpacity onPress={() => router.back()} className="mb-6 self-start">
-            <Text className="text-text-muted text-[14px] font-medium">← Back</Text>
-          </TouchableOpacity>
-
-          {/* Header */}
-          <View className="items-center mb-8">
-            <View
-              className="w-[60px] h-[60px] rounded-[18px] bg-rose-brand items-center justify-center mb-4"
-              style={{
-                shadowColor: "#E8956D",
-                shadowOffset: { width: 0, height: 6 },
-                shadowOpacity: 0.45,
-                shadowRadius: 16,
-                elevation: 10,
-              }}
+          <ScrollView
+            contentContainerStyle={{ paddingTop: 12, paddingBottom: 32, paddingHorizontal: 20 }}
+            keyboardShouldPersistTaps="handled"
+            showsVerticalScrollIndicator={false}
+          >
+            <TouchableOpacity
+              onPress={() => router.back()}
+              className="mb-6 self-start flex-row items-center gap-1 py-2"
+              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
             >
-              <Text className="text-bg text-[22px] font-black tracking-tight">CH</Text>
-            </View>
-            <Text className="text-text-primary text-[26px] font-extrabold tracking-tight mb-1.5">
-              Welcome back
-            </Text>
-            <Text className="text-text-muted text-[14px] text-center">
-              Sign in to your CelebrateHub account
-            </Text>
-          </View>
+              <SymbolView name="chevron.left" size={17} tintColor="#1C1C1E" />
+              <Text className="text-[#1C1C1E] text-[15px] font-medium">Back</Text>
+            </TouchableOpacity>
 
-          {/* Email / Phone toggle */}
-          <View className="mb-7">
-            <View className="flex-row bg-bg-input rounded-xl border border-border-faint p-1">
-              <TouchableOpacity
-                className={`flex-1 py-2.5 items-center rounded-[9px] ${
-                  method === "email" ? "bg-bg-card border border-border-rose" : ""
-                }`}
-                onPress={() => { setMethod("email"); setErrors({}); }}
-                activeOpacity={0.8}
-              >
-                <Text
-                  className={`text-[14px] font-semibold ${
-                    method === "email" ? "text-rose-brand" : "text-text-muted"
-                  }`}
-                >
-                  Email
+            <View className="mb-7">
+              <BrandMark size={48} />
+              <View className="bg-white self-start px-3 py-1.5 rounded-full mt-5 border border-[#E8E6E1]">
+                <Text className="text-[#6E6E73] text-[12px] font-semibold">
+                  {meta.pill}
+                </Text>
+              </View>
+              <Text className="text-[#1C1C1E] text-[28px] font-bold tracking-tight mt-3">
+                {meta.title}
+              </Text>
+              <Text className="text-[#6E6E73] text-[15px] mt-1.5 leading-[22px]">
+                {meta.subtitle}
+              </Text>
+            </View>
+
+            <View className="mb-6">
+              <View className="flex-row bg-[#ECEAE6] rounded-xl p-1">
+                {(["email", "phone"] as LoginMethod[]).map((m) => (
+                  <TouchableOpacity
+                    key={m}
+                    className={`flex-1 py-2.5 items-center rounded-lg ${
+                      method === m ? "bg-white border border-[#E0DED8]" : ""
+                    }`}
+                    onPress={() => { setMethod(m); setErrors({}); }}
+                    activeOpacity={0.8}
+                  >
+                    <Text
+                      className={`text-[14px] font-semibold capitalize ${
+                        method === m ? "text-[#1C1C1E]" : "text-[#6E6E73]"
+                      }`}
+                    >
+                      {m}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </View>
+
+            <View className="bg-white rounded-2xl border border-[#E8E6E1] p-5 mb-4">
+              {method === "email" ? (
+                <FormInput
+                  label="Email address"
+                  placeholder="you@example.com"
+                  keyboardType="email-address"
+                  value={email}
+                  onChangeText={(t) => { setEmail(t); setErrors((e) => ({ ...e, email: "" })); }}
+                  error={errors.email}
+                  autoComplete="email"
+                />
+              ) : (
+                <FormInput
+                  label="Phone number"
+                  placeholder="+91 98765 43210"
+                  keyboardType="phone-pad"
+                  value={phone}
+                  onChangeText={(t) => { setPhone(t); setErrors((e) => ({ ...e, phone: "" })); }}
+                  error={errors.phone}
+                />
+              )}
+
+              <FormInput
+                label="Password"
+                placeholder="Enter your password"
+                isPassword
+                value={password}
+                onChangeText={(t) => { setPassword(t); setErrors((e) => ({ ...e, password: "" })); }}
+                error={errors.password}
+              />
+
+              <TouchableOpacity className="self-end mt-1">
+                <Text className="text-[#1C1C1E] text-[13px] font-semibold">
+                  Forgot password?
                 </Text>
               </TouchableOpacity>
-
-              <TouchableOpacity
-                className={`flex-1 py-2.5 items-center rounded-[9px] ${
-                  method === "phone" ? "bg-bg-card border border-border-rose" : ""
-                }`}
-                onPress={() => { setMethod("phone"); setErrors({}); }}
-                activeOpacity={0.8}
-              >
-                <Text
-                  className={`text-[14px] font-semibold ${
-                    method === "phone" ? "text-rose-brand" : "text-text-muted"
-                  }`}
-                >
-                  Phone
-                </Text>
-              </TouchableOpacity>
             </View>
-          </View>
 
-          {/* Form */}
-          <View className="mb-2">
-            {method === "email" ? (
-              <FormInput
-                label="Email address"
-                placeholder="you@example.com"
-                keyboardType="email-address"
-                value={email}
-                onChangeText={(t) => { setEmail(t); setErrors((e) => ({ ...e, email: "" })); }}
-                error={errors.email}
-                autoComplete="email"
-              />
-            ) : (
-              <FormInput
-                label="Phone number"
-                placeholder="+91 98765 43210"
-                keyboardType="phone-pad"
-                value={phone}
-                onChangeText={(t) => { setPhone(t); setErrors((e) => ({ ...e, phone: "" })); }}
-                error={errors.phone}
-              />
-            )}
-
-            <FormInput
-              label="Password"
-              placeholder="Enter your password"
-              isPassword
-              value={password}
-              onChangeText={(t) => { setPassword(t); setErrors((e) => ({ ...e, password: "" })); }}
-              error={errors.password}
+            <Button
+              label="Sign in"
+              onPress={handleLogin}
+              fullWidth
+              size="lg"
+              loading={isLoading}
             />
 
-            <TouchableOpacity className="self-end -mt-1 mb-1">
-              <Text className="text-rose-brand text-[13px] font-medium">
-                Forgot password?
-              </Text>
-            </TouchableOpacity>
-          </View>
-
-          {/* CTA */}
-          <Button
-            label="Sign In"
-            onPress={handleLogin}
-            fullWidth
-            size="lg"
-            loading={isLoading}
-            style={{
-              marginTop: 16,
-              shadowColor: "#E8956D",
-              shadowOffset: { width: 0, height: 6 },
-              shadowOpacity: 0.4,
-              shadowRadius: 14,
-              elevation: 8,
-            }}
-          />
-
-          {/* Register link */}
-          <View className="flex-row justify-center mt-6">
-            <Text className="text-text-muted text-[14px]">New here? </Text>
-            <TouchableOpacity onPress={() => router.push("/(auth)/register" as any)}>
-              <Text className="text-rose-brand text-[14px] font-semibold">
-                Create an account
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
+            {role === "provider" || role === "admin" ? (
+              <View className="mt-5 p-4 bg-white border border-[#E8E6E1] rounded-2xl">
+                <View className="flex-row items-center gap-2 mb-1">
+                  <SymbolView name="info.circle.fill" size={15} tintColor="#6E6E73" />
+                  <Text className="text-[#1C1C1E] font-semibold text-[13px]">
+                    {role === "provider" ? "New service provider?" : "Need admin access?"}
+                  </Text>
+                </View>
+                <Text className="text-[#6E6E73] text-[13px] leading-[19px]">
+                  {role === "provider"
+                    ? "Provider accounts are created and verified by CelebrateHub administration. Contact support to get onboarded."
+                    : "Admin accounts are provisioned by platform owners. Self-registration is disabled."}
+                </Text>
+              </View>
+            ) : (
+              <View className="items-center mt-6">
+                <View className="flex-row items-center justify-center">
+                  <Text className="text-[#6E6E73] text-[14px]">New to CelebrateHub? </Text>
+                  <TouchableOpacity onPress={() => router.push("/(auth)/register" as any)}>
+                    <Text className="text-[#1C1C1E] text-[14px] font-semibold underline">
+                      Create account
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+                <Text className="text-[#A7A7AB] text-[12px] text-center mt-2 leading-[17px]">
+                  Registration is for customers only. Providers and admins are onboarded by our team.
+                </Text>
+              </View>
+            )}
+          </ScrollView>
+        </KeyboardAvoidingView>
+      </SafeAreaView>
     </View>
   );
 }

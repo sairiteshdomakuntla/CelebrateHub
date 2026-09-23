@@ -7,7 +7,8 @@
     "dev": "tsx watch src/server.ts",
     "build": "tsc",
     "start": "node dist/server.js",
-    "test:db": "tsx test-db.ts"
+    "test:db": "tsx test-db.ts",
+    "seed:admin": "tsx prisma/seed-admin.ts"
   },
   "keywords": [],
   "author": "",
@@ -30,6 +31,7 @@
   "devDependencies": {
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/morgan": "^1.9.10",
     "@types/node": "^26.6.2",
     "@types/pg": "^8.23.1",

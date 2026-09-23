@@ -6,13 +6,16 @@ import {
   TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
-  StatusBar,
   Alert,
 } from "react-native";
+import { StatusBar } from "expo-status-bar";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
+import { SymbolView } from "expo-symbols";
 import { useAuthStore } from "@/store/auth.store";
 import { FormInput } from "@/components/ui/FormInput";
 import { Button } from "@/components/ui/Button";
+import { BrandMark } from "@/components/ui/pro-icon";
 import axios from "axios";
 
 export default function RegisterScreen() {
@@ -62,156 +65,142 @@ export default function RegisterScreen() {
       let message = "Registration failed. Please try again.";
       if (axios.isAxiosError(err)) message = err.response?.data?.message ?? message;
       else if (err instanceof Error) message = err.message;
-      Alert.alert("Registration Failed", message);
+      Alert.alert("Registration failed", message);
     }
   }
 
   return (
-    <View className="flex-1 bg-bg">
-      <StatusBar barStyle="light-content" />
-
-      {/* Background blobs */}
-      <View
-        className="absolute rounded-full bg-purple-brand opacity-[0.09]"
-        style={{ width: 280, height: 280, top: -60, left: -80 }}
-      />
-      <View
-        className="absolute rounded-full bg-rose-brand opacity-[0.09]"
-        style={{ width: 220, height: 220, bottom: 60, right: -50 }}
-      />
-
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        className="flex-1"
-      >
-        <ScrollView
-          contentContainerStyle={{ paddingTop: 56, paddingBottom: 40, paddingHorizontal: 24 }}
-          keyboardShouldPersistTaps="handled"
-          showsVerticalScrollIndicator={false}
+    <View className="flex-1 bg-[#F7F7F5]">
+      <StatusBar style="dark" />
+      <SafeAreaView className="flex-1">
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          className="flex-1"
         >
-          {/* Back */}
-          <TouchableOpacity onPress={() => router.back()} className="mb-6 self-start">
-            <Text className="text-text-muted text-[14px] font-medium">← Back</Text>
-          </TouchableOpacity>
-
-          {/* Header */}
-          <View className="items-center mb-6">
-            <View
-              className="w-[60px] h-[60px] rounded-[18px] bg-rose-brand items-center justify-center mb-4"
-              style={{
-                shadowColor: "#E8956D",
-                shadowOffset: { width: 0, height: 6 },
-                shadowOpacity: 0.45,
-                shadowRadius: 16,
-                elevation: 10,
-              }}
+          <ScrollView
+            contentContainerStyle={{ paddingTop: 12, paddingBottom: 32, paddingHorizontal: 20 }}
+            keyboardShouldPersistTaps="handled"
+            showsVerticalScrollIndicator={false}
+          >
+            <TouchableOpacity
+              onPress={() => router.back()}
+              className="mb-6 self-start flex-row items-center gap-1 py-2"
+              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
             >
-              <Text className="text-bg text-[22px] font-black tracking-tight">CH</Text>
-            </View>
-            <Text className="text-text-primary text-[26px] font-extrabold tracking-tight mb-1.5">
-              Create account
-            </Text>
-            <Text className="text-text-muted text-[14px]">
-              Start planning your perfect celebration
-            </Text>
-          </View>
-
-          {/* Progress indicator */}
-          <View className="flex-row items-center justify-center mb-1.5 gap-1.5">
-            <View className="w-6 h-2 rounded bg-rose-brand" />
-            <View className="flex-1 max-w-[40px] h-0.5 bg-bg-muted rounded" />
-            <View className="w-2 h-2 rounded-full bg-bg-muted" />
-            <View className="flex-1 max-w-[40px] h-0.5 bg-bg-muted rounded" />
-            <View className="w-2 h-2 rounded-full bg-bg-muted" />
-          </View>
-          <Text className="text-text-dim text-[11px] text-center mb-6 tracking-[0.3px]">
-            Step 1 of 3 — Your Details
-          </Text>
-
-          {/* Form */}
-          <View className="mb-2">
-            <FormInput
-              label="Full name"
-              placeholder="Priya Sharma"
-              value={name}
-              onChangeText={(t) => { setName(t); setErrors((e) => ({ ...e, name: "" })); }}
-              error={errors.name}
-              autoComplete="name"
-            />
-
-            <FormInput
-              label="Email address"
-              placeholder="priya@example.com"
-              keyboardType="email-address"
-              value={email}
-              onChangeText={(t) => { setEmail(t); setErrors((e) => ({ ...e, email: "" })); }}
-              error={errors.email}
-              hint="We'll use this to send event updates"
-              autoComplete="email"
-            />
-
-            <FormInput
-              label="Phone number (optional)"
-              placeholder="+91 98765 43210"
-              keyboardType="phone-pad"
-              value={phone}
-              onChangeText={setPhone}
-            />
-
-            <FormInput
-              label="Password"
-              placeholder="Min 8 chars, 1 uppercase, 1 number"
-              isPassword
-              value={password}
-              onChangeText={(t) => { setPassword(t); setErrors((e) => ({ ...e, password: "" })); }}
-              error={errors.password}
-            />
-
-            <FormInput
-              label="Confirm password"
-              placeholder="Repeat your password"
-              isPassword
-              value={confirmPassword}
-              onChangeText={(t) => {
-                setConfirmPassword(t);
-                setErrors((e) => ({ ...e, confirmPassword: "" }));
-              }}
-              error={errors.confirmPassword}
-            />
-          </View>
-
-          {/* Terms */}
-          <Text className="text-text-dim text-[12px] text-center leading-[18px] mb-5">
-            By creating an account you agree to our{" "}
-            <Text className="text-rose-brand font-semibold">Terms of Service</Text> and{" "}
-            <Text className="text-rose-brand font-semibold">Privacy Policy</Text>.
-          </Text>
-
-          {/* CTA */}
-          <Button
-            label="Create Account"
-            onPress={handleRegister}
-            fullWidth
-            size="lg"
-            loading={isLoading}
-            style={{
-              shadowColor: "#E8956D",
-              shadowOffset: { width: 0, height: 6 },
-              shadowOpacity: 0.4,
-              shadowRadius: 14,
-              elevation: 8,
-            }}
-          />
-
-          {/* Login link */}
-          <View className="flex-row justify-center mt-6">
-            <Text className="text-text-muted text-[14px]">Already have an account? </Text>
-            <TouchableOpacity onPress={() => router.push("/(auth)/login" as any)}>
-              <Text className="text-rose-brand text-[14px] font-semibold">Sign in</Text>
+              <SymbolView name="chevron.left" size={17} tintColor="#1C1C1E" />
+              <Text className="text-[#1C1C1E] text-[15px] font-medium">Back</Text>
             </TouchableOpacity>
-          </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
+
+            <View className="mb-6">
+              <BrandMark size={48} />
+              <Text className="text-[#1C1C1E] text-[28px] font-bold tracking-tight mt-4">
+                Create your account
+              </Text>
+              <Text className="text-[#6E6E73] text-[15px] mt-1.5 leading-[22px]">
+                Join CelebrateHub to discover vendors and plan your celebrations.
+              </Text>
+            </View>
+
+            <View className="bg-white border border-[#E8E6E1] rounded-2xl p-4 mb-4 flex-row items-start gap-3">
+              <SymbolView name="info.circle.fill" size={17} tintColor="#6E6E73" />
+              <Text className="text-[#3A3A3C] text-[13px] leading-[19px] flex-1">
+                Public registration is for customers and event hosts. Providers and admins are onboarded directly by our team.
+              </Text>
+            </View>
+
+            <View className="bg-white rounded-2xl border border-[#E8E6E1] p-5 mb-4">
+              <FormInput
+                label="Full name"
+                placeholder="Priya Sharma"
+                value={name}
+                onChangeText={(t) => { setName(t); setErrors((e) => ({ ...e, name: "" })); }}
+                error={errors.name}
+                autoComplete="name"
+              />
+
+              <FormInput
+                label="Email address"
+                placeholder="priya@example.com"
+                keyboardType="email-address"
+                value={email}
+                onChangeText={(t) => { setEmail(t); setErrors((e) => ({ ...e, email: "" })); }}
+                error={errors.email}
+                hint="Event updates and booking confirmations go here"
+                autoComplete="email"
+              />
+
+              <FormInput
+                label="Phone number (optional)"
+                placeholder="+91 98765 43210"
+                keyboardType="phone-pad"
+                value={phone}
+                onChangeText={setPhone}
+              />
+
+              <FormInput
+                label="Password"
+                placeholder="Min. 8 characters"
+                isPassword
+                value={password}
+                onChangeText={(t) => { setPassword(t); setErrors((e) => ({ ...e, password: "" })); }}
+                error={errors.password}
+              />
+
+              <View className="flex-row gap-2 mb-1 -mt-1">
+                {[
+                  { ok: password.length >= 8, label: "8+ chars" },
+                  { ok: /[A-Z]/.test(password), label: "Uppercase" },
+                  { ok: /[0-9]/.test(password), label: "Number" },
+                ].map((r) => (
+                  <View
+                    key={r.label}
+                    className={`px-2.5 py-1 rounded-full border ${
+                      r.ok ? "bg-[#EAF6EE] border-[#CDE8D5]" : "bg-[#F4F2EE] border-[#E8E6E1]"
+                    }`}
+                  >
+                    <Text className={`text-[11px] font-medium ${r.ok ? "text-[#1E7A3C]" : "text-[#A7A7AB]"}`}>
+                      {r.label}
+                    </Text>
+                  </View>
+                ))}
+              </View>
+
+              <FormInput
+                label="Confirm password"
+                placeholder="Repeat your password"
+                isPassword
+                value={confirmPassword}
+                onChangeText={(t) => {
+                  setConfirmPassword(t);
+                  setErrors((e) => ({ ...e, confirmPassword: "" }));
+                }}
+                error={errors.confirmPassword}
+              />
+            </View>
+
+            <Text className="text-[#6E6E73] text-[12px] text-center leading-[18px] mb-5 px-2">
+              By creating an account you agree to our{" "}
+              <Text className="text-[#1C1C1E] font-semibold">Terms of Service</Text> and{" "}
+              <Text className="text-[#1C1C1E] font-semibold">Privacy Policy</Text>.
+            </Text>
+
+            <Button
+              label="Create account"
+              onPress={handleRegister}
+              fullWidth
+              size="lg"
+              loading={isLoading}
+            />
+
+            <View className="flex-row justify-center mt-6">
+              <Text className="text-[#6E6E73] text-[14px]">Already have an account? </Text>
+              <TouchableOpacity onPress={() => router.push("/(auth)/login?role=customer" as any)}>
+                <Text className="text-[#1C1C1E] text-[14px] font-semibold underline">Sign in</Text>
+              </TouchableOpacity>
+            </View>
+          </ScrollView>
+        </KeyboardAvoidingView>
+      </SafeAreaView>
     </View>
   );
 }

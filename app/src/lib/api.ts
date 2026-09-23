@@ -2,12 +2,15 @@ import axios from "axios";
 import * as SecureStore from "expo-secure-store";
 import { Platform } from "react-native";
 
-const BASE_URL = process.env.EXPO_PUBLIC_API_URL ?? "http://localhost:5000";
+const rawBaseUrl = process.env.EXPO_PUBLIC_API_URL ?? "http://localhost:5000";
+// Ensure trailing /api or slashes are stripped so endpoints like /api/auth/login are never duplicated
+const BASE_URL = rawBaseUrl.replace(/\/api\/?$/, "").replace(/\/+$/, "");
 
 // ─── Token storage (secure on device, localStorage fallback on web) ──────────
 
 const TOKEN_KEY = "ch_access_token";
 const REFRESH_KEY = "ch_refresh_token";
+const USER_KEY = "ch_user_profile";
 
 export async function storeTokens(access: string, refresh: string) {
   if (Platform.OS === "web") {
@@ -36,6 +39,42 @@ export async function clearTokens() {
   } else {
     await SecureStore.deleteItemAsync(TOKEN_KEY);
     await SecureStore.deleteItemAsync(REFRESH_KEY);
+  }
+}
+
+// ─── Persisted user profile (restores role instantly on cold boot) ───────────
+// Tokens alone can't tell us the role, so the last known profile is cached.
+// Screens re-validate with GET /me and overwrite it on every successful fetch.
+
+export async function storeUserProfile(user: unknown) {
+  const raw = JSON.stringify(user);
+  if (Platform.OS === "web") {
+    localStorage.setItem(USER_KEY, raw);
+  } else {
+    await SecureStore.setItemAsync(USER_KEY, raw);
+  }
+}
+
+export async function getStoredUserProfile<T>(): Promise<T | null> {
+  try {
+    const raw =
+      Platform.OS === "web"
+        ? localStorage.getItem(USER_KEY)
+        : await SecureStore.getItemAsync(USER_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as T;
+    if (!parsed || typeof parsed !== "object" || !(parsed as any).role) return null;
+    return parsed;
+  } catch {
+    return null;
+  }
+}
+
+export async function clearStoredUserProfile() {
+  if (Platform.OS === "web") {
+    localStorage.removeItem(USER_KEY);
+  } else {
+    await SecureStore.deleteItemAsync(USER_KEY);
   }
 }
 

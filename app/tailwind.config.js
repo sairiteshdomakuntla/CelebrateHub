@@ -8,30 +8,35 @@ module.exports = {
     extend: {
       colors: {
         bg: {
-          DEFAULT: "#0D0D0D",
-          card: "#161616",
-          input: "#141414",
-          muted: "#1A1A1A",
+          DEFAULT: "#F7F7F5",
+          card: "#FFFFFF",
+          input: "#FFFFFF",
+          muted: "#EFEDEA",
         },
         rose: {
-          brand: "#E8956D",
-          dim: "rgba(232,149,109,0.12)",
-          glow: "rgba(232,149,109,0.45)",
+          brand: "#1C1C1E",
+          dim: "rgba(28,28,30,0.06)",
+          glow: "rgba(28,28,30,0.12)",
+        },
+        accent: {
+          DEFAULT: "#9A3B26",
+          soft: "#F9EFE9",
+          muted: "#C97B5D",
         },
         purple: {
-          brand: "#A78BFA",
+          brand: "#5B5BD6",
         },
         border: {
-          subtle: "rgba(255,255,255,0.07)",
-          faint: "rgba(255,255,255,0.06)",
-          rose: "rgba(232,149,109,0.25)",
+          subtle: "#E8E6E1",
+          faint: "#EFEEEA",
+          rose: "rgba(28,28,30,0.16)",
         },
         text: {
-          primary: "#F5F5F5",
-          secondary: "#C0C0C0",
-          muted: "#6B7280",
-          dim: "#4B5563",
-          error: "#F87171",
+          primary: "#1C1C1E",
+          secondary: "#3A3A3C",
+          muted: "#6E6E73",
+          dim: "#A7A7AB",
+          error: "#B3261E",
         },
       },
       borderRadius: {

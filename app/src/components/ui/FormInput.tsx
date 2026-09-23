@@ -30,27 +30,38 @@ export function FormInput({
   const [focused, setFocused] = useState(false);
 
   const borderClass = error
-    ? "border-red-500"
+    ? "border-[#B3261E]"
     : focused
-    ? "border-rose-brand"
-    : "border-border-subtle";
+    ? "border-[#1C1C1E]"
+    : "border-[#E3E1DC]";
 
   return (
     <View className="mb-4" style={containerStyle}>
-      <Text className="text-text-secondary text-[13px] font-semibold tracking-[0.5px] uppercase mb-2">
+      <Text className="text-[#3A3A3C] text-[13px] font-semibold mb-2">
         {label}
       </Text>
 
       <View
-        className={`flex-row items-center bg-bg-input rounded-xl border-[1.5px] overflow-hidden ${borderClass}`}
+        className={`flex-row items-center bg-white rounded-xl border-[1px] ${borderClass}`}
+        style={
+          focused && !error
+            ? {
+                shadowColor: "#1C1C1E",
+                shadowOffset: { width: 0, height: 0 },
+                shadowOpacity: 0.06,
+                shadowRadius: 8,
+                elevation: 1,
+              }
+            : undefined
+        }
       >
         {leftIcon && (
           <View className="pl-3.5 justify-center">{leftIcon}</View>
         )}
 
         <RNTextInput
-          className={`flex-1 text-text-primary text-[15px] py-3.5 ${leftIcon ? "pl-2 pr-4" : "px-4"}`}
-          placeholderTextColor="#4B4B4B"
+          className={`flex-1 text-[#1C1C1E] text-[15px] py-3.5 ${leftIcon ? "pl-2 pr-4" : "px-4"}`}
+          placeholderTextColor="#A7A7AB"
           secureTextEntry={isPassword && !visible}
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
@@ -61,10 +72,10 @@ export function FormInput({
         {isPassword && (
           <TouchableOpacity
             onPress={() => setVisible((v) => !v)}
-            className="px-3.5 py-3.5"
+            className="px-4 py-3.5"
             hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
           >
-            <Text className="text-rose-brand text-[13px] font-semibold">
+            <Text className="text-[#6E6E73] text-[13px] font-semibold">
               {visible ? "Hide" : "Show"}
             </Text>
           </TouchableOpacity>
@@ -72,10 +83,10 @@ export function FormInput({
       </View>
 
       {!!error && (
-        <Text className="text-text-error text-xs mt-1.5 font-medium">{error}</Text>
+        <Text className="text-[#B3261E] text-xs mt-1.5">{error}</Text>
       )}
       {!error && !!hint && (
-        <Text className="text-text-dim text-xs mt-1.5">{hint}</Text>
+        <Text className="text-[#A7A7AB] text-xs mt-1.5">{hint}</Text>
       )}
     </View>
   );

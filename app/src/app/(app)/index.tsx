@@ -4,11 +4,11 @@ import {
   Text,
   ScrollView,
   TouchableOpacity,
-  StatusBar,
   Alert,
   ActivityIndicator,
   RefreshControl,
 } from "react-native";
+import { StatusBar } from "expo-status-bar";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import Animated, {
@@ -16,12 +16,10 @@ import Animated, {
   useAnimatedStyle,
   withTiming,
   withDelay,
-  withSpring,
 } from "react-native-reanimated";
+import { SymbolView, type SymbolViewProps } from "expo-symbols";
 import { useAuthStore } from "@/store/auth.store";
 import { authApi, adminApi, type AuthUser } from "@/lib/auth.api";
-
-// ─── Helpers ─────────────────────────────────────────────────────────────────
 
 function getGreeting(): string {
   const h = new Date().getHours();
@@ -30,37 +28,37 @@ function getGreeting(): string {
   return "Good evening";
 }
 
-const ROLE_BADGE: Record<string, { label: string; badgeCls: string; textCls: string }> = {
-  ADMIN:    { label: "Admin",    badgeCls: "bg-purple-500/20 border border-purple-500/30", textCls: "text-purple-400" },
-  PROVIDER: { label: "Provider", badgeCls: "bg-amber-500/20 border border-amber-500/30",   textCls: "text-amber-400"  },
-  CUSTOMER: { label: "Customer", badgeCls: "bg-sky-500/20 border border-sky-500/30",       textCls: "text-sky-400"    },
+const ROLE_META: Record<string, { label: string; bg: string; text: string; border: string }> = {
+  ADMIN: { label: "Admin", bg: "#EAF0FB", text: "#2F54B8", border: "#CCD9F2" },
+  PROVIDER: { label: "Provider", bg: "#FDF3E3", text: "#8A5E10", border: "#F0DFB8" },
+  CUSTOMER: { label: "Customer", bg: "#EAF6EE", text: "#1E7A3C", border: "#CDE8D5" },
 };
 
-// ─── Action Card Component ───────────────────────────────────────────────────
+type IconName = SymbolViewProps["name"];
 
-function ActionCard({
-  emoji,
+function ActionRow({
+  icon,
+  tone,
   title,
   subtitle,
-  badgeText,
-  accent = false,
+  badge,
   onPress,
   delay = 0,
 }: {
-  emoji: string;
+  icon: IconName;
+  tone: string;
   title: string;
   subtitle: string;
-  badgeText?: string;
-  accent?: boolean;
+  badge?: string;
   onPress?: () => void;
   delay?: number;
 }) {
   const opacity = useSharedValue(0);
-  const translateY = useSharedValue(16);
+  const translateY = useSharedValue(12);
 
   useEffect(() => {
-    opacity.value = withDelay(delay, withTiming(1, { duration: 380 }));
-    translateY.value = withDelay(delay, withSpring(0, { damping: 15 }));
+    opacity.value = withDelay(delay, withTiming(1, { duration: 350 }));
+    translateY.value = withDelay(delay, withTiming(0, { duration: 350 }));
   }, []);
 
   const animatedStyle = useAnimatedStyle(() => ({
@@ -68,78 +66,78 @@ function ActionCard({
     transform: [{ translateY: translateY.value }],
   }));
 
+  const tones: Record<string, { bg: string; icon: string; border: string }> = {
+    dark: { bg: "#1C1C1E", icon: "#FFFFFF", border: "#1C1C1E" },
+    neutral: { bg: "#F1EFEC", icon: "#3A3A3C", border: "#E8E6E1" },
+    accent: { bg: "#F9EFE9", icon: "#9A3B26", border: "#EFD9CC" },
+    success: { bg: "#EAF6EE", icon: "#1E7A3C", border: "#CDE8D5" },
+    info: { bg: "#EAF0FB", icon: "#2F54B8", border: "#CCD9F2" },
+    warning: { bg: "#FDF3E3", icon: "#8A5E10", border: "#F0DFB8" },
+  };
+  const t = tones[tone] ?? tones.neutral;
+
   return (
-    <Animated.View style={animatedStyle} className="mb-3">
+    <Animated.View style={animatedStyle} className="mb-2.5">
       <TouchableOpacity
         onPress={onPress}
-        activeOpacity={0.8}
-        className={`flex-row items-center gap-3.5 p-4 rounded-2xl border ${
-          accent
-            ? "bg-rose-brand/10 border-rose-brand/30"
-            : "bg-bg-card border-border-subtle"
-        }`}
+        activeOpacity={0.75}
+        className="flex-row items-center bg-white rounded-2xl border border-[#E8E6E1] p-4"
       >
         <View
-          className={`w-12 h-12 rounded-xl items-center justify-center ${
-            accent ? "bg-rose-brand/20" : "bg-white/[0.06]"
-          }`}
+          style={{
+            width: 44, height: 44, borderRadius: 12,
+            backgroundColor: t.bg, borderWidth: 1, borderColor: t.border,
+            alignItems: "center", justifyContent: "center",
+          }}
         >
-          <Text className="text-2xl">{emoji}</Text>
+          <SymbolView name={icon} size={20} tintColor={t.icon} />
         </View>
 
-        <View className="flex-1">
-          <View className="flex-row items-center gap-2 mb-0.5">
-            <Text
-              className={`text-[15px] font-bold ${
-                accent ? "text-rose-brand" : "text-text-primary"
-              }`}
-            >
+        <View className="flex-1 ml-3.5">
+          <View className="flex-row items-center gap-2">
+            <Text className="text-[#1C1C1E] text-[15px] font-semibold">
               {title}
             </Text>
-            {badgeText && (
-              <View className="bg-rose-brand/20 px-2 py-0.5 rounded-full">
-                <Text className="text-rose-brand text-[10px] font-bold uppercase">
-                  {badgeText}
+            {badge && (
+              <View className="bg-[#1C1C1E] px-2 py-0.5 rounded-full">
+                <Text className="text-white text-[10px] font-semibold uppercase tracking-wide">
+                  {badge}
                 </Text>
               </View>
             )}
           </View>
-          <Text className="text-text-muted text-xs leading-4">{subtitle}</Text>
+          <Text className="text-[#6E6E73] text-[13px] leading-[18px] mt-0.5">{subtitle}</Text>
         </View>
 
-        <Text className="text-text-dim text-lg font-bold">›</Text>
+        <SymbolView name="chevron.right" size={15} tintColor="#C7C7CC" />
       </TouchableOpacity>
     </Animated.View>
   );
 }
 
-// ─── Stat Card Component ─────────────────────────────────────────────────────
-
 function StatCard({
-  emoji,
+  icon,
   value,
   label,
   loading = false,
 }: {
-  emoji: string;
+  icon: IconName;
   value: string | number;
   label: string;
   loading?: boolean;
 }) {
   return (
-    <View className="flex-1 bg-bg-card border border-border-subtle rounded-2xl p-3.5 items-center gap-1">
-      <Text className="text-2xl">{emoji}</Text>
+    <View className="flex-1 bg-white border border-[#E8E6E1] rounded-2xl p-4">
+      <SymbolView name={icon} size={18} tintColor="#6E6E73" />
       {loading ? (
-        <ActivityIndicator size="small" color="#E8956D" />
+        <ActivityIndicator size="small" color="#1C1C1E" style={{ marginTop: 10 }} />
       ) : (
-        <Text className="text-text-primary text-xl font-black">{value}</Text>
+        <Text className="text-[#1C1C1E] text-[22px] font-bold mt-2 tracking-tight">{value}</Text>
       )}
-      <Text className="text-text-dim text-[11px] text-center font-medium">{label}</Text>
+      <Text className="text-[#6E6E73] text-[12px] mt-0.5">{label}</Text>
     </View>
   );
 }
-
-// ─── Main Screen Component ───────────────────────────────────────────────────
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -148,18 +146,21 @@ export default function HomeScreen() {
   const [loggingOut, setLoggingOut] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
 
-  // Admin stats
   const [totalUsers, setTotalUsers] = useState<number | null>(null);
   const [providersCount, setProvidersCount] = useState<number | null>(null);
   const [customersCount, setCustomersCount] = useState<number | null>(null);
   const [loadingStats, setLoadingStats] = useState(false);
+  // True once the profile has been resolved at least once. When the store has
+  // no cached user (fresh install / cleared storage), we hold a loader instead
+  // of rendering a default-role dashboard that would visibly flip moments later.
+  const [resolving, setResolving] = useState(!storeUser);
 
   const headerOpacity = useSharedValue(0);
   const headerStyle = useAnimatedStyle(() => ({ opacity: headerOpacity.value }));
 
   const user = profile ?? storeUser;
   const role = user?.role ?? "CUSTOMER";
-  const badge = ROLE_BADGE[role] ?? ROLE_BADGE.CUSTOMER;
+  const roleMeta = ROLE_META[role] ?? ROLE_META.CUSTOMER;
 
   const loadData = useCallback(async () => {
     try {
@@ -172,23 +173,23 @@ export default function HomeScreen() {
         try {
           const res = await adminApi.listUsers({ page: 1 });
           setTotalUsers(res.pagination.total);
-          const provs = res.users.filter((u) => u.role === "PROVIDER").length;
-          const custs = res.users.filter((u) => u.role === "CUSTOMER").length;
-          setProvidersCount(provs);
-          setCustomersCount(custs);
+          setProvidersCount(res.users.filter((u) => u.role === "PROVIDER").length);
+          setCustomersCount(res.users.filter((u) => u.role === "CUSTOMER").length);
         } catch {
-          // silently continue
+          // ignore
         } finally {
           setLoadingStats(false);
         }
       }
     } catch {
-      // offline or unauth
+      // offline — fall back to the cached store user
+    } finally {
+      setResolving(false);
     }
   }, []);
 
   useEffect(() => {
-    headerOpacity.value = withTiming(1, { duration: 500 });
+    headerOpacity.value = withTiming(1, { duration: 400 });
     loadData();
   }, [loadData]);
 
@@ -198,15 +199,14 @@ export default function HomeScreen() {
     setRefreshing(false);
   }, [loadData]);
 
-  // Sign out confirmation dialog
   function confirmLogout() {
     Alert.alert(
-      "Sign Out",
+      "Sign out",
       "Are you sure you want to sign out of CelebrateHub?",
       [
         { text: "Cancel", style: "cancel" },
         {
-          text: "Sign Out",
+          text: "Sign out",
           style: "destructive",
           onPress: async () => {
             setLoggingOut(true);
@@ -214,7 +214,7 @@ export default function HomeScreen() {
               await logout();
               router.replace("/(auth)/welcome" as any);
             } catch (err: any) {
-              Alert.alert("Logout Error", err.message ?? "Could not complete logout");
+              Alert.alert("Error", err.message ?? "Could not sign out");
               setLoggingOut(false);
             }
           },
@@ -223,53 +223,51 @@ export default function HomeScreen() {
     );
   }
 
+  if (resolving && !user) {
+    return (
+      <View className="flex-1 bg-[#F7F7F5] items-center justify-center">
+        <StatusBar style="dark" />
+        <View className="w-14 h-14 rounded-2xl bg-[#1C1C1E] items-center justify-center mb-4">
+          <Text className="text-white text-[18px] font-bold">CH</Text>
+        </View>
+        <ActivityIndicator size="small" color="#1C1C1E" />
+      </View>
+    );
+  }
+
   return (
-    <View className="flex-1 bg-bg">
-      <StatusBar barStyle="light-content" />
-
-      {/* Background ambient lighting */}
-      <View
-        className="absolute rounded-full bg-rose-brand opacity-[0.06]"
-        style={{ width: 340, height: 340, top: -100, right: -80 }}
-      />
-      <View
-        className="absolute rounded-full bg-purple-brand opacity-[0.05]"
-        style={{ width: 280, height: 280, bottom: 80, left: -90 }}
-      />
-
+    <View className="flex-1 bg-[#F7F7F5]">
+      <StatusBar style="dark" />
       <SafeAreaView className="flex-1">
         <ScrollView
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 48 }}
+          contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 40 }}
           refreshControl={
             <RefreshControl
               refreshing={refreshing}
               onRefresh={onRefresh}
-              tintColor="#E8956D"
-              colors={["#E8956D"]}
+              tintColor="#1C1C1E"
             />
           }
         >
-          {/* ── Top Header ────────────────────────────────────────── */}
           <Animated.View
             style={headerStyle}
-            className="flex-row items-center justify-between pt-4 mb-6"
+            className="flex-row items-center justify-between pt-4 mb-5"
           >
-            {/* Left: Greeting & Profile Trigger */}
             <TouchableOpacity
               activeOpacity={0.8}
               onPress={() => router.push("/profile" as any)}
               className="flex-row items-center gap-3 flex-1 mr-3"
             >
-              <View className="w-11 h-11 rounded-full bg-rose-brand/20 border border-rose-brand/40 items-center justify-center">
-                <Text className="text-rose-brand font-black text-lg">
+              <View className="w-11 h-11 rounded-full bg-[#1C1C1E] items-center justify-center">
+                <Text className="text-white font-bold text-[17px]">
                   {user?.name ? user.name[0].toUpperCase() : "U"}
                 </Text>
               </View>
               <View className="flex-1">
-                <Text className="text-text-muted text-[13px]">{getGreeting()} 👋</Text>
+                <Text className="text-[#6E6E73] text-[13px]">{getGreeting()}</Text>
                 <Text
-                  className="text-text-primary text-[20px] font-extrabold tracking-tight"
+                  className="text-[#1C1C1E] text-[20px] font-bold tracking-tight"
                   numberOfLines={1}
                 >
                   {user?.name?.split(" ")[0] ?? "Welcome"}
@@ -277,293 +275,202 @@ export default function HomeScreen() {
               </View>
             </TouchableOpacity>
 
-            {/* Right: Role Badge & Sign Out Button */}
             <View className="flex-row items-center gap-2">
-              <View className={`px-3 py-1.5 rounded-full ${badge.badgeCls}`}>
-                <Text className={`text-xs font-bold ${badge.textCls}`}>
-                  {badge.label}
+              <View
+                style={{ backgroundColor: roleMeta.bg, borderColor: roleMeta.border }}
+                className="px-3 py-1.5 rounded-full border"
+              >
+                <Text style={{ color: roleMeta.text }} className="text-[12px] font-semibold">
+                  {roleMeta.label}
                 </Text>
               </View>
-
               <TouchableOpacity
                 onPress={confirmLogout}
                 disabled={loggingOut}
                 activeOpacity={0.7}
-                className="w-10 h-10 rounded-full bg-red-500/10 border border-red-500/30 items-center justify-center"
+                className="w-10 h-10 rounded-full bg-white border border-[#E8E6E1] items-center justify-center"
                 accessibilityLabel="Sign out"
               >
                 {loggingOut ? (
-                  <ActivityIndicator size="small" color="#EF4444" />
+                  <ActivityIndicator size="small" color="#1C1C1E" />
                 ) : (
-                  <Text className="text-red-400 text-base font-bold">⎋</Text>
+                  <SymbolView name="rectangle.portrait.and.arrow.right" size={17} tintColor="#3A3A3C" />
                 )}
               </TouchableOpacity>
             </View>
           </Animated.View>
 
-          {/* ── Hero Banner ───────────────────────────────────────── */}
-          <View
-            className="rounded-3xl p-6 mb-6 overflow-hidden relative"
-            style={{
-              backgroundColor: "#161212",
-              borderWidth: 1,
-              borderColor: "rgba(232,149,109,0.25)",
-            }}
-          >
-            {/* Glow blob */}
-            <View
-              className="absolute rounded-full bg-rose-brand opacity-15"
-              style={{ width: 180, height: 180, top: -50, right: -50 }}
-            />
-
-            <View className="flex-row items-center justify-between mb-4">
-              <View
-                className="w-12 h-12 rounded-2xl bg-rose-brand items-center justify-center"
-                style={{
-                  shadowColor: "#E8956D",
-                  shadowOffset: { width: 0, height: 4 },
-                  shadowOpacity: 0.4,
-                  shadowRadius: 10,
-                  elevation: 6,
-                }}
-              >
-                <Text className="text-bg text-xl font-black">CH</Text>
+          {/* Summary card */}
+          <View className="rounded-2xl bg-[#1C1C1E] p-5 mb-4">
+            <View className="flex-row items-center justify-between mb-3">
+              <View className="flex-row items-center gap-2">
+                <View className="w-9 h-9 rounded-[10px] bg-white/10 items-center justify-center">
+                  <Text className="text-white text-[13px] font-bold">CH</Text>
+                </View>
+                <Text className="text-white/70 text-[12px] font-medium">
+                  {role === "ADMIN" ? "Operations overview" : role === "PROVIDER" ? "Business overview" : "CelebrateHub"}
+                </Text>
               </View>
-              <View className="flex-row items-center gap-1.5 bg-emerald-500/10 border border-emerald-500/30 px-3 py-1 rounded-full">
-                <View className="w-2 h-2 rounded-full bg-emerald-400" />
-                <Text className="text-emerald-400 text-[11px] font-semibold">
-                  API Connected
+              <View className="flex-row items-center gap-1.5 bg-[#2E7D46]/25 border border-[#2E7D46]/40 px-2.5 py-1 rounded-full">
+                <View className="w-1.5 h-1.5 rounded-full bg-[#4ADE80]" />
+                <Text className="text-[#B7E4C7] text-[11px] font-semibold">
+                  Systems normal
                 </Text>
               </View>
             </View>
 
-            <Text className="text-text-primary text-xl font-extrabold mb-1">
+            <Text className="text-white text-[22px] font-bold tracking-tight">
               {role === "ADMIN"
-                ? "Admin Command Center"
+                ? "Admin command centre"
                 : role === "PROVIDER"
-                ? "Service Provider Portal"
-                : "CelebrateHub Marketplace"}
+                ? "Provider workspace"
+                : "Plan your next celebration"}
             </Text>
-            <Text className="text-text-muted text-xs leading-5">
+            <Text className="text-white/60 text-[13px] leading-[19px] mt-1.5">
               {role === "ADMIN"
-                ? "Full platform oversight, role-based user management, provider verification, and system control."
+                ? "User management, provider verification and platform controls in one place."
                 : role === "PROVIDER"
-                ? "Receive qualified leads, manage your business profile, and accept booking requests."
-                : "Discover and book trusted caterers, photographers, venues, and decorators for your special day."}
+                ? "Track incoming leads, manage your profile and confirm bookings."
+                : "Browse verified caterers, photographers, venues and decorators."}
             </Text>
           </View>
 
-          {/* ── Live Stats Grid ───────────────────────────────────── */}
+          {/* Stats */}
           <View className="flex-row gap-2.5 mb-6">
             {role === "ADMIN" ? (
               <>
-                <StatCard
-                  emoji="👥"
-                  value={totalUsers !== null ? totalUsers : "5"}
-                  label="Total Users"
-                  loading={loadingStats}
-                />
-                <StatCard
-                  emoji="🛎️"
-                  value={providersCount !== null ? providersCount : "2"}
-                  label="Providers"
-                  loading={loadingStats}
-                />
-                <StatCard
-                  emoji="🎉"
-                  value={customersCount !== null ? customersCount : "2"}
-                  label="Customers"
-                  loading={loadingStats}
-                />
+                <StatCard icon="person.2.fill" value={totalUsers ?? "—"} label="Total users" loading={loadingStats} />
+                <StatCard icon="briefcase.fill" value={providersCount ?? "—"} label="Providers" loading={loadingStats} />
+                <StatCard icon="person.fill" value={customersCount ?? "—"} label="Customers" loading={loadingStats} />
               </>
             ) : role === "PROVIDER" ? (
               <>
-                <StatCard emoji="📥" value="12" label="New Leads" />
-                <StatCard emoji="✅" value="8" label="Bookings" />
-                <StatCard emoji="⭐" value="4.9" label="Rating" />
+                <StatCard icon="tray.fill" value="12" label="New leads" />
+                <StatCard icon="checkmark.circle.fill" value="8" label="Bookings" />
+                <StatCard icon="star.fill" value="4.9" label="Rating" />
               </>
             ) : (
               <>
-                <StatCard emoji="🎉" value="3" label="My Events" />
-                <StatCard emoji="🛎️" value="4" label="Bookings" />
-                <StatCard emoji="💌" value="45" label="Invited" />
+                <StatCard icon="calendar" value="3" label="My events" />
+                <StatCard icon="ticket.fill" value="4" label="Bookings" />
+                <StatCard icon="envelope.fill" value="45" label="Invites sent" />
               </>
             )}
           </View>
 
-          {/* ── Section Title: Quick Actions ───────────────────────── */}
-          <View className="flex-row items-center gap-3 mb-4">
-            <View className="flex-1 h-px bg-border-subtle" />
-            <Text className="text-text-dim text-[11px] font-bold uppercase tracking-wider">
-              Management & Operations
-            </Text>
-            <View className="flex-1 h-px bg-border-subtle" />
-          </View>
+          <Text className="text-[#6E6E73] text-[12px] font-semibold uppercase tracking-widest mb-3">
+            {role === "ADMIN" ? "Management" : "Quick actions"}
+          </Text>
 
-          {/* ── Role Specific Operations ──────────────────────────── */}
           {role === "ADMIN" && (
             <>
-              <ActionCard
-                emoji="👥"
-                title="Manage All Users"
-                subtitle="View, create, change status (ACTIVE/SUSPENDED), and delete accounts"
-                badgeText="Admin"
-                accent
-                delay={150}
+              <ActionRow
+                icon="person.2.fill" tone="dark" title="Manage users" badge="Admin"
+                subtitle="Search, create, suspend and delete accounts"
+                delay={80}
                 onPress={() => router.push("/admin-users" as any)}
               />
-              <ActionCard
-                emoji="👤"
-                title="My Admin Profile"
-                subtitle="View security details, tokens, and account information"
-                delay={250}
+              <ActionRow
+                icon="person.fill" tone="neutral" title="My profile"
+                subtitle="Account details and security"
+                delay={140}
                 onPress={() => router.push("/profile" as any)}
               />
-              <ActionCard
-                emoji="🛡️"
-                title="Provider Verifications"
-                subtitle="Review vendor business licenses, KYC, and documents"
-                delay={350}
-                onPress={() =>
-                  Alert.alert(
-                    "Provider Verifications",
-                    "Provider verification queue is up to date. You can also manage providers in Manage All Users."
-                  )
-                }
+              <ActionRow
+                icon="checkmark.seal.fill" tone="success" title="Provider verifications"
+                subtitle="Review licences, KYC and documents"
+                delay={200}
+                onPress={() => Alert.alert("Verifications", "The verification queue is up to date.")}
               />
-              <ActionCard
-                emoji="📊"
-                title="Platform Activity"
-                subtitle="Monitor active leads, quotes, and event transactions"
-                delay={450}
-                onPress={() =>
-                  Alert.alert(
-                    "Platform Activity",
-                    "Database and server are operating normally. Real-time event analytics active."
-                  )
-                }
+              <ActionRow
+                icon="chart.bar.fill" tone="info" title="Platform activity"
+                subtitle="Leads, quotes and transactions"
+                delay={260}
+                onPress={() => Alert.alert("Activity", "All systems operating normally.")}
               />
             </>
           )}
 
           {role === "PROVIDER" && (
             <>
-              <ActionCard
-                emoji="📥"
-                title="Qualified Leads"
-                subtitle="Accept incoming event requests on first-come basis"
-                accent
-                delay={150}
-                onPress={() =>
-                  Alert.alert("Leads", "You have no pending inquiries right now.")
-                }
+              <ActionRow
+                icon="tray.fill" tone="dark" title="Qualified leads"
+                subtitle="Review incoming event requests"
+                delay={80}
+                onPress={() => Alert.alert("Leads", "You have no pending enquiries right now.")}
               />
-              <ActionCard
-                emoji="👤"
-                title="Business Profile & Portfolio"
-                subtitle="Manage pricing, services offered, and bio"
-                delay={250}
+              <ActionRow
+                icon="briefcase.fill" tone="neutral" title="Business profile"
+                subtitle="Pricing, services and portfolio"
+                delay={140}
                 onPress={() => router.push("/profile" as any)}
               />
-              <ActionCard
-                emoji="📅"
-                title="Booking Calendar"
-                subtitle="Track confirmed event dates and scheduled times"
-                delay={350}
-                onPress={() =>
-                  Alert.alert("Calendar", "Your upcoming bookings will appear here.")
-                }
+              <ActionRow
+                icon="calendar" tone="neutral" title="Booking calendar"
+                subtitle="Confirmed dates and schedules"
+                delay={200}
+                onPress={() => Alert.alert("Calendar", "Your upcoming bookings will appear here.")}
               />
-              <ActionCard
-                emoji="⭐"
-                title="Reviews & Ratings"
-                subtitle="See testimonials from satisfied celebration hosts"
-                delay={450}
-                onPress={() =>
-                  Alert.alert("Reviews", "Your provider profile currently has a 4.9 rating!")
-                }
+              <ActionRow
+                icon="star.fill" tone="warning" title="Reviews"
+                subtitle="Client feedback and ratings"
+                delay={260}
+                onPress={() => Alert.alert("Reviews", "Your profile holds a 4.9 rating.")}
               />
             </>
           )}
 
           {role === "CUSTOMER" && (
             <>
-              <ActionCard
-                emoji="🎉"
-                title="Plan New Event"
-                subtitle="Birthday, Wedding, Anniversary, or Corporate Gala"
-                accent
-                delay={150}
-                onPress={() =>
-                  Alert.alert(
-                    "Plan Event",
-                    "Event wizard is ready. Choose your category, location, and guest count."
-                  )
-                }
+              <ActionRow
+                icon="plus.circle.fill" tone="dark" title="Plan new event"
+                subtitle="Wedding, birthday, anniversary, corporate"
+                delay={80}
+                onPress={() => Alert.alert("Plan event", "Choose a category, location and guest count to begin.")}
               />
-              <ActionCard
-                emoji="🔍"
-                title="Find Event Providers"
-                subtitle="Browse top-rated caterers, decorators, and photographers"
-                delay={250}
-                onPress={() =>
-                  Alert.alert(
-                    "Find Providers",
-                    "Explore verified local providers tailored to your budget."
-                  )
-                }
+              <ActionRow
+                icon="magnifyingglass" tone="neutral" title="Find providers"
+                subtitle="Caterers, decorators, photographers"
+                delay={140}
+                onPress={() => Alert.alert("Providers", "Verified local providers matched to your budget.")}
               />
-              <ActionCard
-                emoji="👤"
-                title="My Profile & Security"
-                subtitle="Manage phone, email, and password credentials"
-                delay={350}
+              <ActionRow
+                icon="person.fill" tone="neutral" title="Profile and security"
+                subtitle="Contact details and password"
+                delay={200}
                 onPress={() => router.push("/profile" as any)}
               />
-              <ActionCard
-                emoji="💌"
-                title="Send Guest Invitations"
-                subtitle="WhatsApp, SMS, and Email RSVP management"
-                delay={450}
-                onPress={() =>
-                  Alert.alert(
-                    "Guest Invitations",
-                    "Digital invitation templates are ready for dispatch."
-                  )
-                }
+              <ActionRow
+                icon="envelope.fill" tone="neutral" title="Guest invitations"
+                subtitle="WhatsApp, SMS and email RSVPs"
+                delay={260}
+                onPress={() => Alert.alert("Invitations", "Invitation templates are ready to send.")}
               />
             </>
           )}
 
-          {/* ── Sign Out Direct Action ───────────────────────────── */}
-          <View className="mt-4 mb-6">
-            <TouchableOpacity
-              onPress={confirmLogout}
-              disabled={loggingOut}
-              activeOpacity={0.8}
-              className="flex-row items-center justify-center gap-2 py-3.5 px-4 rounded-2xl bg-red-500/10 border border-red-500/25"
-            >
-              {loggingOut ? (
-                <ActivityIndicator size="small" color="#EF4444" />
-              ) : (
-                <>
-                  <Text className="text-red-400 text-sm font-bold">⎋</Text>
-                  <Text className="text-red-400 text-sm font-bold">Sign Out of CelebrateHub</Text>
-                </>
-              )}
-            </TouchableOpacity>
-          </View>
+          <TouchableOpacity
+            onPress={confirmLogout}
+            disabled={loggingOut}
+            activeOpacity={0.8}
+            className="flex-row items-center justify-center gap-2 py-3.5 px-4 rounded-2xl bg-white border border-[#EAD9D2] mt-3"
+          >
+            {loggingOut ? (
+              <ActivityIndicator size="small" color="#B3261E" />
+            ) : (
+              <View className="flex-row items-center gap-2">
+                <SymbolView name="rectangle.portrait.and.arrow.right" size={16} tintColor="#B3261E" />
+                <Text className="text-[#B3261E] text-[14px] font-semibold">Sign out</Text>
+              </View>
+            )}
+          </TouchableOpacity>
 
-          {/* ── Footer ────────────────────────────────────────────── */}
-          <View className="items-center gap-1.5 pt-2">
-            <Text className="text-text-dim text-xs text-center">
-              Signed in as{" "}
-              <Text className="text-rose-brand font-semibold">
-                {user?.email ?? user?.phone ?? "User"}
-              </Text>
+          <View className="items-center mt-6">
+            <Text className="text-[#A7A7AB] text-[12px]">
+              Signed in as {user?.email ?? user?.phone ?? "user"}
             </Text>
-            <Text className="text-text-dim text-[11px]">
-              CelebrateHub • Mobile Platform v1.0.0
+            <Text className="text-[#C7C7CC] text-[11px] mt-1">
+              CelebrateHub · v1.0.0
             </Text>
           </View>
         </ScrollView>
@@ -571,3 +478,4 @@ export default function HomeScreen() {
     </View>
   );
 }
+

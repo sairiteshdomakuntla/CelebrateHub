@@ -3,66 +3,87 @@ import {
   View,
   Text,
   TouchableOpacity,
-  StatusBar,
   ScrollView,
-  Dimensions,
 } from "react-native";
+import { StatusBar } from "expo-status-bar";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withTiming,
   withDelay,
-  withSpring,
   Easing,
 } from "react-native-reanimated";
-
-const { height } = Dimensions.get("window");
+import { SymbolView } from "expo-symbols";
+import { BrandMark } from "@/components/ui/pro-icon";
 
 const ROLES = [
   {
     key: "customer",
-    emoji: "🎉",
-    title: "I'm Planning an Event",
-    subtitle: "Find caterers, venues, photographers & more for your celebration",
+    icon: "person.fill" as const,
+    tone: "accent" as const,
+    pill: "Public registration",
+    title: "Plan an event",
+    subtitle: "Find caterers, venues, photographers and more for your celebration.",
     href: "/(auth)/register" as const,
-    ctaLabel: "Create Account",
-    secondaryHref: "/(auth)/login" as const,
-    secondaryLabel: "Sign in instead",
+    ctaLabel: "Create account",
+    secondaryHref: "/(auth)/login?role=customer" as any,
+    secondaryLabel: "Sign in",
+    note: "Instant signup for customers and hosts.",
   },
   {
     key: "provider",
-    emoji: "🛎️",
-    title: "I'm a Service Provider",
-    subtitle: "Receive qualified leads from customers looking for your services",
-    href: "/(auth)/login" as const,
-    ctaLabel: "Provider Login",
+    icon: "briefcase.fill" as const,
+    tone: "warning" as const,
+    pill: "Onboarded by admin",
+    title: "Offer services",
+    subtitle: "Receive qualified leads from customers looking for your services.",
+    href: "/(auth)/login?role=provider" as any,
+    ctaLabel: "Provider sign in",
     secondaryHref: null,
     secondaryLabel: null,
+    note: "Provider accounts are created and verified by CelebrateHub admin.",
   },
   {
     key: "admin",
-    emoji: "⚙️",
-    title: "Admin Portal",
-    subtitle: "Manage platform users, providers and platform settings",
-    href: "/(auth)/login" as const,
-    ctaLabel: "Admin Login",
+    icon: "lock.shield.fill" as const,
+    tone: "info" as const,
+    pill: "Restricted",
+    title: "Manage platform",
+    subtitle: "Manage users, providers and platform settings.",
+    href: "/(auth)/login?role=admin" as any,
+    ctaLabel: "Admin sign in",
     secondaryHref: null,
     secondaryLabel: null,
+    note: "Authorised administrators and staff only.",
   },
 ];
+
+const TONE_BG: Record<string, string> = {
+  accent: "#F9EFE9",
+  warning: "#FDF3E3",
+  info: "#EAF0FB",
+};
+const TONE_ICON: Record<string, string> = {
+  accent: "#9A3B26",
+  warning: "#9A6A14",
+  info: "#2F54B8",
+};
+const TONE_BORDER: Record<string, string> = {
+  accent: "#EFD9CC",
+  warning: "#F0DFB8",
+  info: "#CCD9F2",
+};
 
 function RoleCard({ role, index }: { role: (typeof ROLES)[0]; index: number }) {
   const router = useRouter();
   const opacity = useSharedValue(0);
-  const translateY = useSharedValue(30);
+  const translateY = useSharedValue(16);
 
   useEffect(() => {
-    opacity.value = withDelay(300 + index * 120, withTiming(1, { duration: 500 }));
-    translateY.value = withDelay(
-      300 + index * 120,
-      withSpring(0, { damping: 16, stiffness: 100 })
-    );
+    opacity.value = withDelay(150 + index * 100, withTiming(1, { duration: 420, easing: Easing.out(Easing.quad) }));
+    translateY.value = withDelay(150 + index * 100, withTiming(0, { duration: 420, easing: Easing.out(Easing.quad) }));
   }, []);
 
   const animStyle = useAnimatedStyle(() => ({
@@ -71,36 +92,57 @@ function RoleCard({ role, index }: { role: (typeof ROLES)[0]; index: number }) {
   }));
 
   return (
-    <Animated.View style={animStyle} className="mb-3.5">
-      <View className="bg-bg-card rounded-[18px] border border-border-subtle overflow-hidden">
-        {/* Card body */}
+    <Animated.View style={animStyle} className="mb-3">
+      <View className="bg-white rounded-2xl border border-[#E8E6E1] overflow-hidden">
         <TouchableOpacity
-          activeOpacity={0.88}
-          className="flex-row items-center p-[18px] gap-3.5"
+          activeOpacity={0.85}
+          className="p-5"
           onPress={() => router.push(role.href as any)}
         >
-          <Text className="text-3xl">{role.emoji}</Text>
-          <View className="flex-1">
-            <Text className="text-text-primary text-[15px] font-bold mb-[3px]">
-              {role.title}
-            </Text>
-            <Text className="text-text-muted text-xs leading-[17px]">
-              {role.subtitle}
-            </Text>
+          <View className="flex-row items-start gap-4">
+            <View
+              style={{
+                width: 48,
+                height: 48,
+                borderRadius: 12,
+                backgroundColor: TONE_BG[role.tone],
+                borderWidth: 1,
+                borderColor: TONE_BORDER[role.tone],
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <SymbolView name={role.icon} size={22} tintColor={TONE_ICON[role.tone]} />
+            </View>
+            <View className="flex-1">
+              <View className="bg-[#F4F2EE] self-start px-2.5 py-1 rounded-full mb-2 border border-[#E8E6E1]">
+                <Text className="text-[#6E6E73] text-[11px] font-semibold">
+                  {role.pill}
+                </Text>
+              </View>
+              <Text className="text-[#1C1C1E] text-[17px] font-bold tracking-tight">
+                {role.title}
+              </Text>
+              <Text className="text-[#6E6E73] text-[14px] leading-[20px] mt-1">
+                {role.subtitle}
+              </Text>
+            </View>
+            <View className="pt-1">
+              <SymbolView name="chevron.right" size={16} tintColor="#A7A7AB" />
+            </View>
           </View>
-          <View className="w-7 h-7 rounded-full bg-rose-dim items-center justify-center">
-            <Text className="text-rose-brand text-[14px] font-bold">→</Text>
-          </View>
+          <Text className="text-[#A7A7AB] text-[12px] mt-3">
+            {role.note}
+          </Text>
         </TouchableOpacity>
 
-        {/* Card footer actions */}
-        <View className="flex-row items-center px-[18px] py-3.5 gap-3 border-t border-border-subtle">
+        <View className="flex-row items-center px-5 py-4 gap-3 border-t border-[#EFEEEA] bg-[#FAFAF8]">
           <TouchableOpacity
-            className="flex-1 bg-rose-brand rounded-[10px] py-[11px] items-center"
+            className="flex-1 bg-[#1C1C1E] rounded-xl py-3 items-center"
             onPress={() => router.push(role.href as any)}
             activeOpacity={0.85}
           >
-            <Text className="text-bg text-[13px] font-bold tracking-[0.2px]">
+            <Text className="text-white text-[14px] font-semibold">
               {role.ctaLabel}
             </Text>
           </TouchableOpacity>
@@ -109,9 +151,9 @@ function RoleCard({ role, index }: { role: (typeof ROLES)[0]; index: number }) {
             <TouchableOpacity
               onPress={() => router.push(role.secondaryHref as any)}
               activeOpacity={0.7}
-              className="px-1"
+              className="px-2"
             >
-              <Text className="text-text-muted text-[13px] font-medium">
+              <Text className="text-[#1C1C1E] text-[14px] font-semibold">
                 {role.secondaryLabel}
               </Text>
             </TouchableOpacity>
@@ -124,75 +166,62 @@ function RoleCard({ role, index }: { role: (typeof ROLES)[0]; index: number }) {
 
 export default function WelcomeScreen() {
   const headerOpacity = useSharedValue(0);
-  const headerTranslateY = useSharedValue(-20);
 
   useEffect(() => {
-    headerOpacity.value = withTiming(1, { duration: 600, easing: Easing.out(Easing.quad) });
-    headerTranslateY.value = withSpring(0, { damping: 18, stiffness: 90 });
+    headerOpacity.value = withTiming(1, { duration: 500 });
   }, []);
 
   const headerStyle = useAnimatedStyle(() => ({
     opacity: headerOpacity.value,
-    transform: [{ translateY: headerTranslateY.value }],
   }));
 
   return (
-    <View className="flex-1 bg-bg">
-      <StatusBar barStyle="light-content" />
+    <View className="flex-1 bg-[#F7F7F5]">
+      <StatusBar style="dark" />
+      <SafeAreaView className="flex-1">
+        <ScrollView
+          contentContainerStyle={{ paddingTop: 32, paddingBottom: 32, paddingHorizontal: 20 }}
+          showsVerticalScrollIndicator={false}
+        >
+          <Animated.View className="items-start mb-8" style={headerStyle}>
+            <BrandMark size={52} />
+            <Text className="text-[#1C1C1E] text-[32px] font-bold tracking-tight mt-5">
+              CelebrateHub
+            </Text>
+            <Text className="text-[#6E6E73] text-[15px] leading-[22px] mt-2 max-w-[320px]">
+              India event services marketplace. Book trusted vendors for weddings, birthdays and corporate events.
+            </Text>
+            <View className="flex-row items-center gap-4 mt-5">
+              <View className="flex-row items-center gap-1.5">
+                <SymbolView name="checkmark.seal.fill" size={15} tintColor="#1E7A3C" />
+                <Text className="text-[#3A3A3C] text-[12px] font-medium">Verified vendors</Text>
+              </View>
+              <View className="flex-row items-center gap-1.5">
+                <SymbolView name="star.fill" size={14} tintColor="#9A6A14" />
+                <Text className="text-[#3A3A3C] text-[12px] font-medium">4.9 rated</Text>
+              </View>
+              <View className="flex-row items-center gap-1.5">
+                <SymbolView name="mappin.circle.fill" size={15} tintColor="#6E6E73" />
+                <Text className="text-[#3A3A3C] text-[12px] font-medium">Pan-India</Text>
+              </View>
+            </View>
+          </Animated.View>
 
-      {/* Background blobs — only animated values need inline style */}
-      <View
-        className="absolute rounded-full bg-rose-brand opacity-[0.12]"
-        style={{ width: 320, height: 320, top: -80, right: -80 }}
-      />
-      <View
-        className="absolute rounded-full bg-purple-brand opacity-[0.12]"
-        style={{ width: 240, height: 240, bottom: height * 0.15, left: -60 }}
-      />
+          <Text className="text-[#6E6E73] text-[12px] font-semibold uppercase tracking-widest mb-3">
+            Continue as
+          </Text>
 
-      <ScrollView
-        contentContainerStyle={{ paddingTop: 72, paddingBottom: 40, paddingHorizontal: 24 }}
-        showsVerticalScrollIndicator={false}
-        bounces={false}
-      >
-        {/* Logo / Brand */}
-        <Animated.View className="items-center mb-10" style={headerStyle}>
-          <View
-            className="w-[72px] h-[72px] rounded-[22px] bg-rose-brand items-center justify-center mb-4"
-            style={{
-              shadowColor: "#E8956D",
-              shadowOffset: { width: 0, height: 8 },
-              shadowOpacity: 0.5,
-              shadowRadius: 20,
-              elevation: 12,
-            }}
-          >
-            <Text className="text-bg text-[26px] font-black tracking-tight">CH</Text>
+          <View>
+            {ROLES.map((role, i) => (
+              <RoleCard key={role.key} role={role} index={i} />
+            ))}
           </View>
-          <Text className="text-text-primary text-[30px] font-extrabold tracking-tight mb-2">
-            CelebrateHub
-          </Text>
-          <Text className="text-text-muted text-[14px] text-center leading-[21px]">
-            India's event services marketplace —{"\n"}connect, celebrate, create memories.
-          </Text>
-        </Animated.View>
 
-        {/* Divider */}
-        <View className="flex-row items-center mb-6 gap-3">
-          <View className="flex-1 h-px bg-border-subtle" />
-          <Text className="text-text-dim text-[11px] font-semibold tracking-[0.5px] uppercase">
-            Who are you?
+          <Text className="text-[#A7A7AB] text-[12px] text-center mt-4 leading-[18px]">
+            By continuing you agree to our Terms of Service and Privacy Policy.
           </Text>
-          <View className="flex-1 h-px bg-border-subtle" />
-        </View>
-
-        {/* Role cards */}
-        <View>
-          {ROLES.map((role, i) => (
-            <RoleCard key={role.key} role={role} index={i} />
-          ))}
-        </View>
-      </ScrollView>
+        </ScrollView>
+      </SafeAreaView>
     </View>
   );
 }

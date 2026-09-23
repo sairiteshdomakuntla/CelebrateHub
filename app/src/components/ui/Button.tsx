@@ -23,29 +23,29 @@ interface ButtonProps {
 }
 
 const variantStyles: Record<Variant, string> = {
-  primary: "bg-rose-brand",
-  secondary: "bg-transparent border border-rose-brand",
-  ghost:    "bg-transparent",
-  danger:   "bg-red-500",
+  primary: "bg-[#1C1C1E]",
+  secondary: "bg-white border border-[#E0DED8]",
+  ghost: "bg-transparent",
+  danger: "bg-[#B3261E]",
 };
 
 const sizeStyles: Record<Size, string> = {
-  sm: "px-[18px] py-[10px] min-h-[40px] rounded-xl",
-  md: "px-6 py-[14px] min-h-[52px] rounded-[14px]",
-  lg: "px-8 py-[18px] min-h-[60px] rounded-[14px]",
+  sm: "px-4 py-2.5 min-h-[40px] rounded-xl",
+  md: "px-5 py-3.5 min-h-[52px] rounded-xl",
+  lg: "px-6 py-4 min-h-[56px] rounded-xl",
 };
 
 const labelVariant: Record<Variant, string> = {
-  primary:   "text-bg font-bold",
-  secondary: "text-rose-brand font-bold",
-  ghost:     "text-text-muted font-semibold",
-  danger:    "text-white font-bold",
+  primary: "text-white font-semibold",
+  secondary: "text-[#1C1C1E] font-semibold",
+  ghost: "text-[#6E6E73] font-medium",
+  danger: "text-white font-semibold",
 };
 
 const labelSize: Record<Size, string> = {
   sm: "text-[13px]",
   md: "text-[15px]",
-  lg: "text-[17px]",
+  lg: "text-[16px]",
 };
 
 export function Button({
@@ -65,27 +65,38 @@ export function Button({
     <TouchableOpacity
       onPress={onPress}
       disabled={isDisabled}
-      activeOpacity={0.82}
+      activeOpacity={0.85}
       className={[
         "items-center justify-center flex-row",
         variantStyles[variant],
         sizeStyles[size],
         fullWidth ? "w-full" : "",
-        isDisabled ? "opacity-40" : "",
+        isDisabled ? "opacity-50" : "",
       ].join(" ")}
-      style={style}
+      style={[
+        variant === "primary"
+          ? {
+              shadowColor: "#1C1C1E",
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.12,
+              shadowRadius: 8,
+              elevation: 2,
+            }
+          : undefined,
+        style,
+      ]}
     >
       {loading ? (
         <ActivityIndicator
           size="small"
-          color={variant === "primary" ? "#0D0D0D" : "#E8956D"}
+          color={variant === "secondary" ? "#1C1C1E" : "#FFFFFF"}
         />
       ) : (
         <View className="flex-row items-center gap-2">
           {icon && <View className="mr-0.5">{icon}</View>}
           <Text
             className={[
-              "tracking-[0.3px]",
+              "tracking-[0.1px]",
               labelVariant[variant],
               labelSize[size],
             ].join(" ")}

@@ -66,7 +66,7 @@ export async function listUsers(req: Request, res: Response): Promise<void> {
 // PATCH /api/admin/users/:id/status
 export async function updateUserStatus(req: Request, res: Response): Promise<void> {
   try {
-    const { id } = req.params;
+    const id = req.params.id as string;
     const schema = z.object({
       status: z.enum(["ACTIVE", "INACTIVE", "SUSPENDED"]),
     });
@@ -97,7 +97,7 @@ export async function updateUserStatus(req: Request, res: Response): Promise<voi
 // DELETE /api/admin/users/:id
 export async function deleteUser(req: Request, res: Response): Promise<void> {
   try {
-    const { id } = req.params;
+    const id = req.params.id as string;
 
     if (id === req.user!.userId) {
       res.status(400).json({ success: false, message: "Cannot delete your own account" });

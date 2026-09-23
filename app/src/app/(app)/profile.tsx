@@ -4,37 +4,38 @@ import {
   Text,
   ScrollView,
   TouchableOpacity,
-  StatusBar,
   Alert,
   ActivityIndicator,
 } from "react-native";
+import { StatusBar } from "expo-status-bar";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { SymbolView } from "expo-symbols";
 import { useAuthStore } from "@/store/auth.store";
 import { authApi, type AuthUser } from "@/lib/auth.api";
 
-const ROLE_COLOR: Record<string, string> = {
-  ADMIN: "bg-purple-500/20 text-purple-400 border-purple-500/30",
-  PROVIDER: "bg-amber-500/20 text-amber-400 border-amber-500/30",
-  CUSTOMER: "bg-sky-500/20 text-sky-400 border-sky-500/30",
+const ROLE_STYLE: Record<string, { bg: string; text: string; border: string }> = {
+  ADMIN: { bg: "#EAF0FB", text: "#2F54B8", border: "#CCD9F2" },
+  PROVIDER: { bg: "#FDF3E3", text: "#8A5E10", border: "#F0DFB8" },
+  CUSTOMER: { bg: "#EAF6EE", text: "#1E7A3C", border: "#CDE8D5" },
 };
 
-const STATUS_COLOR: Record<string, string> = {
-  ACTIVE: "bg-emerald-500/20 text-emerald-400",
-  INACTIVE: "bg-slate-500/20 text-slate-400",
-  SUSPENDED: "bg-red-500/20 text-red-400",
+const STATUS_STYLE: Record<string, { bg: string; text: string }> = {
+  ACTIVE: { bg: "#EAF6EE", text: "#1E7A3C" },
+  INACTIVE: { bg: "#F1EFEC", text: "#6E6E73" },
+  SUSPENDED: { bg: "#FBECEB", text: "#B3261E" },
 };
 
-function InfoRow({ label, value }: { label: string; value: string }) {
+function InfoRow({ label, value, last = false }: { label: string; value: string; last?: boolean }) {
   return (
-    <View className="flex-row items-center justify-between py-3 border-b border-white/[0.06]">
-      <Text className="text-slate-500 text-sm">{label}</Text>
-      <Text className="text-slate-200 text-sm font-medium">{value}</Text>
+    <View className={`flex-row items-center justify-between py-3 ${last ? "" : "border-b border-[#EFEEEA]"}`}>
+      <Text className="text-[#6E6E73] text-[14px]">{label}</Text>
+      <Text className="text-[#1C1C1E] text-[14px] font-medium">{value}</Text>
     </View>
   );
 }
 
 export default function ProfileScreen() {
-  const { user: storeUser, logout, refreshToken } = useAuthStore();
+  const { user: storeUser, logout } = useAuthStore();
   const [profile, setProfile] = useState<AuthUser | null>(null);
   const [loading, setLoading] = useState(true);
   const [loggingOut, setLoggingOut] = useState(false);
@@ -47,10 +48,8 @@ export default function ProfileScreen() {
     try {
       const data = await authApi.getMe();
       setProfile(data);
-      // Sync store user with fresh data
       useAuthStore.getState().setUser(data);
     } catch {
-      // Fall back to store user if API fails
       setProfile(storeUser as any);
     } finally {
       setLoading(false);
@@ -58,10 +57,10 @@ export default function ProfileScreen() {
   }
 
   function handleLogout() {
-    Alert.alert("Sign Out", "Are you sure you want to sign out?", [
+    Alert.alert("Sign out", "Are you sure you want to sign out?", [
       { text: "Cancel", style: "cancel" },
       {
-        text: "Sign Out",
+        text: "Sign out",
         style: "destructive",
         onPress: async () => {
           setLoggingOut(true);
@@ -72,84 +71,76 @@ export default function ProfileScreen() {
   }
 
   const user = profile ?? storeUser;
-  const rolePill = ROLE_COLOR[user?.role ?? "CUSTOMER"] ?? ROLE_COLOR.CUSTOMER;
-  const statusPill = STATUS_COLOR[user?.status ?? "ACTIVE"] ?? STATUS_COLOR.ACTIVE;
+  const roleStyle = ROLE_STYLE[user?.role ?? "CUSTOMER"] ?? ROLE_STYLE.CUSTOMER;
+  const statusStyle = STATUS_STYLE[user?.status ?? "ACTIVE"] ?? STATUS_STYLE.ACTIVE;
 
   if (loading) {
     return (
-      <View className="flex-1 bg-bg items-center justify-center">
-        <ActivityIndicator color="#E8956D" size="large" />
+      <View className="flex-1 bg-[#F7F7F5] items-center justify-center">
+        <ActivityIndicator color="#1C1C1E" size="large" />
       </View>
     );
   }
 
   return (
-    <View className="flex-1 bg-bg">
-      <StatusBar barStyle="light-content" />
-
-      {/* Background blob */}
-      <View
-        className="absolute rounded-full bg-rose-brand opacity-[0.07]"
-        style={{ width: 300, height: 300, top: -80, right: -60 }}
-      />
-
+    <View className="flex-1 bg-[#F7F7F5]">
+      <StatusBar style="dark" />
       <SafeAreaView className="flex-1">
         <ScrollView
-          contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 40 }}
+          contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 40 }}
           showsVerticalScrollIndicator={false}
         >
-          {/* Header */}
           <View className="items-center pt-8 pb-6">
-            {/* Avatar */}
-            <View
-              className="w-24 h-24 rounded-full bg-rose-brand items-center justify-center mb-4"
-              style={{ shadowColor: "#E8956D", shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.4, shadowRadius: 16, elevation: 10 }}
-            >
-              <Text className="text-bg text-3xl font-black">
+            <View className="w-20 h-20 rounded-full bg-[#1C1C1E] items-center justify-center mb-4">
+              <Text className="text-white text-[28px] font-bold">
                 {user?.name?.[0]?.toUpperCase() ?? "?"}
               </Text>
             </View>
 
-            <Text className="text-text-primary text-2xl font-bold mb-1">{user?.name}</Text>
-            <Text className="text-text-muted text-sm mb-3">{user?.email ?? user?.phone}</Text>
+            <Text className="text-[#1C1C1E] text-[22px] font-bold tracking-tight">{user?.name}</Text>
+            <Text className="text-[#6E6E73] text-[14px] mt-1">{user?.email ?? user?.phone}</Text>
 
-            {/* Role + status badges */}
-            <View className="flex-row gap-2">
-              <View className={`px-3 py-1 rounded-full border ${rolePill.split(" ").slice(0, 2).join(" ")} border-purple-500/30`}>
-                <Text className={`text-xs font-semibold ${rolePill.split(" ")[1]}`}>
+            <View className="flex-row gap-2 mt-3">
+              <View
+                style={{ backgroundColor: roleStyle.bg, borderColor: roleStyle.border }}
+                className="px-3 py-1.5 rounded-full border"
+              >
+                <Text style={{ color: roleStyle.text }} className="text-[12px] font-semibold">
                   {user?.role}
                 </Text>
               </View>
-              <View className={`px-3 py-1 rounded-full ${statusPill}`}>
-                <Text className={`text-xs font-semibold ${statusPill.split(" ")[1]}`}>
+              <View style={{ backgroundColor: statusStyle.bg }} className="px-3 py-1.5 rounded-full">
+                <Text style={{ color: statusStyle.text }} className="text-[12px] font-semibold">
                   {user?.status}
                 </Text>
               </View>
             </View>
           </View>
 
-          {/* Provider business card (if provider) */}
           {profile?.provider && (
-            <View className="bg-bg-card border border-border-subtle rounded-2xl p-5 mb-4">
-              <Text className="text-text-muted text-xs font-semibold uppercase tracking-wider mb-3">
-                Business
-              </Text>
-              <Text className="text-text-primary text-base font-bold mb-1">
+            <View className="bg-white border border-[#E8E6E1] rounded-2xl p-5 mb-3">
+              <View className="flex-row items-center gap-2 mb-3">
+                <SymbolView name="briefcase.fill" size={15} tintColor="#6E6E73" />
+                <Text className="text-[#6E6E73] text-[12px] font-semibold uppercase tracking-widest">
+                  Business
+                </Text>
+              </View>
+              <Text className="text-[#1C1C1E] text-[16px] font-bold">
                 {profile.provider.businessName}
               </Text>
               {profile.provider.serviceArea && (
-                <Text className="text-text-muted text-sm mb-3">{profile.provider.serviceArea}</Text>
+                <Text className="text-[#6E6E73] text-[14px] mt-0.5">{profile.provider.serviceArea}</Text>
               )}
-              <View className="flex-row items-center gap-3">
+              <View className="flex-row items-center gap-3 mt-3">
                 <View className="flex-row items-center gap-1.5">
-                  <Text className="text-amber-400 text-sm">★</Text>
-                  <Text className="text-text-secondary text-sm font-medium">
+                  <SymbolView name="star.fill" size={14} tintColor="#9A6A14" />
+                  <Text className="text-[#1C1C1E] text-[14px] font-semibold">
                     {Number(profile.provider.ratingAvg).toFixed(1)}
                   </Text>
-                  <Text className="text-text-dim text-xs">({profile.provider.ratingCount})</Text>
+                  <Text className="text-[#A7A7AB] text-[12px]">({profile.provider.ratingCount} reviews)</Text>
                 </View>
-                <View className={`px-2 py-0.5 rounded-full ${profile.provider.isAvailable ? "bg-emerald-500/20" : "bg-slate-500/20"}`}>
-                  <Text className={`text-xs font-semibold ${profile.provider.isAvailable ? "text-emerald-400" : "text-slate-400"}`}>
+                <View className={`px-2.5 py-1 rounded-full ${profile.provider.isAvailable ? "bg-[#EAF6EE]" : "bg-[#F1EFEC]"}`}>
+                  <Text className={`text-[12px] font-semibold ${profile.provider.isAvailable ? "text-[#1E7A3C]" : "text-[#6E6E73]"}`}>
                     {profile.provider.isAvailable ? "Available" : "Unavailable"}
                   </Text>
                 </View>
@@ -157,55 +148,42 @@ export default function ProfileScreen() {
             </View>
           )}
 
-          {/* Account details */}
-          <View className="bg-bg-card border border-border-subtle rounded-2xl p-5 mb-4">
-            <Text className="text-text-muted text-xs font-semibold uppercase tracking-wider mb-1">
-              Account Details
-            </Text>
-            <InfoRow
-              label="Email"
-              value={user?.email ?? "—"}
-            />
-            <InfoRow
-              label="Phone"
-              value={user?.phone ?? "—"}
-            />
-            <InfoRow
-              label="Email verified"
-              value={user?.emailVerified ? "✓ Yes" : "✗ No"}
-            />
+          <View className="bg-white border border-[#E8E6E1] rounded-2xl px-5 py-2 mb-3">
+            <InfoRow label="Email" value={user?.email ?? "—"} />
+            <InfoRow label="Phone" value={user?.phone ?? "—"} />
+            <InfoRow label="Email verified" value={user?.emailVerified ? "Yes" : "No"} />
             <InfoRow
               label="Member since"
               value={user?.createdAt ? new Date(user.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }) : "—"}
             />
-            {user?.lastLoginAt && (
+            {user?.lastLoginAt ? (
               <InfoRow
-                label="Last login"
+                label="Last login" last
                 value={new Date(user.lastLoginAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
               />
+            ) : (
+              <View className="py-1" />
             )}
           </View>
 
-          {/* Logout button */}
           <TouchableOpacity
             onPress={handleLogout}
             disabled={loggingOut}
-            activeOpacity={0.82}
-            className="flex-row items-center justify-center gap-2 bg-red-500/10 border border-red-500/25 rounded-2xl py-4 mt-2"
+            activeOpacity={0.8}
+            className="flex-row items-center justify-center gap-2 bg-white border border-[#EAD9D2] rounded-2xl py-4 mt-1"
           >
             {loggingOut ? (
-              <ActivityIndicator color="#EF4444" size="small" />
+              <ActivityIndicator color="#B3261E" size="small" />
             ) : (
-              <>
-                <Text className="text-2xl">🚪</Text>
-                <Text className="text-red-400 text-base font-bold">Sign Out</Text>
-              </>
+              <View className="flex-row items-center gap-2">
+                <SymbolView name="rectangle.portrait.and.arrow.right" size={16} tintColor="#B3261E" />
+                <Text className="text-[#B3261E] text-[15px] font-semibold">Sign out</Text>
+              </View>
             )}
           </TouchableOpacity>
 
-          {/* App version */}
-          <Text className="text-text-dim text-xs text-center mt-6">
-            CelebrateHub v1.0.0
+          <Text className="text-[#A7A7AB] text-[12px] text-center mt-6">
+            CelebrateHub · v1.0.0
           </Text>
         </ScrollView>
       </SafeAreaView>

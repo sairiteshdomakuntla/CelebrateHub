@@ -1,6 +1,14 @@
 import { create } from "zustand";
 import { authApi, type AuthUser, type LoginPayload, type RegisterPayload } from "../lib/auth.api";
-import { storeTokens, clearTokens, getAccessToken, getRefreshToken } from "../lib/api";
+import {
+  storeTokens,
+  clearTokens,
+  getAccessToken,
+  getRefreshToken,
+  storeUserProfile,
+  getStoredUserProfile,
+  clearStoredUserProfile,
+} from "../lib/api";
 
 interface AuthState {
   user: AuthUser | null;
@@ -23,18 +31,18 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   isLoading: false,
   isInitialized: false,
 
-  // Called once on app boot — restores tokens from secure storage
+  // Called once on app boot — restores tokens AND the last known user
+  // profile from secure storage, so the correct role renders on first frame
+  // instead of flashing a default dashboard while /me resolves.
   initialize: async () => {
     try {
       const accessToken = await getAccessToken();
       const refreshToken = await getRefreshToken();
       if (accessToken && refreshToken) {
-        // Tokens exist — the user is considered logged in.
-        // The actual user object will be populated after the first API call
-        // or we can store it in SecureStore too. For now mark as having tokens.
-        set({ accessToken, refreshToken, isInitialized: true });
+        const user = await getStoredUserProfile<AuthUser>();
+        set({ accessToken, refreshToken, user, isInitialized: true });
       } else {
-        set({ isInitialized: true });
+        set({ user: null, isInitialized: true });
       }
     } catch {
       set({ isInitialized: true });
@@ -46,6 +54,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     try {
       const result = await authApi.login(payload);
       await storeTokens(result.accessToken, result.refreshToken);
+      await storeUserProfile(result.user);
       set({
         user: result.user,
         accessToken: result.accessToken,
@@ -63,6 +72,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     try {
       const result = await authApi.register(payload);
       await storeTokens(result.accessToken, result.refreshToken);
+      await storeUserProfile(result.user);
       set({
         user: result.user,
         accessToken: result.accessToken,
@@ -81,9 +91,13 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       if (rt) await authApi.logout(rt);
     } finally {
       await clearTokens();
+      await clearStoredUserProfile();
       set({ user: null, accessToken: null, refreshToken: null });
     }
   },
 
-  setUser: (user) => set({ user }),
+  setUser: (user) => {
+    set({ user });
+    if (user) void storeUserProfile(user);
+  },
 }));

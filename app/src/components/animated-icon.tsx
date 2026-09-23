@@ -1,12 +1,10 @@
-import { Image } from 'expo-image';
 import * as SplashScreen from 'expo-splash-screen';
 import { useState } from 'react';
-import { Dimensions, StyleSheet, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import Animated, { Easing, Keyframe } from 'react-native-reanimated';
 import { scheduleOnRN } from 'react-native-worklets';
 
-const INITIAL_SCALE_FACTOR = Dimensions.get('screen').height / 90;
-const DURATION = 600;
+const DURATION = 500;
 
 export function AnimatedSplashOverlay() {
   const [animate, setAnimate] = useState(false);
@@ -14,37 +12,30 @@ export function AnimatedSplashOverlay() {
 
   if (!visible) return null;
 
-  const splashKeyframe = new Keyframe({
-    0: {
-      transform: [{ scale: 1 }],
-      opacity: 1,
-    },
-    20: {
-      opacity: 1,
-    },
-    70: {
-      opacity: 0,
-      easing: Easing.elastic(0.7),
-    },
-    100: {
-      opacity: 0,
-      transform: [{ scale: 1 }],
-      easing: Easing.elastic(0.7),
-    },
+  const fadeOut = new Keyframe({
+    0: { opacity: 1, transform: [{ scale: 1 }] },
+    100: { opacity: 0, transform: [{ scale: 0.98 }], easing: Easing.out(Easing.quad) },
   });
 
-  const image = <Image style={styles.image} source={require('@/assets/images/expo-logo.png')} />;
+  const brand = (
+    <View style={styles.brandWrap}>
+      <View style={styles.mark}>
+        <Text style={styles.markText}>CH</Text>
+      </View>
+      <Text style={styles.wordmark}>CelebrateHub</Text>
+    </View>
+  );
 
   return animate ? (
     <Animated.View
-      entering={splashKeyframe.duration(DURATION).withCallback((finished) => {
+      entering={fadeOut.duration(DURATION).withCallback((finished) => {
         'worklet';
         if (finished) {
           scheduleOnRN(setVisible, false);
         }
       })}
       style={styles.splashOverlay}>
-      {image}
+      {brand}
     </Animated.View>
   ) : (
     <View
@@ -54,93 +45,50 @@ export function AnimatedSplashOverlay() {
         });
       }}
       style={styles.splashOverlay}>
-      {image}
+      {brand}
     </View>
   );
 }
 
-const keyframe = new Keyframe({
-  0: {
-    transform: [{ scale: INITIAL_SCALE_FACTOR }],
-  },
-  100: {
-    transform: [{ scale: 1 }],
-    easing: Easing.elastic(0.7),
-  },
-});
-
-const logoKeyframe = new Keyframe({
-  0: {
-    transform: [{ scale: 1.3 }],
-    opacity: 0,
-  },
-  40: {
-    transform: [{ scale: 1.3 }],
-    opacity: 0,
-    easing: Easing.elastic(0.7),
-  },
-  100: {
-    opacity: 1,
-    transform: [{ scale: 1 }],
-    easing: Easing.elastic(0.7),
-  },
-});
-
-const glowKeyframe = new Keyframe({
-  0: {
-    transform: [{ rotateZ: '0deg' }],
-  },
-  100: {
-    transform: [{ rotateZ: '7200deg' }],
-  },
-});
-
 export function AnimatedIcon() {
   return (
-    <View style={styles.iconContainer}>
-      <Animated.View entering={glowKeyframe.duration(60 * 1000 * 4)} style={styles.glow}>
-        <Image style={styles.glow} source={require('@/assets/images/logo-glow.png')} />
-      </Animated.View>
-
-      <Animated.View entering={keyframe.duration(DURATION)} style={styles.background} />
-      <Animated.View style={styles.imageContainer} entering={logoKeyframe.duration(DURATION)}>
-        <Image style={styles.image} source={require('@/assets/images/expo-logo.png')} />
-      </Animated.View>
+    <View style={styles.brandWrap}>
+      <View style={styles.mark}>
+        <Text style={styles.markText}>CH</Text>
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  imageContainer: {
-    justifyContent: 'center',
+  brandWrap: {
     alignItems: 'center',
-  },
-  glow: {
-    width: 201,
-    height: 201,
-    position: 'absolute',
-  },
-  iconContainer: {
     justifyContent: 'center',
+    gap: 12,
+  },
+  mark: {
+    width: 72,
+    height: 72,
+    borderRadius: 20,
+    backgroundColor: '#1C1C1E',
     alignItems: 'center',
-    width: 128,
-    height: 128,
-    zIndex: 100,
+    justifyContent: 'center',
   },
-  image: {
-    width: 76,
-    height: 71,
+  markText: {
+    color: '#FFFFFF',
+    fontSize: 24,
+    fontWeight: '700',
+    letterSpacing: -0.5,
   },
-  background: {
-    borderRadius: 40,
-    experimental_backgroundImage: `linear-gradient(180deg, #3C9FFE, #0274DF)`,
-    width: 128,
-    height: 128,
-    position: 'absolute',
+  wordmark: {
+    color: '#1C1C1E',
+    fontSize: 17,
+    fontWeight: '600',
+    letterSpacing: -0.2,
   },
   splashOverlay: {
     ...StyleSheet.absoluteFill,
-    backgroundColor: '#208AEF',
+    backgroundColor: '#F7F7F5',
     alignItems: 'center',
     justifyContent: 'center',
     zIndex: 1000,
