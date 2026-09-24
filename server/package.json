@@ -8,7 +8,9 @@
     "build": "tsc",
     "start": "node dist/server.js",
     "test:db": "tsx test-db.ts",
-    "seed:admin": "tsx prisma/seed-admin.ts"
+    "seed:admin": "tsx prisma/seed-admin.ts",
+    "seed:categories": "tsx prisma/seed-categories.ts",
+    "seed:plans": "tsx prisma/seed-plans.ts"
   },
   "keywords": [],
   "author": "",
@@ -26,6 +28,7 @@
     "jsonwebtoken": "^9.0.3",
     "morgan": "^1.12.1",
     "pg": "^8.23.0",
+    "razorpay": "^2.9.8",
     "zod": "^4.6.5"
   },
   "devDependencies": {

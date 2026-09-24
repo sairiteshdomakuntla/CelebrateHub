@@ -4,7 +4,7 @@ import { Platform } from "react-native";
 
 const rawBaseUrl = process.env.EXPO_PUBLIC_API_URL ?? "http://localhost:5000";
 // Ensure trailing /api or slashes are stripped so endpoints like /api/auth/login are never duplicated
-const BASE_URL = rawBaseUrl.replace(/\/api\/?$/, "").replace(/\/+$/, "");
+export const BASE_URL = rawBaseUrl.replace(/\/api\/?$/, "").replace(/\/+$/, "");
 
 // ─── Token storage (secure on device, localStorage fallback on web) ──────────
 

@@ -20,6 +20,7 @@ import Animated, {
 import { AppIcon, type AppIconName } from "@/components/ui/pro-icon";
 import { useAuthStore } from "@/store/auth.store";
 import { authApi, adminApi, type AuthUser } from "@/lib/auth.api";
+import { leadsApi } from "@/lib/leads.api";
 
 function getGreeting(): string {
   const h = new Date().getHours();
@@ -150,6 +151,7 @@ export default function HomeScreen() {
   const [providersCount, setProvidersCount] = useState<number | null>(null);
   const [customersCount, setCustomersCount] = useState<number | null>(null);
   const [loadingStats, setLoadingStats] = useState(false);
+  const [leadStats, setLeadStats] = useState({ availableCount: 0, acceptedCount: 0 });
   // True once the profile has been resolved at least once. When the store has
   // no cached user (fresh install / cleared storage), we hold a loader instead
   // of rendering a default-role dashboard that would visibly flip moments later.
@@ -179,6 +181,15 @@ export default function HomeScreen() {
           // ignore
         } finally {
           setLoadingStats(false);
+        }
+      }
+
+      if (me.role === "PROVIDER") {
+        try {
+          const stats = await leadsApi.getStats();
+          setLeadStats(stats);
+        } catch {
+          // ignore
         }
       }
     } catch {
@@ -345,8 +356,8 @@ export default function HomeScreen() {
               </>
             ) : role === "PROVIDER" ? (
               <>
-                <StatCard icon="inbox" value="12" label="New leads" />
-                <StatCard icon="check-circle" value="8" label="Bookings" />
+                <StatCard icon="inbox" value={leadStats.availableCount} label="New leads" />
+                <StatCard icon="check-circle" value={leadStats.acceptedCount} label="Bookings" />
                 <StatCard icon="star" value="4.9" label="Rating" />
               </>
             ) : (
@@ -396,26 +407,28 @@ export default function HomeScreen() {
               <ActionRow
                 icon="inbox" tone="dark" title="Qualified leads"
                 subtitle="Review incoming event requests"
+                badge={leadStats.availableCount > 0 ? `${leadStats.availableCount} NEW` : undefined}
                 delay={80}
-                onPress={() => Alert.alert("Leads", "You have no pending enquiries right now.")}
+                onPress={() => router.push("/leads" as any)}
               />
               <ActionRow
                 icon="briefcase" tone="neutral" title="Business profile"
                 subtitle="Pricing, services and portfolio"
                 delay={140}
-                onPress={() => router.push("/profile" as any)}
+                onPress={() => router.push("/provider-profile" as any)}
               />
               <ActionRow
-                icon="calendar" tone="neutral" title="Booking calendar"
-                subtitle="Confirmed dates and schedules"
+                icon="calendar" tone="neutral" title="Bookings & calendar"
+                subtitle="Confirmed dates and client details"
+                badge={leadStats.acceptedCount > 0 ? `${leadStats.acceptedCount} CONFIRMED` : undefined}
                 delay={200}
-                onPress={() => Alert.alert("Calendar", "Your upcoming bookings will appear here.")}
+                onPress={() => router.push("/leads" as any)}
               />
               <ActionRow
-                icon="star" tone="warning" title="Reviews"
-                subtitle="Client feedback and ratings"
+                icon="shield" tone="accent" title="Pro Membership & Billing"
+                subtitle="Unlimited leads & verified badge via Razorpay"
                 delay={260}
-                onPress={() => Alert.alert("Reviews", "Your profile holds a 4.9 rating.")}
+                onPress={() => router.push("/subscriptions" as any)}
               />
             </>
           )}
@@ -426,18 +439,24 @@ export default function HomeScreen() {
                 icon="plus-circle" tone="dark" title="Plan new event"
                 subtitle="Wedding, birthday, anniversary, corporate"
                 delay={80}
-                onPress={() => Alert.alert("Plan event", "Choose a category, location and guest count to begin.")}
+                onPress={() => router.push("/events/create" as any)}
               />
               <ActionRow
-                icon="search" tone="neutral" title="Find providers"
-                subtitle="Caterers, decorators, photographers"
+                icon="search" tone="neutral" title="My events"
+                subtitle="View and manage your celebrations"
                 delay={140}
-                onPress={() => Alert.alert("Providers", "Verified local providers matched to your budget.")}
+                onPress={() => router.push("/events" as any)}
+              />
+              <ActionRow
+                icon="gift" tone="accent" title="Celebrate Club"
+                subtitle="VIP concierge & custom invitations via Razorpay"
+                delay={200}
+                onPress={() => router.push("/subscriptions" as any)}
               />
               <ActionRow
                 icon="user" tone="neutral" title="Profile and security"
                 subtitle="Contact details and password"
-                delay={200}
+                delay={260}
                 onPress={() => router.push("/profile" as any)}
               />
               <ActionRow

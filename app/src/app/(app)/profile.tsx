@@ -10,6 +10,7 @@ import {
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { AppIcon } from "@/components/ui/pro-icon";
+import { useRouter } from "expo-router";
 import { useAuthStore } from "@/store/auth.store";
 import { authApi, type AuthUser } from "@/lib/auth.api";
 
@@ -35,6 +36,7 @@ function InfoRow({ label, value, last = false }: { label: string; value: string;
 }
 
 export default function ProfileScreen() {
+  const router = useRouter();
   const { user: storeUser, logout } = useAuthStore();
   const [profile, setProfile] = useState<AuthUser | null>(null);
   const [loading, setLoading] = useState(true);
@@ -165,6 +167,27 @@ export default function ProfileScreen() {
               <View className="py-1" />
             )}
           </View>
+
+          <TouchableOpacity
+            onPress={() => router.push("/subscriptions" as any)}
+            activeOpacity={0.8}
+            className="flex-row items-center justify-between bg-white border border-[#E8E6E1] rounded-2xl px-5 py-4 mb-3 shadow-xs"
+          >
+            <View className="flex-row items-center gap-3">
+              <View className="w-10 h-10 rounded-xl bg-[#1C1C1E] items-center justify-center">
+                <AppIcon name="shield" size={18} color="#FFFFFF" />
+              </View>
+              <View>
+                <Text className="text-[#1C1C1E] text-[15px] font-semibold">
+                  Membership & Plans
+                </Text>
+                <Text className="text-[#6E6E73] text-[12px] mt-0.5">
+                  Manage subscription & Razorpay billing
+                </Text>
+              </View>
+            </View>
+            <AppIcon name="chevron-right" size={16} color="#8E8E93" />
+          </TouchableOpacity>
 
           <TouchableOpacity
             onPress={handleLogout}

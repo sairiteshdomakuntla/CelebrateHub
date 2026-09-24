@@ -4,6 +4,29 @@ import { Feather } from "@expo/vector-icons";
 
 export type AppIconName = React.ComponentProps<typeof Feather>["name"];
 
+const ICON_FALLBACKS: Record<string, AppIconName> = {
+  car: "truck",
+  utensils: "coffee",
+  sparkles: "star",
+  brush: "edit-3",
+  cake: "gift",
+  "indian-rupee": "dollar-sign",
+  rupee: "dollar-sign",
+  currency: "dollar-sign",
+  party: "gift",
+  celebration: "gift",
+  ring: "heart",
+};
+
+export function resolveIconName(name: string): AppIconName {
+  if (!name) return "circle";
+  const lower = name.toLowerCase().trim();
+  if (ICON_FALLBACKS[lower]) {
+    return ICON_FALLBACKS[lower];
+  }
+  return (name as AppIconName) || "circle";
+}
+
 /**
  * App-wide icon component backed by bundled vector fonts.
  * Renders identically on Android, iOS and web — no native symbol
@@ -15,11 +38,12 @@ export function AppIcon({
   color = "#1C1C1E",
   style,
 }: {
-  name: AppIconName;
+  name: string;
   size?: number;
   color?: string;
   style?: StyleProp<ViewStyle>;
 }) {
+  const iconName = resolveIconName(name);
   return (
     <View
       style={[
@@ -32,7 +56,7 @@ export function AppIcon({
         style,
       ]}
     >
-      <Feather name={name} size={size} color={color} />
+      <Feather name={iconName} size={size} color={color} />
     </View>
   );
 }
@@ -43,7 +67,7 @@ export function IconTile({
   tone = "neutral",
   size = 44,
 }: {
-  name: AppIconName;
+  name: string;
   tone?: "neutral" | "dark" | "accent" | "success" | "warning" | "danger" | "info";
   size?: number;
 }) {
@@ -57,6 +81,7 @@ export function IconTile({
     info: { bg: "#EAF0FB", icon: "#2F54B8", border: "#CCD9F2" },
   };
   const t = tones[tone];
+  const iconName = resolveIconName(name);
   return (
     <View
       style={{
@@ -70,7 +95,7 @@ export function IconTile({
         justifyContent: "center",
       }}
     >
-      <Feather name={name} size={21} color={t.icon} />
+      <Feather name={iconName} size={21} color={t.icon} />
     </View>
   );
 }
