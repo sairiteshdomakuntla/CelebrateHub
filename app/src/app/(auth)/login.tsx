@@ -5,7 +5,6 @@ import {
   ScrollView,
   TouchableOpacity,
   KeyboardAvoidingView,
-  Platform,
   Alert,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
@@ -89,12 +88,12 @@ export default function LoginScreen() {
       <StatusBar style="dark" />
       <SafeAreaView className="flex-1">
         <KeyboardAvoidingView
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          behavior="padding"
           className="flex-1"
         >
           <ScrollView
             contentContainerStyle={{ paddingTop: 12, paddingBottom: 32, paddingHorizontal: 20 }}
-            keyboardShouldPersistTaps="handled"
+            keyboardShouldPersistTaps="always"
             showsVerticalScrollIndicator={false}
           >
             <TouchableOpacity

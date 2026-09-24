@@ -7,17 +7,16 @@ import { AnimatedSplashOverlay } from "@/components/animated-icon";
 
 SplashScreen.preventAutoHideAsync();
 
-export default function RootLayout() {
-  const { isInitialized, accessToken, initialize } = useAuthStore();
+/**
+ * Isolated component that reads useSegments() so its re-renders
+ * never propagate to <Slot /> and the screens rendered inside it.
+ * This prevents keyboard dismissal caused by parent re-renders.
+ */
+function AuthGuard() {
+  const { isInitialized, accessToken } = useAuthStore();
   const segments = useSegments();
   const router = useRouter();
 
-  // Restore tokens from SecureStore on first mount
-  useEffect(() => {
-    initialize();
-  }, []);
-
-  // Auth guard: once initialized, redirect to the right group
   useEffect(() => {
     if (!isInitialized) return;
 
@@ -35,10 +34,22 @@ export default function RootLayout() {
     }
   }, [isInitialized, accessToken, segments]);
 
+  return null;
+}
+
+export default function RootLayout() {
+  const { isInitialized, initialize } = useAuthStore();
+
+  // Restore tokens from SecureStore on first mount
+  useEffect(() => {
+    initialize();
+  }, []);
+
   if (!isInitialized) return null;
 
   return (
     <>
+      <AuthGuard />
       <AnimatedSplashOverlay />
       <Slot />
     </>
