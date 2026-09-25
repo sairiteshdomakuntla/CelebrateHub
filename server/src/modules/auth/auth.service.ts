@@ -1,7 +1,7 @@
 import bcrypt from "bcryptjs";
 import { prisma } from "../../lib/prisma.js";
 import { signAccessToken, signRefreshToken, verifyRefreshToken } from "../../lib/jwt.js";
-import type { RegisterDto, LoginDto, CreateUserDto } from "./auth.schema.js";
+import type { RegisterDto, RegisterProviderDto, LoginDto, CreateUserDto } from "./auth.schema.js";
 
 const SALT_ROUNDS = 12;
 const REFRESH_TOKEN_EXPIRY_DAYS = 7;
@@ -70,6 +70,95 @@ export async function register(
 
   return {
     user: sanitizeUser(user),
+    accessToken,
+    refreshToken,
+  };
+}
+
+// ─── Public: Provider self-registration & onboarding ──────────────────────────
+
+export async function registerProvider(
+  dto: RegisterProviderDto,
+  meta?: { ipAddress?: string; userAgent?: string }
+) {
+  // Check uniqueness
+  if (dto.email) {
+    const existing = await prisma.user.findUnique({ where: { email: dto.email } });
+    if (existing) throw new Error("An account with this email already exists");
+  }
+  if (dto.phone) {
+    const existing = await prisma.user.findUnique({ where: { phone: dto.phone } });
+    if (existing) throw new Error("An account with this phone number already exists");
+  }
+
+  const passwordHash = await bcrypt.hash(dto.password, SALT_ROUNDS);
+
+  // Create User + Provider in a transaction
+  const result = await prisma.$transaction(async (tx) => {
+    const user = await tx.user.create({
+      data: {
+        name: dto.name,
+        email: dto.email,
+        phone: dto.phone,
+        passwordHash,
+        role: "PROVIDER",
+      },
+    });
+
+    const provider = await tx.provider.create({
+      data: {
+        userId: user.id,
+        businessName: dto.businessName.trim(),
+        description: dto.description?.trim() || null,
+        serviceArea: dto.serviceArea.trim(),
+        pricingMin: dto.pricingMin || null,
+        pricingMax: dto.pricingMax || null,
+        verificationStatus: "PENDING",
+      },
+    });
+
+    // Link initial service categories
+    if (dto.categoryIds && dto.categoryIds.length > 0) {
+      await tx.providerCategory.createMany({
+        data: dto.categoryIds.map((categoryId) => ({
+          providerId: provider.id,
+          categoryId,
+        })),
+        skipDuplicates: true,
+      });
+    }
+
+    // Seed default availability (all 7 days, 09:00 - 21:00)
+    const days = [
+      "MONDAY",
+      "TUESDAY",
+      "WEDNESDAY",
+      "THURSDAY",
+      "FRIDAY",
+      "SATURDAY",
+      "SUNDAY",
+    ] as const;
+
+    await tx.providerAvailability.createMany({
+      data: days.map((dayOfWeek) => ({
+        providerId: provider.id,
+        dayOfWeek,
+        startTime: "09:00",
+        endTime: "21:00",
+        isAvailable: true,
+      })),
+      skipDuplicates: true,
+    });
+
+    return { user, provider };
+  });
+
+  const { accessToken, refreshToken } = buildTokenPair(result.user.id, result.user.role);
+  await persistSession(result.user.id, refreshToken, meta?.ipAddress, meta?.userAgent);
+
+  return {
+    user: sanitizeUser(result.user),
+    provider: result.provider,
     accessToken,
     refreshToken,
   };

@@ -21,6 +21,8 @@ import { AppIcon, type AppIconName } from "@/components/ui/pro-icon";
 import { useAuthStore } from "@/store/auth.store";
 import { authApi, adminApi, type AuthUser } from "@/lib/auth.api";
 import { leadsApi } from "@/lib/leads.api";
+import { providersApi } from "@/lib/providers.api";
+import { notificationsApi } from "@/lib/notifications.api";
 
 function getGreeting(): string {
   const h = new Date().getHours();
@@ -150,8 +152,12 @@ export default function HomeScreen() {
   const [totalUsers, setTotalUsers] = useState<number | null>(null);
   const [providersCount, setProvidersCount] = useState<number | null>(null);
   const [customersCount, setCustomersCount] = useState<number | null>(null);
+  const [totalEvents, setTotalEvents] = useState<number | null>(null);
+  const [totalBookings, setTotalBookings] = useState<number | null>(null);
   const [loadingStats, setLoadingStats] = useState(false);
+  const [pendingVerifications, setPendingVerifications] = useState(0);
   const [leadStats, setLeadStats] = useState({ availableCount: 0, acceptedCount: 0 });
+  const [unreadNotifCount, setUnreadNotifCount] = useState(0);
   // True once the profile has been resolved at least once. When the store has
   // no cached user (fresh install / cleared storage), we hold a loader instead
   // of rendering a default-role dashboard that would visibly flip moments later.
@@ -173,10 +179,13 @@ export default function HomeScreen() {
       if (me.role === "ADMIN") {
         setLoadingStats(true);
         try {
-          const res = await adminApi.listUsers({ page: 1 });
-          setTotalUsers(res.pagination.total);
-          setProvidersCount(res.users.filter((u) => u.role === "PROVIDER").length);
-          setCustomersCount(res.users.filter((u) => u.role === "CUSTOMER").length);
+          const statsRes = await adminApi.getStats();
+          setTotalUsers(statsRes.totalUsers);
+          setProvidersCount(statsRes.providersCount);
+          setCustomersCount(statsRes.customersCount);
+          setTotalEvents(statsRes.totalEvents);
+          setTotalBookings(statsRes.totalBookings);
+          setPendingVerifications(statsRes.pendingVerifications);
         } catch {
           // ignore
         } finally {
@@ -191,6 +200,14 @@ export default function HomeScreen() {
         } catch {
           // ignore
         }
+      }
+
+      // Unread notification count — all roles
+      try {
+        const count = await notificationsApi.getUnreadCount();
+        setUnreadNotifCount(count);
+      } catch {
+        // ignore
       }
     } catch {
       // offline — fall back to the cached store user
@@ -295,6 +312,24 @@ export default function HomeScreen() {
                   {roleMeta.label}
                 </Text>
               </View>
+
+              {/* Bell with unread badge */}
+              <TouchableOpacity
+                onPress={() => router.push("/notifications" as any)}
+                activeOpacity={0.7}
+                className="w-10 h-10 rounded-full bg-white border border-[#E8E6E1] items-center justify-center"
+                accessibilityLabel="Notifications"
+              >
+                <AppIcon name="bell" size={17} color="#3A3A3C" />
+                {unreadNotifCount > 0 && (
+                  <View className="absolute top-0.5 right-0.5 min-w-[16px] h-4 rounded-full bg-[#6366F1] items-center justify-center px-0.5">
+                    <Text className="text-white text-[9px] font-bold">
+                      {unreadNotifCount > 99 ? "99+" : unreadNotifCount}
+                    </Text>
+                  </View>
+                )}
+              </TouchableOpacity>
+
               <TouchableOpacity
                 onPress={confirmLogout}
                 disabled={loggingOut}
@@ -350,9 +385,10 @@ export default function HomeScreen() {
           <View className="flex-row gap-2.5 mb-6">
             {role === "ADMIN" ? (
               <>
-                <StatCard icon="users" value={totalUsers ?? "—"} label="Total users" loading={loadingStats} />
+                <StatCard icon="users" value={totalUsers ?? "—"} label="Users" loading={loadingStats} />
                 <StatCard icon="briefcase" value={providersCount ?? "—"} label="Providers" loading={loadingStats} />
-                <StatCard icon="user" value={customersCount ?? "—"} label="Customers" loading={loadingStats} />
+                <StatCard icon="calendar" value={totalEvents ?? "—"} label="Events" loading={loadingStats} />
+                <StatCard icon="check-circle" value={totalBookings ?? "—"} label="Bookings" loading={loadingStats} />
               </>
             ) : role === "PROVIDER" ? (
               <>
@@ -390,14 +426,33 @@ export default function HomeScreen() {
               <ActionRow
                 icon="check-circle" tone="success" title="Provider verifications"
                 subtitle="Review licences, KYC and documents"
+                badge={pendingVerifications > 0 ? `${pendingVerifications} PENDING` : undefined}
                 delay={200}
-                onPress={() => Alert.alert("Verifications", "The verification queue is up to date.")}
+                onPress={() => router.push("/admin-providers" as any)}
               />
               <ActionRow
-                icon="bar-chart-2" tone="info" title="Platform activity"
-                subtitle="Leads, quotes and transactions"
-                delay={260}
-                onPress={() => Alert.alert("Activity", "All systems operating normally.")}
+                icon="grid" tone="warning" title="Event & Service Categories"
+                subtitle="Manage service categories, icons & active status"
+                delay={230}
+                onPress={() => router.push("/admin-categories" as any)}
+              />
+              <ActionRow
+                icon="credit-card" tone="accent" title="Subscription Plans & Pricing"
+                subtitle="Configure tiers, prices, lead limits & billing"
+                delay={250}
+                onPress={() => router.push("/admin-plans" as any)}
+              />
+              <ActionRow
+                icon="shield" tone="danger" title="Reviews & Platform Disputes"
+                subtitle="Review moderation, flag handling & client disputes"
+                delay={270}
+                onPress={() => router.push("/admin-moderation" as any)}
+              />
+              <ActionRow
+                icon="bar-chart-2" tone="info" title="Platform Analytics & Policy"
+                subtitle="Financials, GMV, take-rate & lead dispatch controls"
+                delay={290}
+                onPress={() => router.push("/admin-analytics" as any)}
               />
             </>
           )}
@@ -448,7 +503,13 @@ export default function HomeScreen() {
                 onPress={() => router.push("/events" as any)}
               />
               <ActionRow
-                icon="gift" tone="accent" title="Celebrate Club"
+                icon="gift" tone="accent" title="Gift Circle & Registry"
+                subtitle="Wishlist, group cash funds & guest blessings"
+                delay={170}
+                onPress={() => router.push("/events" as any)}
+              />
+              <ActionRow
+                icon="star" tone="dark" title="Celebrate Club"
                 subtitle="VIP concierge & custom invitations via Razorpay"
                 delay={200}
                 onPress={() => router.push("/subscriptions" as any)}

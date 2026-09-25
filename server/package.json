@@ -10,7 +10,8 @@
     "test:db": "tsx test-db.ts",
     "seed:admin": "tsx prisma/seed-admin.ts",
     "seed:categories": "tsx prisma/seed-categories.ts",
-    "seed:plans": "tsx prisma/seed-plans.ts"
+    "seed:plans": "tsx prisma/seed-plans.ts",
+    "seed:gifts": "tsx prisma/seed-gifts.ts"
   },
   "keywords": [],
   "author": "",

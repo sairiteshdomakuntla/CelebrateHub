@@ -203,7 +203,7 @@ Scan the QR code with Expo Go, or press `a` (Android) / `i` (iOS).
 | Google / social auth | ❌ |
 | Push notifications (Expo Push / FCM) | ❌ |
 | File / image upload (Cloudinary / Supabase) | ❌ |
-| Maps / geolocation integration | ❌ |
+| Maps / geolocation integration | ✅ Interactive pin-drop modal, Google Maps navigation, provider coverage radius circle & Indian celebration hub selector |
 
 ---
 
@@ -213,7 +213,7 @@ Scan the QR code with Expo Go, or press `a` (Android) / `i` (iOS).
 |---------|--------|
 | Registration, login & logout | ✅ |
 | Profile view (read-only) | ✅ |
-| Edit profile (name, email, phone, password) | ❌ |
+| Edit profile (name, email, phone, password) | ✅ Inline edit + Password modal |
 | Create & manage events | ✅ |
 | Event types (Wedding, Birthday, Corporate, etc.) | ✅ |
 | Event fields (date, time, location, guests, budget) | ✅ |
@@ -224,9 +224,9 @@ Scan the QR code with Expo Go, or press `a` (Android) / `i` (iOS).
 | Invite & manage guests | ✅ |
 | Invitation delivery (WhatsApp, SMS, Native Share) | ✅ |
 | Digital invitation card & templates | ✅ |
-| Gift Circle | ❌ |
+| Gift Circle | ✅ Registry, group cash funds, blessings wall & claim flow |
 | Customer subscription plans & status | ✅ (Razorpay integrated) |
-| In-app notifications & event updates | 🟡 DB model ready |
+| In-app notifications & event updates | ✅ Notification Center (inbox, mark-read, bell badge) |
 | Leave reviews after bookings | ✅ |
 
 ---
@@ -235,11 +235,11 @@ Scan the QR code with Expo Go, or press `a` (Android) / `i` (iOS).
 
 | Feature | Status |
 |---------|--------|
-| Provider self-registration & onboarding flow | ❌ |
+| Provider self-registration & onboarding flow | ✅ Full onboarding (role switch, business details, categories, availability) |
 | Admin-created provider account | ✅ |
 | Business profile view (basic) | ✅ |
 | Edit business profile (description, pricing, images) | ✅ |
-| Provider verification workflow | 🟡 verificationStatus in DB; Admin verification UI coming |
+| Provider verification workflow | ✅ Admin verification screen complete |
 | Subscription plans for lead access | ✅ (Razorpay integrated) |
 | Define service categories & coverage | ✅ |
 | Availability management | ✅ |
@@ -256,17 +256,17 @@ Scan the QR code with Expo Go, or press `a` (Android) / `i` (iOS).
 | Feature | Status |
 |---------|--------|
 | Admin role & role-based dashboard | ✅ |
-| Dashboard stats (total users, providers, customers) | 🟡 Events/leads/subscriptions stats missing |
+| Dashboard stats (total users, providers, customers) | ✅ Comprehensive stats (users, providers, events, bookings, GMV, lead conversion) |
 | User list with search, filter, pagination | ✅ |
 | Create users (customer / provider / admin) | ✅ |
 | Suspend / activate / delete users | ✅ |
-| Provider verification & approval screen | ❌ |
-| Manage event & service categories | ❌ |
+| Provider verification & approval screen | ✅ |
+| Manage event & service categories | ✅ Dynamic CRUD (name, slug, icons, active toggles & linked counts) |
 | Monitor customer requests & lead activity | ✅ |
-| Manage reviews & platform issues | ❌ |
-| Manage subscription plans | ❌ |
-| Configure max providers per lead | ❌ |
-| Reports & analytics | ❌ |
+| Manage reviews & platform issues | ✅ Trust & Safety moderation, review flag/hide/approve, dispute tracking & resolution notes |
+| Manage subscription plans | ✅ Dynamic CRUD (pricing, intervals, MRR tracking, role tiers & Razorpay sync) |
+| Configure max providers per lead | ✅ Configurable via Admin Policy Engine (`MAX_PROVIDERS_PER_LEAD`) & dynamic dispatch |
+| Reports & analytics | ✅ Financials & KPIs, Gross Volume (GMV), conversion funnel, category demand balance & policy controls |
 
 ---
 
@@ -286,7 +286,7 @@ Scan the QR code with Expo Go, or press `a` (Android) / `i` (iOS).
 |---------|--------|
 | Provider subscription payments | ✅ (Razorpay) |
 | Customer subscription payments | ✅ (Razorpay) |
-| Platform commission model | ❌ |
+| Platform commission model | ✅ Configurable take-rate (`PLATFORM_COMMISSION_PCT`), booking commission deductions & payout tracking |
 
 ---
 
@@ -330,7 +330,7 @@ npx expo start --ios
 
 - **Auth flow:** On login/register the server returns `accessToken` + `refreshToken`. The app stores both in `expo-secure-store`. The Axios client automatically retries with a refreshed token on `401`.
 - **Role routing:** After login, `/(app)/index.tsx` reads the user role and renders the appropriate dashboard (Admin / Provider / Customer).
-- **Provider creation:** Currently only possible via the Admin → "New user" sheet by selecting the Provider role and entering a business name.
+- **Provider creation:** Both vendor self-registration (via `/(auth)/register?role=provider` with instant profile, categories and availability setup) and Admin-created provider accounts are supported.
 - **Database:** Hosted on [Neon](https://neon.tech) (serverless PostgreSQL). Prisma 7 uses the `@prisma/adapter-pg` driver adapter.
 
 ---

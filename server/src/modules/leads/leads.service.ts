@@ -69,8 +69,23 @@ export async function distributeLeadsForService(eventServiceId: string) {
     },
   });
 
-  // 3. Match top providers (up to 10)
-  for (const provider of eligibleProviders) {
+  // 3. Match top providers based on configured MAX_PROVIDERS_PER_LEAD setting
+  let maxProviders = 5;
+  try {
+    const setting = await prisma.platformSetting.findUnique({
+      where: { key: "MAX_PROVIDERS_PER_LEAD" },
+    });
+    if (setting?.value) {
+      const parsed = parseInt(setting.value, 10);
+      if (!isNaN(parsed) && parsed > 0) maxProviders = parsed;
+    }
+  } catch {
+    // fallback to 5
+  }
+
+  const targetedProviders = eligibleProviders.slice(0, maxProviders);
+
+  for (const provider of targetedProviders) {
     // Upsert LeadProvider
     const existingLp = await prisma.leadProvider.findUnique({
       where: {
@@ -468,7 +483,28 @@ export async function acceptLead(leadId: string, userId: string, dto?: AcceptLea
       },
     });
 
-    // 6. Create Booking
+    // 6. Calculate Platform Commission & Create Booking
+    let commissionRate = 10.0;
+    try {
+      const commSetting = await tx.platformSetting.findUnique({
+        where: { key: "PLATFORM_COMMISSION_PCT" },
+      });
+      if (commSetting?.value) {
+        const parsedRate = parseFloat(commSetting.value);
+        if (!isNaN(parsedRate) && parsedRate >= 0) commissionRate = parsedRate;
+      }
+    } catch {
+      // fallback to 10%
+    }
+
+    const agreedPrice = dto?.agreedPrice ?? provider.pricingMin ?? null;
+    let commissionAmount: number | null = null;
+    let payoutAmount: number | null = null;
+    if (agreedPrice !== null) {
+      commissionAmount = Math.round((agreedPrice * commissionRate) / 100);
+      payoutAmount = agreedPrice - commissionAmount;
+    }
+
     const booking = await tx.booking.create({
       data: {
         leadId: lead.id,
@@ -476,7 +512,10 @@ export async function acceptLead(leadId: string, userId: string, dto?: AcceptLea
         providerId: provider.id,
         status: "CONFIRMED",
         paymentStatus: "NOT_REQUIRED",
-        agreedPrice: dto?.agreedPrice ?? provider.pricingMin ?? null,
+        agreedPrice,
+        commissionRate,
+        commissionAmount,
+        payoutAmount,
         notes: dto?.notes,
         confirmedAt: now,
       },

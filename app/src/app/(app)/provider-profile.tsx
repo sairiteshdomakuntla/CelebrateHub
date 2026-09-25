@@ -26,6 +26,7 @@ import {
 } from "@/lib/providers.api";
 import { eventsApi, type ServiceCategory } from "@/lib/events.api";
 import { reviewsApi, type ProviderReviewsResponse } from "@/lib/reviews.api";
+import { LocationPickerModal } from "@/components/map/location-picker-modal";
 
 // ─── Section wrapper ──────────────────────────────────────────────────────────
 
@@ -63,6 +64,14 @@ function BusinessSection({
   const [businessName, setBusinessName] = useState(profile.businessName);
   const [description, setDescription] = useState(profile.description ?? "");
   const [serviceArea, setServiceArea] = useState(profile.serviceArea ?? "");
+  const [serviceRadiusKm, setServiceRadiusKm] = useState(profile.serviceRadiusKm ?? 25);
+  const [latitude, setLatitude] = useState<number | null>(
+    profile.latitude ? parseFloat(profile.latitude) : null
+  );
+  const [longitude, setLongitude] = useState<number | null>(
+    profile.longitude ? parseFloat(profile.longitude) : null
+  );
+  const [showLocationPicker, setShowLocationPicker] = useState(false);
   const [pricingMin, setPricingMin] = useState(profile.pricingMin?.toString() ?? "");
   const [pricingMax, setPricingMax] = useState(profile.pricingMax?.toString() ?? "");
   const [isAvailable, setIsAvailable] = useState(profile.isAvailable);
@@ -79,13 +88,16 @@ function BusinessSection({
         businessName: businessName.trim(),
         description: description.trim() || null,
         serviceArea: serviceArea.trim() || null,
+        serviceRadiusKm,
+        latitude,
+        longitude,
         pricingMin: pricingMin ? parseInt(pricingMin) : null,
         pricingMax: pricingMax ? parseInt(pricingMax) : null,
         isAvailable,
       };
       const updated = await providersApi.update(payload);
       onSaved(updated);
-      Alert.alert("Saved", "Business profile updated.");
+      Alert.alert("Saved", "Business profile and service radius updated.");
     } catch (err: any) {
       Alert.alert("Error", err?.response?.data?.message ?? "Could not save changes.");
     } finally {
@@ -126,12 +138,41 @@ function BusinessSection({
         onChangeText={setDescription}
         multiline
       />
-      <FormInput
-        label="Service area"
-        placeholder="e.g. Hyderabad, Telangana"
-        value={serviceArea}
-        onChangeText={setServiceArea}
-      />
+
+      {/* Interactive Service Area & Radius Selector Card */}
+      <View className="mb-4 bg-[#F7F7F5] rounded-xl p-3.5 border border-[#E8E6E1]">
+        <View className="flex-row items-center justify-between mb-1.5">
+          <View className="flex-row items-center gap-1.5">
+            <AppIcon name="map-pin" size={14} color="#8B5CF6" />
+            <Text className="text-[#1C1C1E] text-[13px] font-semibold">Service Area & Radius</Text>
+          </View>
+          <TouchableOpacity
+            onPress={() => setShowLocationPicker(true)}
+            className="px-2.5 py-1.5 rounded-lg bg-[#1C1C1E] flex-row items-center gap-1 active:opacity-80"
+          >
+            <AppIcon name="crosshair" size={11} color="#FFFFFF" />
+            <Text className="text-white text-[11px] font-bold">Pick on Map</Text>
+          </TouchableOpacity>
+        </View>
+        <Text className="text-[#6E6E73] text-[12px] leading-4">
+          {serviceArea
+            ? `${serviceArea} • ${serviceRadiusKm} km coverage perimeter`
+            : "Set your central hub and coverage perimeter to match with nearby event leads."}
+        </Text>
+        {latitude && longitude && (
+          <View className="mt-2 flex-row items-center gap-2">
+            <View className="bg-[#8B5CF6]/15 px-2 py-0.5 rounded-md border border-[#8B5CF6]/30">
+              <Text className="text-[#7C3AED] text-[10px] font-mono font-bold">
+                GPS: {latitude.toFixed(4)}, {longitude.toFixed(4)}
+              </Text>
+            </View>
+            <View className="bg-[#10B981]/15 px-2 py-0.5 rounded-md border border-[#10B981]/30">
+              <Text className="text-[#059669] text-[10px] font-bold">{serviceRadiusKm} km radius</Text>
+            </View>
+          </View>
+        )}
+      </View>
+
       <View className="flex-row gap-3">
         <View className="flex-1">
           <FormInput
@@ -153,6 +194,23 @@ function BusinessSection({
         </View>
       </View>
       <Button label="Save changes" onPress={handleSave} fullWidth loading={saving} />
+
+      {/* Location Picker Modal */}
+      <LocationPickerModal
+        visible={showLocationPicker}
+        mode="SERVICE_RADIUS"
+        initialAddress={serviceArea}
+        initialLatitude={latitude}
+        initialLongitude={longitude}
+        initialRadiusKm={serviceRadiusKm}
+        onClose={() => setShowLocationPicker(false)}
+        onSelect={(res) => {
+          setServiceArea(res.address);
+          setLatitude(res.latitude);
+          setLongitude(res.longitude);
+          if (res.radiusKm) setServiceRadiusKm(res.radiusKm);
+        }}
+      />
     </Section>
   );
 }

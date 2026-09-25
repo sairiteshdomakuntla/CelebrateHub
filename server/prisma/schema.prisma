@@ -99,6 +99,18 @@ enum SubscriptionInterval {
   YEARLY
 }
 
+enum GiftPriority {
+  HIGH
+  MEDIUM
+  LOW
+}
+
+enum GiftStatus {
+  AVAILABLE
+  CLAIMED
+  COMPLETED
+}
+
 enum InvitationChannel {
   WHATSAPP
   SMS
@@ -177,6 +189,7 @@ model User {
   reviews      Review[]     @relation("ReviewAuthor")
   notifications Notification[]
   sessions     UserSession[]
+  issues       PlatformIssue[]
 
   @@index([role])
   @@index([status])
@@ -201,9 +214,10 @@ model Provider {
   currency   String @default("INR")
 
   // Location
-  serviceArea String?
-  latitude    Decimal? @db.Decimal(10, 7)
-  longitude   Decimal? @db.Decimal(10, 7)
+  serviceArea     String?
+  serviceRadiusKm Int?     @default(25)
+  latitude        Decimal? @db.Decimal(10, 7)
+  longitude       Decimal? @db.Decimal(10, 7)
 
   // Verification
   verificationStatus VerificationStatus @default(PENDING)
@@ -354,6 +368,8 @@ model Event {
 
   services EventService[]
   guests   Guest[]
+  giftItems GiftItem[]
+  giftContributions GiftContribution[]
 
   @@index([customerId])
   @@index([eventDate])
@@ -457,8 +473,11 @@ model Booking {
   status        BookingStatus @default(PENDING)
   paymentStatus PaymentStatus @default(NOT_REQUIRED)
 
-  agreedPrice Int?
-  currency    String @default("INR")
+  agreedPrice       Int?
+  currency          String        @default("INR")
+  commissionRate    Decimal?      @default(10.0) @db.Decimal(5, 2)
+  commissionAmount  Int?
+  payoutAmount      Int?
 
   notes String?
 
@@ -498,6 +517,12 @@ model Review {
   rating  Int
   comment String?
 
+  status          String    @default("APPROVED")
+  isFlagged       Boolean   @default(false)
+  flagReason      String?
+  moderatedAt     DateTime?
+  moderationNotes String?
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -507,7 +532,37 @@ model Review {
 
   @@index([providerId])
   @@index([authorId])
+  @@index([status])
+  @@index([isFlagged])
   @@map("reviews")
+}
+
+// ============================================================
+// PLATFORM ISSUES & SUPPORT DISPUTES
+// ============================================================
+
+model PlatformIssue {
+  id              String    @id @default(uuid())
+  userId          String
+
+  title           String
+  description     String
+  category        String    @default("BOOKING_DISPUTE")
+  priority        String    @default("MEDIUM")
+  status          String    @default("OPEN")
+
+  resolutionNotes String?
+  resolvedAt      DateTime?
+
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([status])
+  @@index([priority])
+  @@map("platform_issues")
 }
 
 // ============================================================
@@ -597,6 +652,67 @@ model Guest {
 }
 
 // ============================================================
+// GIFT CIRCLE (REGISTRY, FUNDS & CONTRIBUTIONS)
+// ============================================================
+
+model GiftItem {
+  id              String        @id @default(uuid())
+  eventId         String
+
+  title           String
+  description     String?
+  category        String        @default("GENERAL")
+  imageUrl        String?
+  externalUrl     String?
+
+  targetAmount    Int?
+  collectedAmount Int           @default(0)
+
+  isGroupGift     Boolean       @default(false)
+  priority        GiftPriority  @default(MEDIUM)
+  status          GiftStatus    @default(AVAILABLE)
+
+  claimedBy       String?
+  claimedAt       DateTime?
+
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  event           Event         @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  contributions   GiftContribution[]
+
+  @@index([eventId])
+  @@index([status])
+  @@map("gift_items")
+}
+
+model GiftContribution {
+  id               String        @id @default(uuid())
+  eventId          String
+  giftItemId       String?
+
+  contributorName  String
+  contributorEmail String?
+  contributorPhone String?
+
+  amount           Int
+  message          String?
+  paymentStatus    PaymentStatus @default(PAID)
+  isAnonymous      Boolean       @default(false)
+  thanked          Boolean       @default(false)
+
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+
+  event            Event         @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  giftItem         GiftItem?     @relation(fields: [giftItemId], references: [id], onDelete: SetNull)
+
+  @@index([eventId])
+  @@index([giftItemId])
+  @@map("gift_contributions")
+}
+
+// ============================================================
 // NOTIFICATIONS
 // ============================================================
 
@@ -670,3 +786,20 @@ model UserSession {
   @@index([expiresAt])
   @@map("user_sessions")
 }
+
+// ============================================================
+// PLATFORM SETTINGS & CONFIGURATION
+// ============================================================
+
+model PlatformSetting {
+  id          String   @id @default(uuid())
+  key         String   @unique
+  value       String
+  label       String
+  description String?
+  category    String   @default("SYSTEM")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("platform_settings")
+}

@@ -34,6 +34,9 @@ import {
   generateInvitationMessage,
 } from "@/lib/guests.api";
 import { reviewsApi } from "@/lib/reviews.api";
+import { giftsApi } from "@/lib/gifts.api";
+import { VenueMapCard } from "@/components/map/venue-map-card";
+import { LocationPickerModal } from "@/components/map/location-picker-modal";
 
 function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString("en-IN", {
@@ -85,6 +88,7 @@ export default function EventDetailScreen() {
   const [showServicePicker, setShowServicePicker] = useState(false);
   const [addingService, setAddingService] = useState(false);
   const [updatingStatus, setUpdatingStatus] = useState(false);
+  const [showVenuePicker, setShowVenuePicker] = useState(false);
 
   // Guests & Invitations state
   const [guests, setGuests] = useState<Guest[]>([]);
@@ -95,6 +99,9 @@ export default function EventDetailScreen() {
   const [newGuestPhone, setNewGuestPhone] = useState("");
   const [newGuestEmail, setNewGuestEmail] = useState("");
   const [savingGuest, setSavingGuest] = useState(false);
+
+  // Gift Circle state
+  const [giftStats, setGiftStats] = useState<{ totalItems: number; claimedItems: number; totalCollectedAmount: number } | null>(null);
 
   // Reviews state
   const [showReviewModal, setShowReviewModal] = useState(false);
@@ -125,6 +132,7 @@ export default function EventDetailScreen() {
       setCategories(cats);
       setGuests(guestRes.guests);
       setGuestStats(guestRes.stats);
+      giftsApi.getCircle(id).then((g) => setGiftStats(g.stats)).catch(() => null);
       opacity.value = withTiming(1, { duration: 300 });
     } catch {
       Alert.alert("Error", "Could not load event.");
@@ -524,6 +532,39 @@ export default function EventDetailScreen() {
             )}
           </View>
 
+          {/* Celebration Venue & Navigation Card */}
+          <VenueMapCard
+            location={event.location}
+            latitude={event.latitude}
+            longitude={event.longitude}
+            eventTitle={event.title || event.type}
+            canEdit={event.status === "DRAFT"}
+            onEditPress={() => setShowVenuePicker(true)}
+          />
+
+          {/* Venue Pin / Location Picker Modal */}
+          <LocationPickerModal
+            visible={showVenuePicker}
+            mode="VENUE_PIN"
+            initialAddress={event.location}
+            initialLatitude={event.latitude ? parseFloat(String(event.latitude)) : null}
+            initialLongitude={event.longitude ? parseFloat(String(event.longitude)) : null}
+            onClose={() => setShowVenuePicker(false)}
+            onSelect={async (res) => {
+              try {
+                const updated = await eventsApi.update(event.id, {
+                  location: res.address,
+                  latitude: res.latitude,
+                  longitude: res.longitude,
+                });
+                setEvent(updated);
+                Alert.alert("Venue Updated", "Celebration venue and map pin have been updated.");
+              } catch (err: any) {
+                Alert.alert("Error", err?.response?.data?.message || "Could not update location");
+              }
+            }}
+          />
+
           {/* Services */}
           <View className="bg-white border border-[#E8E6E1] rounded-2xl p-4 mb-4">
             <View className="flex-row items-center justify-between mb-3">
@@ -855,6 +896,50 @@ export default function EventDetailScreen() {
               <AppIcon name="plus" size={15} color="#FFFFFF" />
               <Text className="text-white text-[13px] font-bold">Add Guest</Text>
             </TouchableOpacity>
+          </View>
+
+          {/* Gift Circle & Registry Section */}
+          <View className="bg-white border border-[#E8E6E1] rounded-2xl p-5 mb-4 shadow-xs">
+            <View className="flex-row items-center justify-between mb-3">
+              <View className="flex-row items-center gap-2.5">
+                <View className="w-10 h-10 rounded-xl bg-[#EEF2FF] border border-[#C7D2FE] items-center justify-center">
+                  <AppIcon name="gift" size={18} color="#4F46E5" />
+                </View>
+                <View>
+                  <Text className="text-[#1C1C1E] text-[16px] font-bold">Gift Circle & Registry</Text>
+                  <Text className="text-[#8E8E93] text-[12px]">
+                    {giftStats ? `${giftStats.totalItems} items • ₹${giftStats.totalCollectedAmount.toLocaleString("en-IN")} raised` : "Wishlist, cash funds & guest blessings"}
+                  </Text>
+                </View>
+              </View>
+              <TouchableOpacity
+                onPress={() => router.push({ pathname: "/events/gift-circle", params: { id: event.id } } as any)}
+                className="flex-row items-center gap-1 px-3 py-1.5 rounded-full bg-[#4F46E5]"
+                activeOpacity={0.8}
+              >
+                <Text className="text-white text-[12px] font-bold">Open Registry</Text>
+                <AppIcon name="chevron-right" size={13} color="#FFFFFF" />
+              </TouchableOpacity>
+            </View>
+
+            <Text className="text-[#6E6E73] text-[13px] leading-[18px]">
+              Curate your dream celebration wishlist, set up group cash funds, and invite guests to pledge gifts or share warm blessings!
+            </Text>
+
+            <View className="flex-row items-center gap-2 mt-3 pt-3 border-t border-[#F0EEEA]">
+              <View className="flex-1 bg-[#FAF9F5] border border-[#EEEEEC] rounded-xl p-2.5 items-center">
+                <Text className="text-[#8E8E93] text-[10px] font-bold uppercase">Items</Text>
+                <Text className="text-[#1C1C1E] text-[15px] font-extrabold mt-0.5">{giftStats?.totalItems ?? 0}</Text>
+              </View>
+              <View className="flex-1 bg-[#ECFDF5] border border-[#A7F3D0] rounded-xl p-2.5 items-center">
+                <Text className="text-[#059669] text-[10px] font-bold uppercase">Claimed</Text>
+                <Text className="text-[#065F46] text-[15px] font-extrabold mt-0.5">{giftStats?.claimedItems ?? 0}</Text>
+              </View>
+              <View className="flex-1 bg-[#EEF2FF] border border-[#C7D2FE] rounded-xl p-2.5 items-center">
+                <Text className="text-[#4F46E5] text-[10px] font-bold uppercase">Raised</Text>
+                <Text className="text-[#3730A3] text-[15px] font-extrabold mt-0.5">₹{(giftStats?.totalCollectedAmount ?? 0).toLocaleString("en-IN")}</Text>
+              </View>
+            </View>
           </View>
         </Animated.ScrollView>
 

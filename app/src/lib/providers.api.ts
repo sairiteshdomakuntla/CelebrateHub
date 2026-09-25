@@ -29,6 +29,7 @@ export interface ProviderProfile {
   pricingMax: number | null;
   currency: string;
   serviceArea: string | null;
+  serviceRadiusKm: number | null;
   latitude: string | null;
   longitude: string | null;
   verificationStatus: VerificationStatus;
@@ -50,6 +51,7 @@ export interface UpdateProviderPayload {
   pricingMin?: number | null;
   pricingMax?: number | null;
   serviceArea?: string | null;
+  serviceRadiusKm?: number | null;
   latitude?: number | null;
   longitude?: number | null;
   isAvailable?: boolean;

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -6,65 +6,161 @@ import {
   TouchableOpacity,
   KeyboardAvoidingView,
   Alert,
+  ActivityIndicator,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useRouter } from "expo-router";
+import { useRouter, useLocalSearchParams } from "expo-router";
 import { AppIcon } from "@/components/ui/pro-icon";
 import { useAuthStore } from "@/store/auth.store";
 import { FormInput } from "@/components/ui/FormInput";
-import { Button } from "@/components/ui/Button";
 import { BrandMark } from "@/components/ui/pro-icon";
+import { eventsApi, type ServiceCategory } from "@/lib/events.api";
 import axios from "axios";
+
+const DEFAULT_CATEGORIES = [
+  { id: "photography", name: "Photography & Video", icon: "camera" },
+  { id: "catering", name: "Catering & Food", icon: "coffee" },
+  { id: "decor", name: "Decor & Flowers", icon: "sparkles" },
+  { id: "dj-music", name: "DJ & Sound", icon: "music" },
+  { id: "venue", name: "Venues & Banquets", icon: "home" },
+  { id: "makeup", name: "Makeup & Styling", icon: "heart" },
+  { id: "cake-desserts", name: "Cake & Desserts", icon: "gift" },
+  { id: "planner", name: "Event Planner", icon: "briefcase" },
+];
 
 export default function RegisterScreen() {
   const router = useRouter();
-  const { register, isLoading } = useAuthStore();
+  const params = useLocalSearchParams<{ role?: string }>();
+  const { register, registerProvider, isLoading } = useAuthStore();
 
+  const [selectedRole, setSelectedRole] = useState<"CUSTOMER" | "PROVIDER">(
+    params.role === "provider" ? "PROVIDER" : "CUSTOMER"
+  );
+
+  // Common user fields
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+
+  // Provider-specific onboarding fields
+  const [businessName, setBusinessName] = useState("");
+  const [serviceArea, setServiceArea] = useState("");
+  const [pricingMin, setPricingMin] = useState("");
+  const [description, setDescription] = useState("");
+  const [selectedCategoryIds, setSelectedCategoryIds] = useState<string[]>([]);
+  const [categories, setCategories] = useState<{ id: string; name: string; icon: string | null }[]>(
+    DEFAULT_CATEGORIES
+  );
+
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  // Load live service categories from API
+  useEffect(() => {
+    eventsApi
+      .listCategories()
+      .then((cats) => {
+        if (cats && cats.length > 0) {
+          setCategories(cats);
+        }
+      })
+      .catch(() => {
+        // Fall back to default categories
+      });
+  }, []);
+
+  function toggleCategory(catId: string) {
+    setSelectedCategoryIds((prev) =>
+      prev.includes(catId) ? prev.filter((id) => id !== catId) : [...prev, catId]
+    );
+    setErrors((e) => ({ ...e, categories: "" }));
+  }
 
   function validate(): boolean {
     const newErrors: Record<string, string> = {};
-    if (!name.trim() || name.trim().length < 2)
+
+    if (!name.trim() || name.trim().length < 2) {
       newErrors.name = "Full name must be at least 2 characters";
-    if (!email.trim() && !phone.trim())
+    }
+
+    if (!email.trim() && !phone.trim()) {
       newErrors.email = "Provide an email or phone number";
-    if (email && !/\S+@\S+\.\S+/.test(email))
+    }
+
+    if (email && !/\S+@\S+\.\S+/.test(email)) {
       newErrors.email = "Enter a valid email address";
-    if (!password)
+    }
+
+    if (!password) {
       newErrors.password = "Password is required";
-    else if (password.length < 8)
+    } else if (password.length < 8) {
       newErrors.password = "Password must be at least 8 characters";
-    else if (!/[A-Z]/.test(password))
+    } else if (!/[A-Z]/.test(password)) {
       newErrors.password = "Include at least one uppercase letter";
-    else if (!/[0-9]/.test(password))
+    } else if (!/[0-9]/.test(password)) {
       newErrors.password = "Include at least one number";
-    if (password && confirmPassword !== password)
+    }
+
+    if (password && confirmPassword !== password) {
       newErrors.confirmPassword = "Passwords do not match";
+    }
+
+    if (selectedRole === "PROVIDER") {
+      if (!phone.trim()) {
+        newErrors.phone = "Phone number is required for vendor communication";
+      }
+      if (!businessName.trim() || businessName.trim().length < 2) {
+        newErrors.businessName = "Business name must be at least 2 characters";
+      }
+      if (!serviceArea.trim() || serviceArea.trim().length < 2) {
+        newErrors.serviceArea = "Specify your service coverage city or area";
+      }
+      if (selectedCategoryIds.length === 0) {
+        newErrors.categories = "Select at least one primary service category";
+      }
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   }
 
   async function handleRegister() {
     if (!validate()) return;
+
     try {
-      await register({
-        name: name.trim(),
-        email: email.trim().toLowerCase() || undefined,
-        phone: phone.trim() || undefined,
-        password,
-      });
+      if (selectedRole === "PROVIDER") {
+        const parsedPrice = pricingMin ? parseInt(pricingMin.replace(/[^0-9]/g, ""), 10) : undefined;
+        await registerProvider({
+          name: name.trim(),
+          email: email.trim().toLowerCase() || undefined,
+          phone: phone.trim() || undefined,
+          password,
+          businessName: businessName.trim(),
+          serviceArea: serviceArea.trim(),
+          pricingMin: parsedPrice,
+          description: description.trim() || undefined,
+          categoryIds: selectedCategoryIds.length > 0 ? selectedCategoryIds : undefined,
+        });
+      } else {
+        await register({
+          name: name.trim(),
+          email: email.trim().toLowerCase() || undefined,
+          phone: phone.trim() || undefined,
+          password,
+        });
+      }
+
       router.replace("/(app)" as any);
     } catch (err) {
       let message = "Registration failed. Please try again.";
-      if (axios.isAxiosError(err)) message = err.response?.data?.message ?? message;
-      else if (err instanceof Error) message = err.message;
-      Alert.alert("Registration failed", message);
+      if (axios.isAxiosError(err)) {
+        message = err.response?.data?.message ?? message;
+      } else if (err instanceof Error) {
+        message = err.message;
+      }
+      Alert.alert("Registration Failed", message);
     }
   }
 
@@ -72,45 +168,116 @@ export default function RegisterScreen() {
     <View className="flex-1 bg-[#F7F7F5]">
       <StatusBar style="dark" />
       <SafeAreaView className="flex-1">
-        <KeyboardAvoidingView
-          behavior="padding"
-          className="flex-1"
-        >
+        <KeyboardAvoidingView behavior="padding" className="flex-1">
           <ScrollView
-            contentContainerStyle={{ paddingTop: 12, paddingBottom: 32, paddingHorizontal: 20 }}
+            contentContainerStyle={{ paddingTop: 12, paddingBottom: 48, paddingHorizontal: 20 }}
             keyboardShouldPersistTaps="always"
             showsVerticalScrollIndicator={false}
           >
+            {/* Back Button */}
             <TouchableOpacity
               onPress={() => router.back()}
-              className="mb-6 self-start flex-row items-center gap-1 py-2"
+              className="mb-4 self-start flex-row items-center gap-1 py-2"
               hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
             >
               <AppIcon name="chevron-left" size={17} color="#1C1C1E" />
               <Text className="text-[#1C1C1E] text-[15px] font-medium">Back</Text>
             </TouchableOpacity>
 
-            <View className="mb-6">
-              <BrandMark size={48} />
-              <Text className="text-[#1C1C1E] text-[28px] font-bold tracking-tight mt-4">
-                Create your account
+            {/* Header */}
+            <View className="mb-5">
+              <BrandMark size={44} />
+              <Text className="text-[#1C1C1E] text-[26px] font-extrabold tracking-tight mt-3">
+                {selectedRole === "PROVIDER" ? "Partner with CelebrateHub" : "Create your account"}
               </Text>
-              <Text className="text-[#6E6E73] text-[15px] mt-1.5 leading-[22px]">
-                Join CelebrateHub to discover vendors and plan your celebrations.
-              </Text>
-            </View>
-
-            <View className="bg-white border border-[#E8E6E1] rounded-2xl p-4 mb-4 flex-row items-start gap-3">
-              <AppIcon name="info" size={17} color="#6E6E73" />
-              <Text className="text-[#3A3A3C] text-[13px] leading-[19px] flex-1">
-                Public registration is for customers and event hosts. Providers and admins are onboarded directly by our team.
+              <Text className="text-[#6E6E73] text-[14px] mt-1 leading-[20px]">
+                {selectedRole === "PROVIDER"
+                  ? "Grow your celebration business, receive real-time leads, and connect with event hosts."
+                  : "Join CelebrateHub to discover vendors, plan events, and manage gift circles."}
               </Text>
             </View>
 
-            <View className="bg-white rounded-2xl border border-[#E8E6E1] p-5 mb-4">
+            {/* Role Switcher Pill Bar */}
+            <View className="flex-row p-1 bg-[#EBE8E3] rounded-2xl mb-5">
+              <TouchableOpacity
+                onPress={() => {
+                  setSelectedRole("CUSTOMER");
+                  setErrors({});
+                }}
+                className={`flex-1 flex-row items-center justify-center gap-2 py-2.5 rounded-xl ${
+                  selectedRole === "CUSTOMER"
+                    ? "bg-white shadow-xs"
+                    : "bg-transparent"
+                }`}
+                activeOpacity={0.8}
+              >
+                <AppIcon
+                  name="user"
+                  size={15}
+                  color={selectedRole === "CUSTOMER" ? "#1C1C1E" : "#6E6E73"}
+                />
+                <Text
+                  className={`text-[13px] font-bold ${
+                    selectedRole === "CUSTOMER" ? "text-[#1C1C1E]" : "text-[#6E6E73]"
+                  }`}
+                >
+                  Event Host
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                onPress={() => {
+                  setSelectedRole("PROVIDER");
+                  setErrors({});
+                }}
+                className={`flex-1 flex-row items-center justify-center gap-2 py-2.5 rounded-xl ${
+                  selectedRole === "PROVIDER"
+                    ? "bg-[#1C1C1E] shadow-xs"
+                    : "bg-transparent"
+                }`}
+                activeOpacity={0.8}
+              >
+                <AppIcon
+                  name="briefcase"
+                  size={15}
+                  color={selectedRole === "PROVIDER" ? "#FFFFFF" : "#6E6E73"}
+                />
+                <Text
+                  className={`text-[13px] font-bold ${
+                    selectedRole === "PROVIDER" ? "text-white" : "text-[#6E6E73]"
+                  }`}
+                >
+                  Service Vendor
+                </Text>
+              </TouchableOpacity>
+            </View>
+
+            {/* Provider Welcome Pill */}
+            {selectedRole === "PROVIDER" && (
+              <View className="bg-[#FFFBEB] border border-[#FDE68A] rounded-2xl p-4 mb-4 flex-row items-start gap-3">
+                <View className="w-8 h-8 rounded-full bg-[#FEF3C7] items-center justify-center mt-0.5">
+                  <AppIcon name="zap" size={16} color="#B45309" />
+                </View>
+                <View className="flex-1">
+                  <Text className="text-[#92400E] text-[13px] font-bold">
+                    Vendor Onboarding Flow
+                  </Text>
+                  <Text className="text-[#B45309] text-[12px] leading-[17px] mt-0.5">
+                    Your profile will be created with instant lead matching. You can update pricing, portfolio images, and subscriptions anytime.
+                  </Text>
+                </View>
+              </View>
+            )}
+
+            {/* Form Section 1: Contact & Login Credentials */}
+            <View className="bg-white rounded-2xl border border-[#E8E6E1] p-5 mb-4 shadow-xs">
+              <Text className="text-[#1C1C1E] text-[15px] font-bold mb-3">
+                {selectedRole === "PROVIDER" ? "1. Contact & Account Info" : "Account Details"}
+              </Text>
+
               <FormInput
-                label="Full name"
-                placeholder="Priya Sharma"
+                label="Full name *"
+                placeholder={selectedRole === "PROVIDER" ? "e.g. Rahul Kapoor (Owner)" : "e.g. Priya Sharma"}
                 value={name}
                 onChangeText={(t) => { setName(t); setErrors((e) => ({ ...e, name: "" })); }}
                 error={errors.name}
@@ -119,25 +286,27 @@ export default function RegisterScreen() {
 
               <FormInput
                 label="Email address"
-                placeholder="priya@example.com"
+                placeholder="name@example.com"
                 keyboardType="email-address"
                 value={email}
                 onChangeText={(t) => { setEmail(t); setErrors((e) => ({ ...e, email: "" })); }}
                 error={errors.email}
-                hint="Event updates and booking confirmations go here"
+                hint={selectedRole === "PROVIDER" ? "Leads & inquiries will be delivered here" : "Event updates & booking notices"}
                 autoComplete="email"
               />
 
               <FormInput
-                label="Phone number (optional)"
+                label={`Phone number ${selectedRole === "PROVIDER" ? "*" : "(optional)"}`}
                 placeholder="+91 98765 43210"
                 keyboardType="phone-pad"
                 value={phone}
-                onChangeText={setPhone}
+                onChangeText={(t) => { setPhone(t); setErrors((e) => ({ ...e, phone: "" })); }}
+                error={errors.phone}
+                hint={selectedRole === "PROVIDER" ? "Required for instant customer calls & WhatsApp leads" : undefined}
               />
 
               <FormInput
-                label="Password"
+                label="Password *"
                 placeholder="Min. 8 characters"
                 isPassword
                 value={password}
@@ -145,7 +314,7 @@ export default function RegisterScreen() {
                 error={errors.password}
               />
 
-              <View className="flex-row gap-2 mb-1 -mt-1">
+              <View className="flex-row gap-2 mb-3 -mt-1">
                 {[
                   { ok: password.length >= 8, label: "8+ chars" },
                   { ok: /[A-Z]/.test(password), label: "Uppercase" },
@@ -158,43 +327,148 @@ export default function RegisterScreen() {
                     }`}
                   >
                     <Text className={`text-[11px] font-medium ${r.ok ? "text-[#1E7A3C]" : "text-[#A7A7AB]"}`}>
-                      {r.label}
+                      {r.ok ? "✓ " : ""}{r.label}
                     </Text>
                   </View>
                 ))}
               </View>
 
               <FormInput
-                label="Confirm password"
-                placeholder="Repeat your password"
+                label="Confirm password *"
+                placeholder="Re-enter password"
                 isPassword
                 value={confirmPassword}
-                onChangeText={(t) => {
-                  setConfirmPassword(t);
-                  setErrors((e) => ({ ...e, confirmPassword: "" }));
-                }}
+                onChangeText={(t) => { setConfirmPassword(t); setErrors((e) => ({ ...e, confirmPassword: "" })); }}
                 error={errors.confirmPassword}
               />
             </View>
 
-            <Text className="text-[#6E6E73] text-[12px] text-center leading-[18px] mb-5 px-2">
-              By creating an account you agree to our{" "}
-              <Text className="text-[#1C1C1E] font-semibold">Terms of Service</Text> and{" "}
-              <Text className="text-[#1C1C1E] font-semibold">Privacy Policy</Text>.
-            </Text>
+            {/* Form Section 2: Provider Business & Services Details */}
+            {selectedRole === "PROVIDER" && (
+              <View className="bg-white rounded-2xl border border-[#E8E6E1] p-5 mb-4 shadow-xs">
+                <Text className="text-[#1C1C1E] text-[15px] font-bold mb-3">
+                  2. Business & Service Setup
+                </Text>
 
-            <Button
-              label="Create account"
+                <FormInput
+                  label="Business / Brand Name *"
+                  placeholder="e.g. Royal Moments Candid Studios"
+                  value={businessName}
+                  onChangeText={(t) => { setBusinessName(t); setErrors((e) => ({ ...e, businessName: "" })); }}
+                  error={errors.businessName}
+                  hint="How customers and clients will find you on CelebrateHub"
+                />
+
+                {/* Primary Category Selector */}
+                <View className="mb-4">
+                  <Text className="text-[#1C1C1E] text-[13px] font-semibold mb-1">
+                    Select Your Service Categories *
+                  </Text>
+                  <Text className="text-[#6E6E73] text-[12px] mb-2.5">
+                    Choose what services you provide to match relevant client leads.
+                  </Text>
+
+                  <View className="flex-row flex-wrap gap-2">
+                    {categories.map((cat) => {
+                      const isSelected = selectedCategoryIds.includes(cat.id);
+                      return (
+                        <TouchableOpacity
+                          key={cat.id}
+                          onPress={() => toggleCategory(cat.id)}
+                          className={`flex-row items-center gap-1.5 px-3 py-2 rounded-xl border ${
+                            isSelected
+                              ? "bg-[#1C1C1E] border-[#1C1C1E]"
+                              : "bg-[#F7F7F5] border-[#E3E1DC]"
+                          }`}
+                          activeOpacity={0.7}
+                        >
+                          <AppIcon
+                            name={(cat.icon as any) || "briefcase"}
+                            size={12}
+                            color={isSelected ? "#FFFFFF" : "#6E6E73"}
+                          />
+                          <Text
+                            className={`text-[12px] font-semibold ${
+                              isSelected ? "text-white" : "text-[#3A3A3C]"
+                            }`}
+                          >
+                            {cat.name}
+                          </Text>
+                        </TouchableOpacity>
+                      );
+                    })}
+                  </View>
+                  {errors.categories ? (
+                    <Text className="text-[#B3261E] text-[12px] mt-1.5 font-medium">
+                      {errors.categories}
+                    </Text>
+                  ) : null}
+                </View>
+
+                <FormInput
+                  label="City / Coverage Area *"
+                  placeholder="e.g. Mumbai, Navi Mumbai & Pune"
+                  value={serviceArea}
+                  onChangeText={(t) => { setServiceArea(t); setErrors((e) => ({ ...e, serviceArea: "" })); }}
+                  error={errors.serviceArea}
+                  hint="Locations where you are willing to travel and deliver services"
+                />
+
+                <FormInput
+                  label="Starting Package / Base Price (₹ optional)"
+                  placeholder="e.g. 15000"
+                  keyboardType="numeric"
+                  value={pricingMin}
+                  onChangeText={setPricingMin}
+                  hint="Starting rate shown to customers browsing services"
+                />
+
+                <FormInput
+                  label="Business Bio / About"
+                  placeholder="Tell clients about your experience, style, and equipment..."
+                  value={description}
+                  onChangeText={setDescription}
+                  multiline
+                  numberOfLines={3}
+                />
+              </View>
+            )}
+
+            {/* Submit Button */}
+            <TouchableOpacity
               onPress={handleRegister}
-              fullWidth
-              size="lg"
-              loading={isLoading}
-            />
+              disabled={isLoading}
+              className={`py-4 rounded-xl items-center justify-center mb-4 ${
+                selectedRole === "PROVIDER" ? "bg-[#1C1C1E]" : "bg-[#4F46E5]"
+              }`}
+              activeOpacity={0.85}
+            >
+              {isLoading ? (
+                <ActivityIndicator color="#FFFFFF" size="small" />
+              ) : (
+                <Text className="text-white text-[15px] font-bold">
+                  {selectedRole === "PROVIDER"
+                    ? "Complete Onboarding & Join →"
+                    : "Create Host Account"}
+                </Text>
+              )}
+            </TouchableOpacity>
 
-            <View className="flex-row justify-center mt-6">
+            {/* Sign in alternative link */}
+            <View className="flex-row justify-center items-center py-2">
               <Text className="text-[#6E6E73] text-[14px]">Already have an account? </Text>
-              <TouchableOpacity onPress={() => router.push("/(auth)/login?role=customer" as any)}>
-                <Text className="text-[#1C1C1E] text-[14px] font-semibold underline">Sign in</Text>
+              <TouchableOpacity
+                onPress={() =>
+                  router.push(
+                    (selectedRole === "PROVIDER"
+                      ? "/(auth)/login?role=provider"
+                      : "/(auth)/login") as any
+                  )
+                }
+              >
+                <Text className="text-[#1C1C1E] text-[14px] font-bold underline">
+                  Sign in
+                </Text>
               </TouchableOpacity>
             </View>
           </ScrollView>

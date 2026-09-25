@@ -86,8 +86,9 @@ export async function updateMyProfile(userId: string, dto: UpdateProviderDto) {
       ...(dto.description  !== undefined && { description:  dto.description  }),
       ...(dto.pricingMin   !== undefined && { pricingMin:   dto.pricingMin   }),
       ...(dto.pricingMax   !== undefined && { pricingMax:   dto.pricingMax   }),
-      ...(dto.serviceArea  !== undefined && { serviceArea:  dto.serviceArea  }),
-      ...(dto.latitude     !== undefined && {
+      ...(dto.serviceArea     !== undefined && { serviceArea:     dto.serviceArea     }),
+      ...(dto.serviceRadiusKm !== undefined && { serviceRadiusKm: dto.serviceRadiusKm }),
+      ...(dto.latitude        !== undefined && {
         latitude: dto.latitude !== null ? String(dto.latitude) : null,
       }),
       ...(dto.longitude    !== undefined && {

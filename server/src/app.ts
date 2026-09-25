@@ -12,6 +12,8 @@ import leadsRoutes from "./modules/leads/leads.routes.js";
 import subscriptionsRoutes from "./modules/subscriptions/subscriptions.routes.js";
 import guestsRoutes from "./modules/guests/guests.routes.js";
 import reviewsRoutes from "./modules/reviews/reviews.routes.js";
+import notificationsRoutes from "./modules/notifications/notifications.routes.js";
+import giftsRoutes from "./modules/gifts/gifts.routes.js";
 
 const app = express();
 
@@ -35,6 +37,8 @@ app.use("/api/leads", leadsRoutes);
 app.use("/api/subscriptions", subscriptionsRoutes);
 app.use("/api/guests", guestsRoutes);
 app.use("/api/reviews", reviewsRoutes);
+app.use("/api/notifications", notificationsRoutes);
+app.use("/api/gifts", giftsRoutes);
 
 // ─── 404 ────────────────────────────────────────────────────────────────────
 

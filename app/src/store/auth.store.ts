@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { authApi, type AuthUser, type LoginPayload, type RegisterPayload } from "../lib/auth.api";
+import { authApi, type AuthUser, type LoginPayload, type RegisterPayload, type RegisterProviderPayload } from "../lib/auth.api";
 import {
   storeTokens,
   clearTokens,
@@ -20,6 +20,7 @@ interface AuthState {
   initialize: () => Promise<void>;
   login: (payload: LoginPayload) => Promise<void>;
   register: (payload: RegisterPayload) => Promise<void>;
+  registerProvider: (payload: RegisterProviderPayload) => Promise<void>;
   logout: () => Promise<void>;
   setUser: (user: AuthUser | null) => void;
 }
@@ -71,6 +72,24 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     set({ isLoading: true });
     try {
       const result = await authApi.register(payload);
+      await storeTokens(result.accessToken, result.refreshToken);
+      await storeUserProfile(result.user);
+      set({
+        user: result.user,
+        accessToken: result.accessToken,
+        refreshToken: result.refreshToken,
+        isLoading: false,
+      });
+    } catch (err) {
+      set({ isLoading: false });
+      throw err;
+    }
+  },
+
+  registerProvider: async (payload) => {
+    set({ isLoading: true });
+    try {
+      const result = await authApi.registerProvider(payload);
       await storeTokens(result.accessToken, result.refreshToken);
       await storeUserProfile(result.user);
       set({

@@ -47,7 +47,24 @@ export const CreateUserSchema = z.object({
   { message: "Business name is required for providers", path: ["businessName"] }
 );
 
+export const RegisterProviderSchema = z.object({
+  name: z.string().min(2, "Name must be at least 2 characters").max(100),
+  email: z.string().email("Invalid email address").optional(),
+  phone: z.string().regex(/^\+?[1-9]\d{6,14}$/, "Invalid phone number").optional(),
+  password: passwordSchema,
+  businessName: z.string().min(2, "Business name must be at least 2 characters").max(200),
+  description: z.string().max(1000).optional(),
+  serviceArea: z.string().min(2, "Service coverage area is required").max(100),
+  pricingMin: z.number().int().nonnegative().optional(),
+  pricingMax: z.number().int().nonnegative().optional(),
+  categoryIds: z.array(z.string()).optional(),
+}).refine((data) => data.email || data.phone, {
+  message: "Either email or phone is required",
+  path: ["email"],
+});
+
 export type RegisterDto = z.infer<typeof RegisterSchema>;
+export type RegisterProviderDto = z.infer<typeof RegisterProviderSchema>;
 export type LoginDto = z.infer<typeof LoginSchema>;
 export type RefreshTokenDto = z.infer<typeof RefreshTokenSchema>;
 export type CreateUserDto = z.infer<typeof CreateUserSchema>;

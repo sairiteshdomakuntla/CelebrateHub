@@ -26,6 +26,7 @@ import {
   type ServiceCategory,
   EVENT_TYPE_META,
 } from "@/lib/events.api";
+import { LocationPickerModal } from "@/components/map/location-picker-modal";
 
 // ─── Step definitions ─────────────────────────────────────────────────────────
 
@@ -221,6 +222,8 @@ interface Details {
   eventDate: Date | null;
   startTime: Date | null;
   location: string;
+  latitude: number | null;
+  longitude: number | null;
   guestCount: string;
   budgetMin: string;
   budgetMax: string;
@@ -242,6 +245,8 @@ function DetailsStep({
 }) {
   const tomorrow = new Date();
   tomorrow.setDate(tomorrow.getDate() + 1);
+
+  const [showLocationPicker, setShowLocationPicker] = useState(false);
 
   return (
     <KeyboardAvoidingView enabled={Platform.OS === "ios"} behavior="padding">
@@ -272,12 +277,52 @@ function DetailsStep({
         mode="time"
       />
 
-      <FormInput
-        label="Location / Venue *"
-        placeholder="e.g. Taj Krishna, Hyderabad"
-        value={details.location}
-        onChangeText={(v) => onChange("location", v)}
-        error={errors.location}
+      {/* Location Input with Map Pin Drop CTA */}
+      <View className="mb-4">
+        <View className="flex-row items-center justify-between mb-1.5">
+          <Text className="text-[#1C1C1E] text-[13px] font-semibold">Location / Venue *</Text>
+          <TouchableOpacity
+            onPress={() => setShowLocationPicker(true)}
+            className="flex-row items-center gap-1 px-2.5 py-1 rounded-lg bg-[#8B5CF6]/15 border border-[#8B5CF6]/30"
+          >
+            <AppIcon name="map-pin" size={12} color="#7C3AED" />
+            <Text className="text-[#7C3AED] text-[11px] font-bold">Pin on Map</Text>
+          </TouchableOpacity>
+        </View>
+        <TextInput
+          value={details.location}
+          onChangeText={(v) => onChange("location", v)}
+          placeholder="e.g. Palace Grounds, Bellary Rd, Bengaluru"
+          placeholderTextColor="#A7A7AB"
+          className={`bg-white border rounded-xl px-4 py-3 text-[15px] text-[#1C1C1E] ${
+            errors.location ? "border-[#FF3B30]" : "border-[#E8E6E1]"
+          }`}
+        />
+        {errors.location && (
+          <Text className="text-[#FF3B30] text-[12px] mt-1">{errors.location}</Text>
+        )}
+        {details.latitude && details.longitude && (
+          <View className="mt-1.5 flex-row items-center gap-1.5">
+            <AppIcon name="compass" size={11} color="#059669" />
+            <Text className="text-[#059669] text-[11px] font-mono font-medium">
+              Coordinates pinned: {details.latitude.toFixed(4)}, {details.longitude.toFixed(4)}
+            </Text>
+          </View>
+        )}
+      </View>
+
+      <LocationPickerModal
+        visible={showLocationPicker}
+        mode="VENUE_PIN"
+        initialAddress={details.location}
+        initialLatitude={details.latitude}
+        initialLongitude={details.longitude}
+        onClose={() => setShowLocationPicker(false)}
+        onSelect={(res) => {
+          onChange("location", res.address);
+          onChange("latitude" as any, String(res.latitude) as any);
+          onChange("longitude" as any, String(res.longitude) as any);
+        }}
       />
       <View className="flex-row gap-3">
         <View className="flex-1">
@@ -466,6 +511,8 @@ export default function CreateEventScreen() {
     eventDate: null,
     startTime: null,
     location: "",
+    latitude: null,
+    longitude: null,
     guestCount: "",
     budgetMin: "",
     budgetMax: "",
@@ -545,6 +592,8 @@ export default function CreateEventScreen() {
           ? details.startTime.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })
           : undefined,
         location: details.location.trim(),
+        ...(details.latitude ? { latitude: details.latitude } : {}),
+        ...(details.longitude ? { longitude: details.longitude } : {}),
         guestCount: details.guestCount ? parseInt(details.guestCount) : undefined,
         budgetMin: details.budgetMin ? parseInt(details.budgetMin) : undefined,
         budgetMax: details.budgetMax ? parseInt(details.budgetMax) : undefined,

@@ -76,6 +76,8 @@ export interface CreateEventPayload {
   startTime?: string;       // "HH:MM"
   endTime?: string;
   location: string;
+  latitude?: number;
+  longitude?: number;
   guestCount?: number;
   budgetMin?: number;
   budgetMax?: number;

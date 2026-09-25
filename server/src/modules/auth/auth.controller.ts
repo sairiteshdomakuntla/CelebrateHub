@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { ZodError } from "zod";
 import {
   RegisterSchema,
+  RegisterProviderSchema,
   LoginSchema,
   RefreshTokenSchema,
   CreateUserSchema,
@@ -20,6 +21,17 @@ export async function register(req: Request, res: Response): Promise<void> {
   try {
     const dto = RegisterSchema.parse(req.body);
     const result = await authService.register(dto, getMeta(req));
+    res.status(201).json({ success: true, data: result });
+  } catch (err) {
+    handleError(err, res);
+  }
+}
+
+// POST /api/auth/register-provider
+export async function registerProvider(req: Request, res: Response): Promise<void> {
+  try {
+    const dto = RegisterProviderSchema.parse(req.body);
+    const result = await authService.registerProvider(dto, getMeta(req));
     res.status(201).json({ success: true, data: result });
   } catch (err) {
     handleError(err, res);

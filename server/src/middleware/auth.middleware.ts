@@ -31,6 +31,21 @@ export function authenticate(req: Request, res: Response, next: NextFunction): v
   }
 }
 
+export function optionalAuth(req: Request, _res: Response, next: NextFunction): void {
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return next();
+  }
+  const token = authHeader.split(" ")[1];
+  try {
+    const payload = verifyAccessToken(token);
+    req.user = { userId: payload.userId, role: payload.role };
+  } catch {
+    // Ignore invalid token in optional auth
+  }
+  next();
+}
+
 export function requireRole(...roles: string[]) {
   return (req: Request, res: Response, next: NextFunction): void => {
     if (!req.user) {

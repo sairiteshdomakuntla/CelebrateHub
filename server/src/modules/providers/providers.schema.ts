@@ -5,10 +5,11 @@ export const UpdateProviderSchema = z.object({
   description:  z.string().trim().max(2000).optional().nullable(),
   pricingMin:   z.number().int().nonnegative().optional().nullable(),
   pricingMax:   z.number().int().nonnegative().optional().nullable(),
-  serviceArea:  z.string().trim().max(500).optional().nullable(),
-  latitude:     z.number().min(-90).max(90).optional().nullable(),
-  longitude:    z.number().min(-180).max(180).optional().nullable(),
-  isAvailable:  z.boolean().optional(),
+  serviceArea:     z.string().trim().max(500).optional().nullable(),
+  serviceRadiusKm: z.number().int().min(1).max(500).optional().nullable(),
+  latitude:        z.number().min(-90).max(90).optional().nullable(),
+  longitude:       z.number().min(-180).max(180).optional().nullable(),
+  isAvailable:     z.boolean().optional(),
 });
 
 export const SetCategoriesSchema = z.object({

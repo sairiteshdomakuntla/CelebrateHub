@@ -14,6 +14,11 @@ export default function AppLayout() {
       <Stack.Screen name="index" />
       <Stack.Screen name="profile" />
       <Stack.Screen name="admin-users" />
+      <Stack.Screen name="admin-providers" />
+      <Stack.Screen name="admin-categories" />
+      <Stack.Screen name="admin-plans" />
+      <Stack.Screen name="admin-moderation" />
+      <Stack.Screen name="admin-analytics" />
       <Stack.Screen name="provider-profile" />
       <Stack.Screen name="leads" />
       <Stack.Screen name="subscriptions" />
