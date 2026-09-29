@@ -24,8 +24,8 @@ import {
 
 type IntervalFilter = "MONTHLY" | "YEARLY";
 
-function formatDate(iso: string) {
-  if (!iso) return "—";
+function formatDate(iso?: string | null) {
+  if (!iso) return "Always Active";
   return new Date(iso).toLocaleDateString("en-IN", {
     day: "numeric",
     month: "short",
@@ -233,6 +233,29 @@ export default function SubscriptionsScreen() {
   const annualSavingsPct = bestYearlySavingsPct(plans);
   const recommendedPlanId = filteredPlans.find((p) => p.price > 0)?.id;
 
+  if (role === "ADMIN") {
+    return (
+      <View className="flex-1 bg-[#F7F7F5] items-center justify-center p-6">
+        <StatusBar style="dark" />
+        <View className="w-16 h-16 rounded-3xl bg-[#1C1C1E] items-center justify-center mb-4 shadow-sm">
+          <AppIcon name="shield" size={28} color="#FFFFFF" />
+        </View>
+        <Text className="text-[20px] font-bold text-[#1C1C1E] text-center mb-2">
+          Administrator Account
+        </Text>
+        <Text className="text-[14px] text-[#6E6E73] text-center mb-6 leading-relaxed max-w-xs">
+          As the platform owner, you have full unrestricted access to all features. Personal subscriptions and memberships are not applicable.
+        </Text>
+        <TouchableOpacity
+          onPress={() => router.back()}
+          className="bg-[#1C1C1E] px-6 py-3.5 rounded-2xl shadow-sm active:bg-black"
+        >
+          <Text className="text-white font-bold text-[14px]">Return to Dashboard</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
+
   return (
     <View className="flex-1 bg-[#F7F7F5]">
       <StatusBar style="dark" />
@@ -372,7 +395,9 @@ export default function SubscriptionsScreen() {
             {/* Plans List */}
             <View className="gap-4">
               {filteredPlans.map((plan) => {
-                const isCurrent = activeSub?.planId === plan.id && activeSub.status === "ACTIVE";
+                const isCurrent = activeSub
+                  ? activeSub.planId === plan.id && activeSub.status === "ACTIVE"
+                  : plan.price === 0;
                 const isPaid = plan.price > 0;
 
                 // Facts derived from the real plan record (description + pricing)
@@ -383,18 +408,27 @@ export default function SubscriptionsScreen() {
                   <View
                     key={plan.id}
                     className={`bg-white rounded-3xl p-5 border ${
-                      isPaid
+                      isCurrent
+                        ? "border-[#10B981] shadow-sm"
+                        : isPaid
                         ? "border-[#1C1C1E] shadow-sm"
                         : "border-[#E5E4E0]"
                     }`}
                   >
-                    {isRecommended && (
+                    {isCurrent ? (
+                      <View className="self-start bg-[#10B981] px-3 py-1 rounded-full mb-3 flex-row items-center gap-1.5">
+                        <AppIcon name="check" size={11} color="#FFFFFF" />
+                        <Text className="text-white text-[10px] font-bold uppercase tracking-wider">
+                          Your Current Plan
+                        </Text>
+                      </View>
+                    ) : isRecommended ? (
                       <View className="self-start bg-[#1C1C1E] px-3 py-1 rounded-full mb-3">
                         <Text className="text-white text-[10px] font-bold uppercase tracking-wider">
                           Recommended
                         </Text>
                       </View>
-                    )}
+                    ) : null}
 
                     <View className="flex-row items-baseline justify-between">
                       <View>
@@ -424,13 +458,13 @@ export default function SubscriptionsScreen() {
                         <View key={i} className="flex-row items-center gap-2.5">
                           <View
                             className={`w-5 h-5 rounded-full items-center justify-center ${
-                              isPaid ? "bg-[#10B981]/15" : "bg-[#ECEAE6]"
+                              isCurrent || isPaid ? "bg-[#10B981]/15" : "bg-[#ECEAE6]"
                             }`}
                           >
                             <AppIcon
                               name="check"
                               size={12}
-                              color={isPaid ? "#10B981" : "#7C7C80"}
+                              color={isCurrent || isPaid ? "#10B981" : "#7C7C80"}
                             />
                           </View>
                           <Text className="text-[13px] text-[#3A3A3C] font-medium flex-1">
@@ -475,7 +509,7 @@ export default function SubscriptionsScreen() {
                               ? "Current Plan"
                               : isPaid
                               ? "Upgrade with Razorpay"
-                              : "Switch to Free Plan"}
+                              : "Downgrade to Free Plan"}
                           </Text>
                         </>
                       )}

@@ -37,6 +37,39 @@ async function persistSession(
   });
 }
 
+async function assignDefaultFreePlan(userId: string, role: string, tx: any = prisma) {
+  if (role === "ADMIN") return;
+  try {
+    const slug = role === "PROVIDER" ? "provider-starter" : "customer-standard";
+    let freePlan = await tx.subscriptionPlan.findUnique({ where: { slug } });
+    if (!freePlan) {
+      freePlan = await tx.subscriptionPlan.findFirst({
+        where: {
+          slug: { startsWith: role === "PROVIDER" ? "provider-" : "customer-" },
+          price: 0,
+          isActive: true,
+        },
+      });
+    }
+    if (freePlan) {
+      await tx.subscription.create({
+        data: {
+          userId,
+          planId: freePlan.id,
+          status: "ACTIVE",
+          startDate: new Date(),
+          endDate: null,
+          autoRenew: true,
+          paymentProvider: "FREE",
+          externalId: `free_init_${userId.slice(0, 8)}_${Date.now()}`,
+        },
+      });
+    }
+  } catch (err) {
+    console.warn("Could not assign default free plan:", err);
+  }
+}
+
 // ─── Public: Customer self-registration ──────────────────────────────────────
 
 export async function register(
@@ -64,6 +97,8 @@ export async function register(
       role: "CUSTOMER",
     },
   });
+
+  await assignDefaultFreePlan(user.id, "CUSTOMER");
 
   const { accessToken, refreshToken } = buildTokenPair(user.id, user.role);
   await persistSession(user.id, refreshToken, meta?.ipAddress, meta?.userAgent);
@@ -152,6 +187,8 @@ export async function registerProvider(
       })),
       skipDuplicates: true,
     });
+
+    await assignDefaultFreePlan(user.id, "PROVIDER", tx);
 
     return { user, provider };
   });
@@ -291,6 +328,8 @@ export async function adminCreateUser(dto: CreateUserDto) {
       },
     });
   }
+
+  await assignDefaultFreePlan(user.id, dto.role);
 
   return { user: sanitizeUser(user) };
 }

@@ -22,6 +22,10 @@ function getRazorpayInstance(): Razorpay {
 // ─── List Plans ───────────────────────────────────────────────────────────────
 
 export async function listPlans(role?: string) {
+  if (role === "ADMIN") {
+    return [];
+  }
+
   let where: any = { isActive: true };
 
   if (role === "PROVIDER") {
@@ -39,7 +43,17 @@ export async function listPlans(role?: string) {
 // ─── Get User's Active Subscription ───────────────────────────────────────────
 
 export async function getMySubscription(userId: string) {
-  const subscription = await prisma.subscription.findFirst({
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { id: true, role: true },
+  });
+
+  // Admin accounts are platform owners and never have personal subscriptions
+  if (!user || user.role === "ADMIN") {
+    return null;
+  }
+
+  let subscription = await prisma.subscription.findFirst({
     where: {
       userId,
       status: "ACTIVE",
@@ -55,7 +69,41 @@ export async function getMySubscription(userId: string) {
       where: { id: subscription.id },
       data: { status: "EXPIRED" },
     });
-    return null;
+    subscription = null;
+  }
+
+  // If no active subscription exists, automatically assign the default Free plan for their role
+  if (!subscription) {
+    const freePlanSlug = user.role === "PROVIDER" ? "provider-starter" : "customer-standard";
+    let freePlan = await prisma.subscriptionPlan.findUnique({
+      where: { slug: freePlanSlug },
+    });
+
+    if (!freePlan) {
+      freePlan = await prisma.subscriptionPlan.findFirst({
+        where: {
+          slug: { startsWith: user.role === "PROVIDER" ? "provider-" : "customer-" },
+          price: 0,
+          isActive: true,
+        },
+      });
+    }
+
+    if (freePlan) {
+      subscription = await prisma.subscription.create({
+        data: {
+          userId: user.id,
+          planId: freePlan.id,
+          status: "ACTIVE",
+          startDate: new Date(),
+          endDate: null, // Free tier never expires
+          autoRenew: true,
+          paymentProvider: "FREE",
+          externalId: `free_default_${user.id.slice(0, 8)}_${Date.now()}`,
+        },
+        include: { plan: true },
+      });
+    }
   }
 
   return subscription;
@@ -77,23 +125,40 @@ export async function createRazorpayOrder(userId: string, planId: string) {
     throw Object.assign(new Error("User not found"), { statusCode: 404 });
   }
 
+  if (user.role === "ADMIN") {
+    throw Object.assign(
+      new Error("Admin accounts are platform owners and do not require subscriptions."),
+      { statusCode: 403 }
+    );
+  }
+
   // 1. Free plan activation
   if (plan.price === 0) {
+    const existingActive = await prisma.subscription.findFirst({
+      where: { userId, status: "ACTIVE", planId: plan.id },
+      include: { plan: true },
+    });
+    if (existingActive) {
+      return {
+        free: true,
+        message: "You are already active on this free plan",
+        subscription: existingActive,
+      };
+    }
+
     await prisma.subscription.updateMany({
       where: { userId, status: "ACTIVE" },
       data: { status: "CANCELLED" },
     });
 
     const now = new Date();
-    const endDate = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
-
     const subscription = await prisma.subscription.create({
       data: {
         userId,
         planId: plan.id,
         status: "ACTIVE",
         startDate: now,
-        endDate,
+        endDate: null, // Free plan never expires
         autoRenew: true,
         paymentProvider: "FREE",
         externalId: `free_${userId.slice(0, 8)}_${Date.now()}`,
@@ -154,6 +219,13 @@ export async function getCheckoutHtml(orderId: string, planId: string, userId: s
 
   const user = await prisma.user.findUnique({ where: { id: userId } });
   if (!user) throw Object.assign(new Error("User not found"), { statusCode: 404 });
+
+  if (user.role === "ADMIN") {
+    throw Object.assign(
+      new Error("Admin accounts are platform owners and do not require subscriptions."),
+      { statusCode: 403 }
+    );
+  }
 
   const keyId = process.env.RAZORPAY_KEY_ID;
   const amountPaise = plan.price * 100;
@@ -266,6 +338,14 @@ export async function getCheckoutHtml(orderId: string, planId: string, userId: s
 // ─── Verify Payment with Razorpay SDK & Signature ─────────────────────────────
 
 export async function verifyRazorpayPayment(userId: string, dto: VerifyPaymentDto) {
+  const user = await prisma.user.findUnique({ where: { id: userId } });
+  if (user?.role === "ADMIN") {
+    throw Object.assign(
+      new Error("Admin accounts are platform owners and do not require subscriptions."),
+      { statusCode: 403 }
+    );
+  }
+
   const plan = await prisma.subscriptionPlan.findUnique({
     where: { id: dto.planId },
   });
@@ -368,10 +448,17 @@ export async function verifyRazorpayPayment(userId: string, dto: VerifyPaymentDt
 export async function cancelSubscription(userId: string) {
   const activeSub = await prisma.subscription.findFirst({
     where: { userId, status: "ACTIVE" },
+    include: { plan: true },
   });
 
   if (!activeSub) {
     throw Object.assign(new Error("No active subscription found"), { statusCode: 404 });
+  }
+
+  if (activeSub.plan.price === 0) {
+    throw Object.assign(new Error("The Free tier is always active and does not need to be cancelled."), {
+      statusCode: 400,
+    });
   }
 
   const updated = await prisma.subscription.update({
@@ -383,8 +470,42 @@ export async function cancelSubscription(userId: string) {
     include: { plan: true },
   });
 
+  // Revert back to role-appropriate Free plan
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { id: true, role: true },
+  });
+
+  if (user && user.role !== "ADMIN") {
+    const freePlanSlug = user.role === "PROVIDER" ? "provider-starter" : "customer-standard";
+    const freePlan =
+      (await prisma.subscriptionPlan.findUnique({ where: { slug: freePlanSlug } })) ||
+      (await prisma.subscriptionPlan.findFirst({
+        where: {
+          slug: { startsWith: user.role === "PROVIDER" ? "provider-" : "customer-" },
+          price: 0,
+          isActive: true,
+        },
+      }));
+
+    if (freePlan) {
+      await prisma.subscription.create({
+        data: {
+          userId: user.id,
+          planId: freePlan.id,
+          status: "ACTIVE",
+          startDate: new Date(),
+          endDate: null,
+          autoRenew: true,
+          paymentProvider: "FREE",
+          externalId: `free_revert_${user.id.slice(0, 8)}_${Date.now()}`,
+        },
+      });
+    }
+  }
+
   return {
-    message: "Subscription cancelled successfully",
+    message: "Subscription cancelled successfully. You are now on the Free tier.",
     subscription: updated,
   };
 }
