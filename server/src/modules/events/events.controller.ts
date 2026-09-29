@@ -8,6 +8,15 @@ import * as svc from "./events.service.js";
 
 function handleError(res: Response, err: unknown) {
   const e = err as any;
+  // Zod validation errors: return 400 with the first readable issue
+  // instead of a generic 500, so clients can show what to fix.
+  if (e?.name === "ZodError" && Array.isArray(e?.issues) && e.issues.length > 0) {
+    const first = e.issues[0];
+    const path = Array.isArray(first?.path) ? first.path.join(".") : "";
+    const message = path ? `${path}: ${first.message}` : (first.message ?? "Invalid input");
+    res.status(400).json({ success: false, message });
+    return;
+  }
   const status = e?.statusCode ?? 500;
   const message = e?.message ?? "Internal server error";
   res.status(status).json({ success: false, message });

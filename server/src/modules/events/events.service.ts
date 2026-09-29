@@ -1,6 +1,6 @@
 import { prisma } from "../../lib/prisma.js";
 import type { CreateEventDto, UpdateEventDto, AddServiceDto } from "./events.schema.js";
-import { distributeLeadsForEvent, distributeLeadsForService } from "../leads/leads.service.js";
+import { distributeLeadsForEvent, distributeLeadsForService, isInstantLeadMatchingEnabled } from "../leads/leads.service.js";
 
 // ─── List customer's own events ───────────────────────────────────────────────
 
@@ -10,7 +10,16 @@ export async function listEvents(customerId: string) {
     orderBy: { eventDate: "asc" },
     include: {
       services: {
-        include: { category: { select: { id: true, name: true, slug: true, icon: true } } },
+        include: {
+          category: { select: { id: true, name: true, slug: true, icon: true } },
+          lead: {
+            select: {
+              id: true,
+              status: true,
+              booking: { select: { id: true, status: true } },
+            },
+          },
+        },
       },
       _count: { select: { guests: true } },
     },
@@ -82,8 +91,8 @@ export async function createEvent(customerId: string, dto: CreateEventDto) {
       endTime: fields.endTime,
       timezone: fields.timezone,
       location: fields.location,
-      latitude: fields.latitude ? String(fields.latitude) : undefined,
-      longitude: fields.longitude ? String(fields.longitude) : undefined,
+      latitude: fields.latitude != null ? String(fields.latitude) : undefined,
+      longitude: fields.longitude != null ? String(fields.longitude) : undefined,
       guestCount: fields.guestCount,
       budgetMin: fields.budgetMin,
       budgetMax: fields.budgetMax,
@@ -104,13 +113,18 @@ export async function createEvent(customerId: string, dto: CreateEventDto) {
     },
   });
 
-  // Automatically generate & match leads for requested services
+  // Automatically generate & match leads for requested services in the background
+  // (does not block event creation response or cause mobile network timeouts)
   if (serviceCategories?.length) {
-    try {
-      await distributeLeadsForEvent(event.id);
-    } catch (e) {
-      console.warn("Could not distribute leads for event:", e);
-    }
+    isInstantLeadMatchingEnabled()
+      .then((enabled) => {
+        if (enabled) {
+          return distributeLeadsForEvent(event.id);
+        }
+      })
+      .catch((e) => {
+        console.warn("Background lead distribution error:", e);
+      });
   }
 
   return event;
@@ -141,9 +155,9 @@ export async function updateEvent(
       ...(fields.startTime !== undefined && { startTime: fields.startTime }),
       ...(fields.endTime !== undefined && { endTime: fields.endTime }),
       ...(fields.timezone && { timezone: fields.timezone }),
-      ...(fields.location && { location: fields.location }),
-      ...(fields.latitude !== undefined && { latitude: fields.latitude ? String(fields.latitude) : null }),
-      ...(fields.longitude !== undefined && { longitude: fields.longitude ? String(fields.longitude) : null }),
+      ...(fields.location !== undefined && { location: fields.location.trim() }),
+      ...(fields.latitude !== undefined && { latitude: fields.latitude != null ? String(fields.latitude) : null }),
+      ...(fields.longitude !== undefined && { longitude: fields.longitude != null ? String(fields.longitude) : null }),
       ...(fields.guestCount !== undefined && { guestCount: fields.guestCount }),
       ...(fields.budgetMin !== undefined && { budgetMin: fields.budgetMin }),
       ...(fields.budgetMax !== undefined && { budgetMax: fields.budgetMax }),
@@ -211,10 +225,12 @@ export async function addService(
     include: { category: { select: { id: true, name: true, slug: true, icon: true } } },
   });
 
-  try {
-    await distributeLeadsForService(created.id);
-  } catch (e) {
-    console.warn("Could not distribute lead for service:", e);
+  if (await isInstantLeadMatchingEnabled()) {
+    try {
+      await distributeLeadsForService(created.id);
+    } catch (e) {
+      console.warn("Could not distribute lead for service:", e);
+    }
   }
 
   return created;

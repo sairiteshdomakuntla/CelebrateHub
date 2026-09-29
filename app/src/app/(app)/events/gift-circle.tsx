@@ -121,11 +121,19 @@ export default function GiftCircleScreen() {
     if (!data) return;
     const hostName = data.event.customer?.name || "Host";
     const eventName = data.event.title || `${data.event.type} Celebration`;
+    const eventDate = new Date(data.event.eventDate).toLocaleDateString("en-IN", {
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
     const message =
       `🎁 *Gift Circle & Registry for ${eventName}* 🎉\n\n` +
       `We invite you to view our gift wishlist and celebration funds organized by ${hostName}!\n` +
       `You can pledge a gift, chip into group funds, or leave sweet blessings.\n\n` +
-      `👉 View Gift Registry: CelebrateHub App → Event ID: ${eventId}\n` +
+      `📅 ${eventDate}\n` +
+      `📍 ${data.event.location}\n\n` +
+      `👉 Open the registry in the CelebrateHub app: celebratehub://events/${eventId}\n` +
       `Let's celebrate together! ✨`;
 
     try {

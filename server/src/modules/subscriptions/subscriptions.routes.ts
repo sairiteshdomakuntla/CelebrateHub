@@ -10,10 +10,11 @@ router.get("/checkout", ctrl.getCheckoutPage);
 
 router.use(authenticate);
 
-router.get("/me", ctrl.getMySubscription);
-router.post("/create-order", ctrl.createOrder);
-router.post("/verify-payment", ctrl.verifyPayment);
-router.post("/cancel", ctrl.cancelSubscription);
+// Subscription user endpoints — only CUSTOMER and PROVIDER can use subscriptions
+router.get("/me", requireRole("CUSTOMER", "PROVIDER"), ctrl.getMySubscription);
+router.post("/create-order", requireRole("CUSTOMER", "PROVIDER"), ctrl.createOrder);
+router.post("/verify-payment", requireRole("CUSTOMER", "PROVIDER"), ctrl.verifyPayment);
+router.post("/cancel", requireRole("CUSTOMER", "PROVIDER"), ctrl.cancelSubscription);
 
 // Admin route
 router.get("/admin/all", requireRole("ADMIN"), ctrl.adminListSubscriptions);

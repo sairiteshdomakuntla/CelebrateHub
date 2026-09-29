@@ -409,10 +409,14 @@ export default function ProfileScreen() {
                 <View className="flex-row items-center gap-1.5">
                   <AppIcon name="star" size={14} color="#9A6A14" />
                   <Text className="text-[#1C1C1E] text-[14px] font-semibold">
-                    {Number(profile.provider.ratingAvg).toFixed(1)}
+                    {profile.provider.ratingCount > 0
+                      ? Number(profile.provider.ratingAvg).toFixed(1)
+                      : "—"}
                   </Text>
                   <Text className="text-[#A7A7AB] text-[12px]">
-                    ({profile.provider.ratingCount} reviews)
+                    {profile.provider.ratingCount > 0
+                      ? `(${profile.provider.ratingCount} reviews)`
+                      : "No reviews yet"}
                   </Text>
                 </View>
                 <View
@@ -533,24 +537,28 @@ export default function ProfileScreen() {
               <AppIcon name="chevron-right" size={16} color="#C7C7CC" />
             </TouchableOpacity>
 
-            <View className="h-px bg-[#F0EEEA] mx-5" />
+            {user?.role !== "ADMIN" && (
+              <>
+                <View className="h-px bg-[#F0EEEA] mx-5" />
 
-            <TouchableOpacity
-              onPress={() => router.push("/subscriptions" as any)}
-              activeOpacity={0.7}
-              className="flex-row items-center gap-3 px-5 py-4"
-            >
-              <View className="w-10 h-10 rounded-xl bg-[#1C1C1E] items-center justify-center">
-                <AppIcon name="shield" size={17} color="#FFFFFF" />
-              </View>
-              <View className="flex-1">
-                <Text className="text-[#1C1C1E] text-[15px] font-semibold">Membership & Plans</Text>
-                <Text className="text-[#8E8E93] text-[12px] mt-0.5">
-                  Manage subscription & Razorpay billing
-                </Text>
-              </View>
-              <AppIcon name="chevron-right" size={16} color="#C7C7CC" />
-            </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => router.push("/subscriptions" as any)}
+                  activeOpacity={0.7}
+                  className="flex-row items-center gap-3 px-5 py-4"
+                >
+                  <View className="w-10 h-10 rounded-xl bg-[#1C1C1E] items-center justify-center">
+                    <AppIcon name="shield" size={17} color="#FFFFFF" />
+                  </View>
+                  <View className="flex-1">
+                    <Text className="text-[#1C1C1E] text-[15px] font-semibold">Membership & Plans</Text>
+                    <Text className="text-[#8E8E93] text-[12px] mt-0.5">
+                      Manage subscription & Razorpay billing
+                    </Text>
+                  </View>
+                  <AppIcon name="chevron-right" size={16} color="#C7C7CC" />
+                </TouchableOpacity>
+              </>
+            )}
           </View>
 
           {/* ── Sign out ── */}

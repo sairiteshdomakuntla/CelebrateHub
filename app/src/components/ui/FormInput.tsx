@@ -16,6 +16,7 @@ interface FormInputProps extends TextInputProps {
   isPassword?: boolean;
   containerStyle?: ViewStyle;
   leftIcon?: React.ReactNode;
+  rightAction?: React.ReactNode;
 }
 
 export function FormInput({
@@ -25,6 +26,7 @@ export function FormInput({
   isPassword = false,
   containerStyle,
   leftIcon,
+  rightAction,
   onFocus,
   onBlur,
   ...inputProps
@@ -85,16 +87,25 @@ export function FormInput({
 
   return (
     <View style={[{ marginBottom: 16 }, containerStyle]}>
-      <Text
+      <View
         style={{
-          color: "#3A3A3C",
-          fontSize: 13,
-          fontWeight: "600",
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
           marginBottom: 8,
         }}
       >
-        {label}
-      </Text>
+        <Text
+          style={{
+            color: "#3A3A3C",
+            fontSize: 13,
+            fontWeight: "600",
+          }}
+        >
+          {label}
+        </Text>
+        {rightAction}
+      </View>
 
       <Animated.View
         style={{

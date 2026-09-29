@@ -38,6 +38,62 @@ function formatPrice(amount: number) {
   return "₹" + amount.toLocaleString("en-IN");
 }
 
+function findMonthlyCounterpart(plan: SubscriptionPlan, all: SubscriptionPlan[]) {
+  if (plan.interval !== "YEARLY" || plan.price <= 0) return null;
+  const monthlySlug = plan.slug.replace(/-yearly$/, "-monthly");
+  if (monthlySlug === plan.slug) return null;
+  return (
+    all.find((p) => p.slug === monthlySlug && p.interval === "MONTHLY" && p.price > 0) ?? null
+  );
+}
+
+function bestYearlySavingsPct(all: SubscriptionPlan[]): number | null {
+  let best: number | null = null;
+  for (const plan of all) {
+    const monthly = findMonthlyCounterpart(plan, all);
+    if (!monthly) continue;
+    const fullYearMonthly = monthly.price * 12;
+    if (fullYearMonthly <= plan.price) continue;
+    const pct = Math.round(((fullYearMonthly - plan.price) / fullYearMonthly) * 100);
+    if (best === null || pct > best) best = pct;
+  }
+  return best;
+}
+
+function planFacts(plan: SubscriptionPlan, all: SubscriptionPlan[]): string[] {
+  const facts: string[] = [];
+
+  // Real copy straight from the admin-managed plan description
+  if (plan.description) {
+    for (const part of plan.description.split(/,\s+/)) {
+      const text = part.trim();
+      if (!text) continue;
+      facts.push(text.charAt(0).toUpperCase() + text.slice(1));
+    }
+  }
+
+  if (plan.price === 0) {
+    facts.push("Free forever — no card required");
+  } else if (plan.interval === "YEARLY") {
+    const monthly = findMonthlyCounterpart(plan, all);
+    if (monthly) {
+      const perMonth = Math.round(plan.price / 12);
+      const pct = Math.round(((monthly.price * 12 - plan.price) / (monthly.price * 12)) * 100);
+      facts.push(
+        `Billed yearly — about ${formatPrice(perMonth)}/month instead of ${formatPrice(
+          monthly.price
+        )}/month (save ${pct}%)`
+      );
+    } else {
+      facts.push(`Billed ${formatPrice(plan.price)} per year`);
+    }
+  } else {
+    facts.push(`Billed ${formatPrice(plan.price)} per month`);
+  }
+
+  return facts;
+}
+
 export default function SubscriptionsScreen() {
   const router = useRouter();
   const user = useAuthStore((s) => s.user);
@@ -66,10 +122,19 @@ export default function SubscriptionsScreen() {
     }
   }, [role]);
 
+  // Block admin users — admins don't take memberships
   useEffect(() => {
+    if (role === "ADMIN") {
+      Alert.alert(
+        "Not Available",
+        "Membership & Plans are not applicable for admin accounts.",
+        [{ text: "Go Back", onPress: () => router.back() }]
+      );
+      return;
+    }
     setLoading(true);
     loadData().finally(() => setLoading(false));
-  }, [loadData]);
+  }, [loadData, role]);
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
@@ -165,6 +230,8 @@ export default function SubscriptionsScreen() {
   }
 
   const filteredPlans = plans.filter((p) => p.price === 0 || p.interval === interval);
+  const annualSavingsPct = bestYearlySavingsPct(plans);
+  const recommendedPlanId = filteredPlans.find((p) => p.price > 0)?.id;
 
   return (
     <View className="flex-1 bg-[#F7F7F5]">
@@ -286,14 +353,18 @@ export default function SubscriptionsScreen() {
                 >
                   <Text
                     className={`text-[13px] font-semibold ${
-                      interval === "YEARLY" ? "text-[#1C1C1E]" : "text-[#7C7C80]"
+                      interval === "MONTHLY" ? "text-[#1C1C1E]" : "text-[#7C7C80]"
                     }`}
                   >
                     Annual
                   </Text>
-                  <View className="bg-[#10B981] px-1.5 py-0.5 rounded-md">
-                    <Text className="text-white text-[9px] font-bold">SAVE 17%</Text>
-                  </View>
+                  {annualSavingsPct !== null && annualSavingsPct > 0 && (
+                    <View className="bg-[#10B981] px-1.5 py-0.5 rounded-md">
+                      <Text className="text-white text-[9px] font-bold">
+                        SAVE {annualSavingsPct}%
+                      </Text>
+                    </View>
+                  )}
                 </TouchableOpacity>
               </View>
             </View>
@@ -304,36 +375,9 @@ export default function SubscriptionsScreen() {
                 const isCurrent = activeSub?.planId === plan.id && activeSub.status === "ACTIVE";
                 const isPaid = plan.price > 0;
 
-                // Feature lists tailored to role
-                const features =
-                  role === "PROVIDER"
-                    ? isPaid
-                      ? [
-                          "Unlimited qualified customer leads",
-                          "Instant SMS & Push alerts for new celebrations",
-                          "Verified Pro badge on your profile",
-                          "Top placement in service searches",
-                          "Direct client phone calls & WhatsApp chat",
-                          "Razorpay auto-renewal with instant invoicing",
-                        ]
-                      : [
-                          "Standard directory listing",
-                          "Up to 5 leads per month",
-                          "Standard email support",
-                        ]
-                    : isPaid
-                    ? [
-                        "Unlimited guest lists & RSVP tracking",
-                        "Custom WhatsApp & SMS invitation cards",
-                        "Priority matching with top 5★ rated providers",
-                        "Dedicated CelebrateHub event concierge",
-                        "Exclusive vendor discounts & quotes",
-                      ]
-                    : [
-                        "Basic celebration planning",
-                        "Browse verified vendor directory",
-                        "Standard guest list (up to 25 guests)",
-                      ];
+                // Facts derived from the real plan record (description + pricing)
+                const features = planFacts(plan, plans);
+                const isRecommended = plan.id === recommendedPlanId;
 
                 return (
                   <View
@@ -344,7 +388,7 @@ export default function SubscriptionsScreen() {
                         : "border-[#E5E4E0]"
                     }`}
                   >
-                    {isPaid && (
+                    {isRecommended && (
                       <View className="self-start bg-[#1C1C1E] px-3 py-1 rounded-full mb-3">
                         <Text className="text-white text-[10px] font-bold uppercase tracking-wider">
                           Recommended

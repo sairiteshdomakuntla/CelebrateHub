@@ -112,7 +112,6 @@ export default function EventDetailScreen() {
   const [editingReviewId, setEditingReviewId] = useState<string | null>(null);
   const [submittingReview, setSubmittingReview] = useState(false);
 
-  const fadeStyle = useAnimatedStyle(() => ({ opacity: useSharedValue(0).value }));
   const opacity = useSharedValue(0);
   const animStyle = useAnimatedStyle(() => ({ opacity: opacity.value }));
 
@@ -538,7 +537,7 @@ export default function EventDetailScreen() {
             latitude={event.latitude}
             longitude={event.longitude}
             eventTitle={event.title || event.type}
-            canEdit={event.status === "DRAFT"}
+            canEdit={event.status !== "COMPLETED" && event.status !== "CANCELLED"}
             onEditPress={() => setShowVenuePicker(true)}
           />
 

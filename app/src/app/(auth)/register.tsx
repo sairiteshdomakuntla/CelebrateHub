@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   View,
   Text,
@@ -15,19 +15,9 @@ import { AppIcon } from "@/components/ui/pro-icon";
 import { useAuthStore } from "@/store/auth.store";
 import { FormInput } from "@/components/ui/FormInput";
 import { BrandMark } from "@/components/ui/pro-icon";
-import { eventsApi, type ServiceCategory } from "@/lib/events.api";
+import { eventsApi } from "@/lib/events.api";
+import { LocationPickerModal } from "@/components/map/location-picker-modal";
 import axios from "axios";
-
-const DEFAULT_CATEGORIES = [
-  { id: "photography", name: "Photography & Video", icon: "camera" },
-  { id: "catering", name: "Catering & Food", icon: "coffee" },
-  { id: "decor", name: "Decor & Flowers", icon: "sparkles" },
-  { id: "dj-music", name: "DJ & Sound", icon: "music" },
-  { id: "venue", name: "Venues & Banquets", icon: "home" },
-  { id: "makeup", name: "Makeup & Styling", icon: "heart" },
-  { id: "cake-desserts", name: "Cake & Desserts", icon: "gift" },
-  { id: "planner", name: "Event Planner", icon: "briefcase" },
-];
 
 export default function RegisterScreen() {
   const router = useRouter();
@@ -48,27 +38,57 @@ export default function RegisterScreen() {
   // Provider-specific onboarding fields
   const [businessName, setBusinessName] = useState("");
   const [serviceArea, setServiceArea] = useState("");
+  const [latitude, setLatitude] = useState<number | null>(null);
+  const [longitude, setLongitude] = useState<number | null>(null);
+  const [serviceRadiusKm, setServiceRadiusKm] = useState<number>(25);
+  const [showLocationPicker, setShowLocationPicker] = useState(false);
   const [pricingMin, setPricingMin] = useState("");
   const [description, setDescription] = useState("");
   const [selectedCategoryIds, setSelectedCategoryIds] = useState<string[]>([]);
   const [categories, setCategories] = useState<{ id: string; name: string; icon: string | null }[]>(
-    DEFAULT_CATEGORIES
+    []
   );
+  const [categoriesLoading, setCategoriesLoading] = useState(true);
+  const [categoriesError, setCategoriesError] = useState(false);
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  // Load live service categories from API
+  // Load live service categories from API — never fall back to invented IDs
+  const loadCategories = useCallback(async () => {
+    try {
+      const cats = await eventsApi.listCategories();
+      if (cats && cats.length > 0) {
+        setCategories(cats);
+        setCategoriesError(false);
+      } else {
+        setCategoriesError(true);
+      }
+    } catch {
+      setCategoriesError(true);
+    } finally {
+      setCategoriesLoading(false);
+    }
+  }, []);
+
+  const retryCategories = () => {
+    setCategoriesLoading(true);
+    setCategoriesError(false);
+    loadCategories();
+  };
+
   useEffect(() => {
     eventsApi
       .listCategories()
       .then((cats) => {
         if (cats && cats.length > 0) {
           setCategories(cats);
+          setCategoriesError(false);
+        } else {
+          setCategoriesError(true);
         }
       })
-      .catch(() => {
-        // Fall back to default categories
-      });
+      .catch(() => setCategoriesError(true))
+      .finally(() => setCategoriesLoading(false));
   }, []);
 
   function toggleCategory(catId: string) {
@@ -139,6 +159,9 @@ export default function RegisterScreen() {
           password,
           businessName: businessName.trim(),
           serviceArea: serviceArea.trim(),
+          serviceRadiusKm,
+          latitude,
+          longitude,
           pricingMin: parsedPrice,
           description: description.trim() || undefined,
           categoryIds: selectedCategoryIds.length > 0 ? selectedCategoryIds : undefined,
@@ -369,34 +392,54 @@ export default function RegisterScreen() {
                   </Text>
 
                   <View className="flex-row flex-wrap gap-2">
-                    {categories.map((cat) => {
-                      const isSelected = selectedCategoryIds.includes(cat.id);
-                      return (
+                    {categoriesLoading ? (
+                      <View className="flex-row items-center gap-2 py-2">
+                        <ActivityIndicator size="small" color="#1C1C1E" />
+                        <Text className="text-[#6E6E73] text-[12px]">Loading categories…</Text>
+                      </View>
+                    ) : categoriesError ? (
+                      <View className="w-full">
+                        <Text className="text-[#B3261E] text-[12px] font-medium">
+                          We could not load service categories. Check your connection and retry.
+                        </Text>
                         <TouchableOpacity
-                          key={cat.id}
-                          onPress={() => toggleCategory(cat.id)}
-                          className={`flex-row items-center gap-1.5 px-3 py-2 rounded-xl border ${
-                            isSelected
-                              ? "bg-[#1C1C1E] border-[#1C1C1E]"
-                              : "bg-[#F7F7F5] border-[#E3E1DC]"
-                          }`}
-                          activeOpacity={0.7}
+                          onPress={retryCategories}
+                          className="self-start mt-2 px-3 py-2 rounded-xl bg-[#1C1C1E]"
+                          activeOpacity={0.8}
                         >
-                          <AppIcon
-                            name={(cat.icon as any) || "briefcase"}
-                            size={12}
-                            color={isSelected ? "#FFFFFF" : "#6E6E73"}
-                          />
-                          <Text
-                            className={`text-[12px] font-semibold ${
-                              isSelected ? "text-white" : "text-[#3A3A3C]"
-                            }`}
-                          >
-                            {cat.name}
-                          </Text>
+                          <Text className="text-white text-[12px] font-semibold">Retry</Text>
                         </TouchableOpacity>
-                      );
-                    })}
+                      </View>
+                    ) : (
+                      categories.map((cat) => {
+                        const isSelected = selectedCategoryIds.includes(cat.id);
+                        return (
+                          <TouchableOpacity
+                            key={cat.id}
+                            onPress={() => toggleCategory(cat.id)}
+                            className={`flex-row items-center gap-1.5 px-3 py-2 rounded-xl border ${
+                              isSelected
+                                ? "bg-[#1C1C1E] border-[#1C1C1E]"
+                                : "bg-[#F7F7F5] border-[#E3E1DC]"
+                            }`}
+                            activeOpacity={0.7}
+                          >
+                            <AppIcon
+                              name={(cat.icon as any) || "briefcase"}
+                              size={12}
+                              color={isSelected ? "#FFFFFF" : "#6E6E73"}
+                            />
+                            <Text
+                              className={`text-[12px] font-semibold ${
+                                isSelected ? "text-white" : "text-[#3A3A3C]"
+                              }`}
+                            >
+                              {cat.name}
+                            </Text>
+                          </TouchableOpacity>
+                        );
+                      })
+                    )}
                   </View>
                   {errors.categories ? (
                     <Text className="text-[#B3261E] text-[12px] mt-1.5 font-medium">
@@ -407,12 +450,33 @@ export default function RegisterScreen() {
 
                 <FormInput
                   label="City / Coverage Area *"
+                  rightAction={
+                    <TouchableOpacity
+                      onPress={() => setShowLocationPicker(true)}
+                      className="flex-row items-center gap-1 px-2.5 py-1 rounded-lg bg-[#8B5CF6]/15 border border-[#8B5CF6]/30 active:opacity-80"
+                    >
+                      <AppIcon name="map-pin" size={12} color="#7C3AED" />
+                      <Text className="text-[#7C3AED] text-[11px] font-bold">Pick on Map</Text>
+                    </TouchableOpacity>
+                  }
                   placeholder="e.g. Mumbai, Navi Mumbai & Pune"
                   value={serviceArea}
                   onChangeText={(t) => { setServiceArea(t); setErrors((e) => ({ ...e, serviceArea: "" })); }}
                   error={errors.serviceArea}
                   hint="Locations where you are willing to travel and deliver services"
                 />
+                {latitude && longitude && (
+                  <View className="-mt-2 mb-4 flex-row items-center gap-2">
+                    <View className="bg-[#8B5CF6]/15 px-2 py-0.5 rounded-md border border-[#8B5CF6]/30">
+                      <Text className="text-[#7C3AED] text-[10px] font-mono font-bold">
+                        GPS: {latitude.toFixed(4)}, {longitude.toFixed(4)}
+                      </Text>
+                    </View>
+                    <View className="bg-[#10B981]/15 px-2 py-0.5 rounded-md border border-[#10B981]/30">
+                      <Text className="text-[#059669] text-[10px] font-bold">{serviceRadiusKm} km coverage</Text>
+                    </View>
+                  </View>
+                )}
 
                 <FormInput
                   label="Starting Package / Base Price (₹ optional)"
@@ -474,6 +538,23 @@ export default function RegisterScreen() {
           </ScrollView>
         </KeyboardAvoidingView>
       </SafeAreaView>
+
+      <LocationPickerModal
+        visible={showLocationPicker}
+        mode="SERVICE_RADIUS"
+        initialAddress={serviceArea}
+        initialLatitude={latitude}
+        initialLongitude={longitude}
+        initialRadiusKm={serviceRadiusKm}
+        onClose={() => setShowLocationPicker(false)}
+        onSelect={(res) => {
+          setServiceArea(res.address);
+          setLatitude(res.latitude);
+          setLongitude(res.longitude);
+          if (res.radiusKm) setServiceRadiusKm(res.radiusKm);
+          setErrors((e) => ({ ...e, serviceArea: "" }));
+        }}
+      />
     </View>
   );
 }

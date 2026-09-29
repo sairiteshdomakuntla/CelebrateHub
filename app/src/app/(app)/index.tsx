@@ -21,6 +21,7 @@ import { AppIcon, type AppIconName } from "@/components/ui/pro-icon";
 import { useAuthStore } from "@/store/auth.store";
 import { authApi, adminApi, type AuthUser } from "@/lib/auth.api";
 import { leadsApi } from "@/lib/leads.api";
+import { eventsApi } from "@/lib/events.api";
 import { providersApi } from "@/lib/providers.api";
 import { notificationsApi } from "@/lib/notifications.api";
 
@@ -157,6 +158,11 @@ export default function HomeScreen() {
   const [loadingStats, setLoadingStats] = useState(false);
   const [pendingVerifications, setPendingVerifications] = useState(0);
   const [leadStats, setLeadStats] = useState({ availableCount: 0, acceptedCount: 0 });
+  const [customerStats, setCustomerStats] = useState<{
+    events: number;
+    bookings: number;
+    guests: number;
+  } | null>(null);
   const [unreadNotifCount, setUnreadNotifCount] = useState(0);
   // True once the profile has been resolved at least once. When the store has
   // no cached user (fresh install / cleared storage), we hold a loader instead
@@ -199,6 +205,27 @@ export default function HomeScreen() {
           setLeadStats(stats);
         } catch {
           // ignore
+        }
+      }
+
+      if (me.role === "CUSTOMER") {
+        setLoadingStats(true);
+        try {
+          const myEvents = await eventsApi.list();
+          const bookings = myEvents.reduce(
+            (sum, e) => sum + e.services.filter((s) => s.lead?.booking).length,
+            0
+          );
+          const guests = myEvents.reduce((sum, e) => sum + (e._count?.guests ?? 0), 0);
+          setCustomerStats({
+            events: myEvents.length,
+            bookings,
+            guests,
+          });
+        } catch {
+          // offline — keep previous stats
+        } finally {
+          setLoadingStats(false);
         }
       }
 
@@ -394,13 +421,40 @@ export default function HomeScreen() {
               <>
                 <StatCard icon="inbox" value={leadStats.availableCount} label="New leads" />
                 <StatCard icon="check-circle" value={leadStats.acceptedCount} label="Bookings" />
-                <StatCard icon="star" value="4.9" label="Rating" />
+                <StatCard
+                  icon="star"
+                  value={
+                    user?.provider?.ratingCount
+                      ? Number(user.provider.ratingAvg).toFixed(1)
+                      : "—"
+                  }
+                  label={
+                    user?.provider?.ratingCount
+                      ? `Rating (${user.provider.ratingCount})`
+                      : "No reviews"
+                  }
+                />
               </>
             ) : (
               <>
-                <StatCard icon="calendar" value="3" label="My events" />
-                <StatCard icon="bookmark" value="4" label="Bookings" />
-                <StatCard icon="mail" value="45" label="Invites sent" />
+                <StatCard
+                  icon="calendar"
+                  value={customerStats?.events ?? "—"}
+                  label="My events"
+                  loading={loadingStats && !customerStats}
+                />
+                <StatCard
+                  icon="bookmark"
+                  value={customerStats?.bookings ?? "—"}
+                  label="Bookings"
+                  loading={loadingStats && !customerStats}
+                />
+                <StatCard
+                  icon="users"
+                  value={customerStats?.guests ?? "—"}
+                  label="Guests"
+                  loading={loadingStats && !customerStats}
+                />
               </>
             )}
           </View>
@@ -474,10 +528,10 @@ export default function HomeScreen() {
               />
               <ActionRow
                 icon="calendar" tone="neutral" title="Bookings & calendar"
-                subtitle="Confirmed dates and client details"
+                subtitle="Accepted leads become confirmed bookings"
                 badge={leadStats.acceptedCount > 0 ? `${leadStats.acceptedCount} CONFIRMED` : undefined}
                 delay={200}
-                onPress={() => router.push("/leads" as any)}
+                onPress={() => router.push("/leads?tab=accepted" as any)}
               />
               <ActionRow
                 icon="shield" tone="accent" title="Pro Membership & Billing"
@@ -522,9 +576,9 @@ export default function HomeScreen() {
               />
               <ActionRow
                 icon="mail" tone="neutral" title="Guest invitations"
-                subtitle="WhatsApp, SMS and email RSVPs"
+                subtitle="Open an event to send WhatsApp, SMS & email RSVPs"
                 delay={260}
-                onPress={() => Alert.alert("Invitations", "Invitation templates are ready to send.")}
+                onPress={() => router.push("/events" as any)}
               />
             </>
           )}

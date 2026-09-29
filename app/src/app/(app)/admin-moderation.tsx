@@ -37,6 +37,7 @@ export default function AdminModerationScreen() {
   const [activeTab, setActiveTab] = useState<"REVIEWS" | "ISSUES">("REVIEWS");
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   // Reviews State
   const [reviewsData, setReviewsData] = useState<AdminReviewsResponse | null>(null);
@@ -79,10 +80,16 @@ export default function AdminModerationScreen() {
         adminApi.listReviews(),
         adminApi.listIssues(),
       ]);
-      setReviewsData(revs);
-      setIssuesData(isss);
+      setReviewsData(revs ?? null);
+      setIssuesData(isss ?? null);
+      setLoadError(null);
     } catch (err: any) {
-      Alert.alert("Error", err?.response?.data?.message || err.message || "Failed to load moderation data");
+      // Never Alert here: surface failures inline with a retry action so a
+      // failed fetch can't be mistaken for a clean moderation queue.
+      setLoadError(
+        err?.response?.data?.message ||
+          "Could not load moderation data. Check your connection and try again."
+      );
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -98,15 +105,24 @@ export default function AdminModerationScreen() {
     loadData();
   }, [loadData]);
 
+  const retry = useCallback(() => {
+    setLoadError(null);
+    setLoading(true);
+    loadData();
+  }, [loadData]);
+
   // ─── Filtered Reviews ──────────────────────────────────────────────────────
 
   const filteredReviews = useMemo(() => {
-    if (!reviewsData) return [];
-    return reviewsData.reviews.filter((r) => {
+    const list = reviewsData?.reviews ?? [];
+    return list.filter((r) => {
+      const authorName = (r.author?.name || "").toLowerCase();
+      const providerName = (r.provider?.businessName || "").toLowerCase();
+
       const matchesSearch =
         (r.comment || "").toLowerCase().includes(reviewSearch.toLowerCase()) ||
-        r.author.name.toLowerCase().includes(reviewSearch.toLowerCase()) ||
-        r.provider.businessName.toLowerCase().includes(reviewSearch.toLowerCase());
+        authorName.includes(reviewSearch.toLowerCase()) ||
+        providerName.includes(reviewSearch.toLowerCase());
 
       if (!matchesSearch) return false;
 
@@ -120,8 +136,8 @@ export default function AdminModerationScreen() {
   // ─── Filtered Issues ───────────────────────────────────────────────────────
 
   const filteredIssues = useMemo(() => {
-    if (!issuesData) return [];
-    return issuesData.issues.filter((iss) => {
+    const list = issuesData?.issues ?? [];
+    return list.filter((iss) => {
       if (issueStatusFilter !== "ALL" && iss.status !== issueStatusFilter) return false;
       if (issueCategoryFilter !== "ALL" && iss.category !== issueCategoryFilter) return false;
       return true;
@@ -185,7 +201,7 @@ export default function AdminModerationScreen() {
   const handleDeleteReview = (review: AdminReviewItem) => {
     Alert.alert(
       "Delete Review",
-      `Permanently delete this review from ${review.author.name}?`,
+      `Permanently delete this review from ${review.author?.name || "this customer"}?`,
       [
         { text: "Cancel", style: "cancel" },
         {
@@ -264,12 +280,53 @@ export default function AdminModerationScreen() {
     }
   };
 
+  const hasData = Boolean(reviewsData || issuesData);
+
   if (loading) {
     return (
-      <SafeAreaView className="flex-1 bg-[#FAF9F5] items-center justify-center">
+      <SafeAreaView className="flex-1 bg-[#F7F7F5] items-center justify-center">
         <StatusBar style="dark" />
         <ActivityIndicator size="large" color="#1C1C1E" />
         <Text className="text-[#6E6E73] text-[14px] mt-3">Loading Trust & Safety center...</Text>
+      </SafeAreaView>
+    );
+  }
+
+  if (loadError && !hasData) {
+    return (
+      <SafeAreaView className="flex-1 bg-[#F7F7F5]" edges={["top"]}>
+        <StatusBar style="dark" />
+        <View className="flex-row items-center px-4 py-3 bg-white border-b border-[#F0EEEA]">
+          <TouchableOpacity
+            onPress={() => router.back()}
+            className="w-10 h-10 rounded-full bg-[#F5F4F0] items-center justify-center"
+            activeOpacity={0.7}
+          >
+            <AppIcon name="arrow-left" size={18} color="#1C1C1E" />
+          </TouchableOpacity>
+          <View className="flex-1 pl-3">
+            <Text className="text-[#1C1C1E] text-[16px] font-bold">Trust & Safety Center</Text>
+            <Text className="text-[#6E6E73] text-[11px] font-semibold tracking-wide uppercase">
+              Reviews & Dispute Moderation
+            </Text>
+          </View>
+        </View>
+        <View className="flex-1 items-center justify-center gap-2 px-8">
+          <View className="w-14 h-14 rounded-2xl bg-[#FBECEB] border border-[#F2C7C3] items-center justify-center mb-1">
+            <AppIcon name="info" size={22} color="#B3261E" />
+          </View>
+          <Text className="text-[#1C1C1E] text-[16px] font-semibold text-center">
+            Could not load moderation data
+          </Text>
+          <Text className="text-[#6E6E73] text-[13px] text-center mb-2">{loadError}</Text>
+          <TouchableOpacity
+            onPress={retry}
+            activeOpacity={0.8}
+            className="bg-[#1C1C1E] px-5 py-3 rounded-xl"
+          >
+            <Text className="text-white text-[14px] font-semibold">Retry</Text>
+          </TouchableOpacity>
+        </View>
       </SafeAreaView>
     );
   }
@@ -278,7 +335,7 @@ export default function AdminModerationScreen() {
   const issueStats = issuesData?.stats;
 
   return (
-    <SafeAreaView className="flex-1 bg-[#FAF9F5]" edges={["top"]}>
+    <SafeAreaView className="flex-1 bg-[#F7F7F5]" edges={["top"]}>
       <StatusBar style="dark" />
 
       {/* ─── Top Header ────────────────────────────────────────────────────── */}
@@ -357,6 +414,19 @@ export default function AdminModerationScreen() {
           </TouchableOpacity>
         </View>
 
+        {loadError && hasData && (
+          <TouchableOpacity
+            onPress={retry}
+            activeOpacity={0.8}
+            className="mx-4 mb-3 flex-row items-center justify-center gap-2 py-2.5 px-3 rounded-xl bg-[#FBECEB] border border-[#F2C7C3]"
+          >
+            <AppIcon name="info" size={14} color="#B3261E" />
+            <Text className="text-[#B3261E] text-[12px] font-semibold">
+              Refresh failed — tap to retry
+            </Text>
+          </TouchableOpacity>
+        )}
+
         {activeTab === "REVIEWS" ? (
           <>
             {/* ─── Reviews Metrics Card ────────────────────────────────────── */}
@@ -387,7 +457,9 @@ export default function AdminModerationScreen() {
                 <View className="items-center flex-1">
                   <Text className="text-[#A1A1AA] text-[11px]">Platform Avg</Text>
                   <Text className="text-[#FBBF24] text-[18px] font-bold mt-0.5">
-                    {reviewStats?.avgRating || "5.0"}★
+                    {reviewStats?.avgRating != null && reviewStats.avgRating > 0
+                      ? `${Number(reviewStats.avgRating).toFixed(1)}★`
+                      : "—"}
                   </Text>
                 </View>
                 <View className="h-6 w-px bg-white/15" />
@@ -469,15 +541,18 @@ export default function AdminModerationScreen() {
                         <View className="flex-row items-center gap-2 flex-1 pr-2">
                           <View className="w-8 h-8 rounded-full bg-[#F5F4F0] items-center justify-center">
                             <Text className="text-[#1C1C1E] text-[12px] font-bold">
-                              {rev.author.name.charAt(0).toUpperCase()}
+                              {(rev.author?.name || "?").charAt(0).toUpperCase()}
                             </Text>
                           </View>
                           <View className="flex-1">
                             <Text className="text-[#1C1C1E] text-[14px] font-bold" numberOfLines={1}>
-                              {rev.author.name}
+                              {rev.author?.name || "Unknown client"}
                             </Text>
                             <Text className="text-[#8E8E93] text-[11px]" numberOfLines={1}>
-                              for <Text className="font-semibold text-[#3A3A3C]">{rev.provider.businessName}</Text>
+                              for{" "}
+                              <Text className="font-semibold text-[#3A3A3C]">
+                                {rev.provider?.businessName || "Provider"}
+                              </Text>
                             </Text>
                           </View>
                         </View>
@@ -490,9 +565,9 @@ export default function AdminModerationScreen() {
                       </View>
 
                       {/* Comment text */}
-                      <View className="p-3 rounded-xl bg-[#FAF9F5] border border-[#F0EEEA] my-1">
+                      <View className="p-3 rounded-xl bg-[#F7F7F5] border border-[#F0EEEA] my-1">
                         <Text className="text-[#1C1C1E] text-[13px] leading-[19px]">
-                          "{rev.comment || "No written review comment."}"
+                          “{rev.comment || "No written review comment."}”
                         </Text>
                       </View>
 
@@ -687,9 +762,9 @@ export default function AdminModerationScreen() {
                             </Text>
                           </View>
 
-                          <View className="px-2 py-0.5 rounded-md bg-[#FAF9F5]">
+                          <View className="px-2 py-0.5 rounded-md bg-[#F7F7F5]">
                             <Text className="text-[#6E6E73] text-[10px] font-semibold">
-                              {iss.category.replace(/_/g, " ")}
+                              {(iss.category || "OTHER").replace(/_/g, " ")}
                             </Text>
                           </View>
                         </View>
@@ -733,10 +808,11 @@ export default function AdminModerationScreen() {
                       <View className="flex-row items-center justify-between mt-3 pt-2.5 border-t border-[#F0EEEA]">
                         <View>
                           <Text className="text-[#1C1C1E] text-[12px] font-semibold">
-                            {iss.user.name} ({iss.user.role})
+                            {iss.user?.name || "Unknown user"}
+                            {iss.user?.role ? ` (${iss.user.role})` : ""}
                           </Text>
                           <Text className="text-[#8E8E93] text-[11px]">
-                            {iss.user.email || iss.user.phone || "No direct contact"}
+                            {iss.user?.email || iss.user?.phone || "No direct contact"}
                           </Text>
                         </View>
 
@@ -779,7 +855,7 @@ export default function AdminModerationScreen() {
                 value={flagReason}
                 onChangeText={setFlagReason}
                 placeholder="e.g. Offensive language, suspected fake review, harassment"
-                className="py-3 px-3.5 rounded-xl border border-[#E5E3DD] bg-[#FAF9F5] text-[#1C1C1E] text-[14px] mb-3"
+                className="py-3 px-3.5 rounded-xl border border-[#E5E3DD] bg-[#F7F7F5] text-[#1C1C1E] text-[14px] mb-3"
               />
 
               <Text className="text-[#3A3A3C] text-[12px] font-semibold mb-1">Internal Moderation Notes</Text>
@@ -789,7 +865,7 @@ export default function AdminModerationScreen() {
                 placeholder="Notes for fellow admins..."
                 multiline
                 numberOfLines={3}
-                className="py-3 px-3.5 rounded-xl border border-[#E5E3DD] bg-[#FAF9F5] text-[#1C1C1E] text-[14px] mb-4"
+                className="py-3 px-3.5 rounded-xl border border-[#E5E3DD] bg-[#F7F7F5] text-[#1C1C1E] text-[14px] mb-4"
               />
 
               <TouchableOpacity
@@ -850,7 +926,7 @@ export default function AdminModerationScreen() {
                 placeholder="Explained policy to client, issued dispute refund, or contacted vendor..."
                 multiline
                 numberOfLines={3}
-                className="py-3 px-3.5 rounded-xl border border-[#E5E3DD] bg-[#FAF9F5] text-[#1C1C1E] text-[14px] mb-4"
+                className="py-3 px-3.5 rounded-xl border border-[#E5E3DD] bg-[#F7F7F5] text-[#1C1C1E] text-[14px] mb-4"
               />
 
               <TouchableOpacity
@@ -889,7 +965,7 @@ export default function AdminModerationScreen() {
                 value={newIssueTitle}
                 onChangeText={setNewIssueTitle}
                 placeholder="e.g. Booking cancellation deposit dispute"
-                className="py-3 px-3.5 rounded-xl border border-[#E5E3DD] bg-[#FAF9F5] text-[#1C1C1E] text-[14px] mb-3"
+                className="py-3 px-3.5 rounded-xl border border-[#E5E3DD] bg-[#F7F7F5] text-[#1C1C1E] text-[14px] mb-3"
               />
 
               <Text className="text-[#3A3A3C] text-[12px] font-semibold mb-1.5">Category</Text>
@@ -919,7 +995,7 @@ export default function AdminModerationScreen() {
                 placeholder="Full details of the complaint or issue..."
                 multiline
                 numberOfLines={3}
-                className="py-3 px-3.5 rounded-xl border border-[#E5E3DD] bg-[#FAF9F5] text-[#1C1C1E] text-[14px] mb-4"
+                className="py-3 px-3.5 rounded-xl border border-[#E5E3DD] bg-[#F7F7F5] text-[#1C1C1E] text-[14px] mb-4"
               />
 
               <TouchableOpacity

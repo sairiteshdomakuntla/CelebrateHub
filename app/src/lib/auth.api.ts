@@ -44,6 +44,9 @@ export interface RegisterProviderPayload {
   businessName: string;
   description?: string;
   serviceArea: string;
+  serviceRadiusKm?: number;
+  latitude?: number | null;
+  longitude?: number | null;
   pricingMin?: number;
   pricingMax?: number;
   categoryIds?: string[];
@@ -395,7 +398,7 @@ export interface AdminReviewsResponse {
     totalReviews: number;
     flaggedCount: number;
     hiddenCount: number;
-    avgRating: number;
+    avgRating: number | null;
   };
 }
 

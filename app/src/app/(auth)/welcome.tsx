@@ -197,7 +197,7 @@ export default function WelcomeScreen() {
               </View>
               <View className="flex-row items-center gap-1.5">
                 <AppIcon name="star" size={14} color="#9A6A14" />
-                <Text className="text-[#3A3A3C] text-[12px] font-medium">4.9 rated</Text>
+                <Text className="text-[#3A3A3C] text-[12px] font-medium">Ratings & reviews</Text>
               </View>
               <View className="flex-row items-center gap-1.5">
                 <AppIcon name="map-pin" size={15} color="#6E6E73" />

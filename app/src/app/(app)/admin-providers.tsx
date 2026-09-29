@@ -187,7 +187,9 @@ function ProviderDetailSheet({
                 <View className="flex-1">
                   <Text className="text-[#8E8E93] text-[10px] uppercase font-bold">Rating</Text>
                   <Text className="text-[#1C1C1E] text-[13px] font-medium">
-                    {Number(provider.ratingAvg).toFixed(1)} / 5.0 ({provider.ratingCount} reviews)
+                    {provider.ratingCount > 0
+                      ? `${Number(provider.ratingAvg).toFixed(1)} / 5.0 (${provider.ratingCount} reviews)`
+                      : "No reviews yet"}
                   </Text>
                 </View>
               </View>
@@ -431,7 +433,9 @@ function ProviderCard({
         <View className="flex-row items-center gap-1 mt-2">
           <AppIcon name="star" size={11} color="#F59E0B" />
           <Text className="text-[#6E6E73] text-[11px] font-medium">
-            {Number(provider.ratingAvg).toFixed(1)} ({provider.ratingCount})
+            {provider.ratingCount > 0
+              ? `${Number(provider.ratingAvg).toFixed(1)} (${provider.ratingCount})`
+              : "No reviews"}
           </Text>
         </View>
       )}

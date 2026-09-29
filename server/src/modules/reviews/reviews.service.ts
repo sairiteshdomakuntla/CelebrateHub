@@ -4,8 +4,9 @@ import type { CreateReviewDto, UpdateReviewDto } from "./reviews.schema";
 // ─── Rating sync helper ───────────────────────────────────────────────────────
 
 export async function syncProviderRating(providerId: string) {
+  // Hidden reviews must not count toward the public rating
   const agg = await prisma.review.aggregate({
-    where: { providerId },
+    where: { providerId, status: { not: "HIDDEN" } },
     _avg: { rating: true },
     _count: { rating: true },
   });
@@ -169,7 +170,7 @@ export async function getProviderReviews(providerId: string) {
   }
 
   const reviews = await prisma.review.findMany({
-    where: { providerId },
+    where: { providerId, status: { not: "HIDDEN" } },
     orderBy: { createdAt: "desc" },
     include: {
       author: { select: { id: true, name: true } },

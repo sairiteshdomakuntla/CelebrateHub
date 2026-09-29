@@ -439,7 +439,7 @@ function ReviewsSection({ providerId }: { providerId: string }) {
       <View className="flex-row items-center bg-[#F7F7F5] rounded-xl p-3.5 mb-3 gap-4">
         <View className="items-center justify-center pr-3 border-r border-[#E3E1DC]">
           <Text className="text-[26px] font-bold text-[#1C1C1E]">
-            {stats?.averageRating ? stats.averageRating.toFixed(1) : "0.0"}
+            {stats?.total ? (stats.averageRating || 0).toFixed(1) : "—"}
           </Text>
           <View className="flex-row items-center gap-0.5 mt-0.5">
             {[1, 2, 3, 4, 5].map((s) => (

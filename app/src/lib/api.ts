@@ -82,7 +82,7 @@ export async function clearStoredUserProfile() {
 
 export const api = axios.create({
   baseURL: BASE_URL,
-  timeout: 15_000,
+  timeout: 30_000,
   headers: { "Content-Type": "application/json" },
 });
 

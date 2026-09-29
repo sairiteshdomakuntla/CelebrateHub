@@ -13,7 +13,7 @@ import {
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useRouter } from "expo-router";
+import { useRouter, useLocalSearchParams } from "expo-router";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -47,7 +47,10 @@ function formatCurrency(amount?: number | null) {
 
 export default function ProviderLeadsScreen() {
   const router = useRouter();
-  const [tab, setTab] = useState<TabType>("available");
+  const { tab: tabParam } = useLocalSearchParams<{ tab?: string }>();
+  const initialTab: TabType =
+    tabParam === "accepted" || tabParam === "history" ? tabParam : "available";
+  const [tab, setTab] = useState<TabType>(initialTab);
   const [leads, setLeads] = useState<LeadItem[]>([]);
   const [stats, setStats] = useState<LeadStats>({ availableCount: 0, acceptedCount: 0 });
   const [loading, setLoading] = useState(true);

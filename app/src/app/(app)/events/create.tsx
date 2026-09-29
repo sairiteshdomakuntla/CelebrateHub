@@ -12,7 +12,7 @@ import {
   Modal,
 } from "react-native";
 import DateTimePicker, {
-  type DateTimePickerEvent,
+  type DateTimePickerChangeEvent,
 } from "@react-native-community/datetimepicker";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -124,9 +124,15 @@ function DatePickerField({
     return d.toLocaleDateString("en-IN", { weekday: "short", day: "numeric", month: "long", year: "numeric" });
   }
 
-  function handleChange(_: DateTimePickerEvent, selected?: Date) {
+  function handleValueChange(_: DateTimePickerChangeEvent, selected: Date) {
+    if (selected) onChange(selected as Date);
+    // Android picker is a modal dialog — close it after a value is picked.
+    // iOS uses our own bottom-sheet with a Done button, so keep it open.
     if (Platform.OS === "android") setShow(false);
-    if (selected) onChange(selected);
+  }
+
+  function handleDismiss() {
+    setShow(false);
   }
 
   const displayDate = formatDisplay(value);
@@ -176,7 +182,8 @@ function DatePickerField({
           value={value ?? new Date()}
           minimumDate={minimumDate}
           display="default"
-          onChange={handleChange}
+          onValueChange={handleValueChange}
+          onDismiss={handleDismiss}
         />
       )}
 
@@ -204,7 +211,7 @@ function DatePickerField({
                 value={value ?? new Date()}
                 minimumDate={minimumDate}
                 display="spinner"
-                onChange={handleChange}
+                onValueChange={handleValueChange}
                 style={{ height: 180 }}
               />
             </View>
@@ -235,18 +242,26 @@ function DetailsStep({
   onDateChange,
   onTimeChange,
   onChange,
+  onLocationSelect,
   errors,
 }: {
   details: Details;
   onDateChange: (d: Date) => void;
   onTimeChange: (d: Date) => void;
-  onChange: (k: keyof Details, v: string) => void;
+  onChange: <K extends keyof Details>(k: K, v: Details[K]) => void;
+  onLocationSelect: (address: string, latitude: number, longitude: number) => void;
   errors: Partial<Record<keyof Details, string>>;
 }) {
   const tomorrow = new Date();
   tomorrow.setDate(tomorrow.getDate() + 1);
 
   const [showLocationPicker, setShowLocationPicker] = useState(false);
+
+  const hasCoords =
+    typeof details.latitude === "number" &&
+    Number.isFinite(details.latitude) &&
+    typeof details.longitude === "number" &&
+    Number.isFinite(details.longitude);
 
   return (
     <KeyboardAvoidingView enabled={Platform.OS === "ios"} behavior="padding">
@@ -301,11 +316,12 @@ function DetailsStep({
         {errors.location && (
           <Text className="text-[#FF3B30] text-[12px] mt-1">{errors.location}</Text>
         )}
-        {details.latitude && details.longitude && (
+        {hasCoords && (
           <View className="mt-1.5 flex-row items-center gap-1.5">
             <AppIcon name="compass" size={11} color="#059669" />
             <Text className="text-[#059669] text-[11px] font-mono font-medium">
-              Coordinates pinned: {details.latitude.toFixed(4)}, {details.longitude.toFixed(4)}
+              Coordinates pinned: {Number(details.latitude).toFixed(4)},{" "}
+              {Number(details.longitude).toFixed(4)}
             </Text>
           </View>
         )}
@@ -319,9 +335,7 @@ function DetailsStep({
         initialLongitude={details.longitude}
         onClose={() => setShowLocationPicker(false)}
         onSelect={(res) => {
-          onChange("location", res.address);
-          onChange("latitude" as any, String(res.latitude) as any);
-          onChange("longitude" as any, String(res.longitude) as any);
+          onLocationSelect(res.address, res.latitude, res.longitude);
         }}
       />
       <View className="flex-row gap-3">
@@ -530,9 +544,24 @@ export default function CreateEventScreen() {
       .finally(() => setLoadingCategories(false));
   }, []);
 
-  function setDetail(k: keyof Details, v: string) {
+  function setDetail<K extends keyof Details>(k: K, v: Details[K]) {
     setDetails((p) => ({ ...p, [k]: v }));
     if (detailErrors[k]) setDetailErrors((p) => ({ ...p, [k]: undefined }));
+  }
+
+  const handleLocationSelect = useCallback(
+    (address: string, latitude: number, longitude: number) => {
+      setDetails((p) => ({ ...p, location: address, latitude, longitude }));
+      setDetailErrors((p) => ({ ...p, location: undefined }));
+    },
+    []
+  );
+
+  function parseOptionalInt(raw: string): number | undefined {
+    const trimmed = raw.trim();
+    if (!trimmed) return undefined;
+    const n = parseInt(trimmed, 10);
+    return Number.isNaN(n) ? undefined : n;
   }
 
   function toggleService(id: string) {
@@ -584,6 +613,13 @@ export default function CreateEventScreen() {
     if (!eventType || !details.eventDate) return;
     setSubmitting(true);
     try {
+      const guestCount = parseOptionalInt(details.guestCount);
+      const budgetMin = parseOptionalInt(details.budgetMin);
+      const budgetMax = parseOptionalInt(details.budgetMax);
+      if (budgetMin !== undefined && budgetMax !== undefined && budgetMin > budgetMax) {
+        setDetailErrors((p) => ({ ...p, budgetMax: "Max must be ≥ min" }));
+        return;
+      }
       const payload = {
         type: eventType,
         title: details.title.trim() || undefined,
@@ -592,11 +628,15 @@ export default function CreateEventScreen() {
           ? details.startTime.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })
           : undefined,
         location: details.location.trim(),
-        ...(details.latitude ? { latitude: details.latitude } : {}),
-        ...(details.longitude ? { longitude: details.longitude } : {}),
-        guestCount: details.guestCount ? parseInt(details.guestCount) : undefined,
-        budgetMin: details.budgetMin ? parseInt(details.budgetMin) : undefined,
-        budgetMax: details.budgetMax ? parseInt(details.budgetMax) : undefined,
+        ...(typeof details.latitude === "number" && Number.isFinite(details.latitude)
+          ? { latitude: details.latitude }
+          : {}),
+        ...(typeof details.longitude === "number" && Number.isFinite(details.longitude)
+          ? { longitude: details.longitude }
+          : {}),
+        ...(guestCount !== undefined ? { guestCount } : {}),
+        ...(budgetMin !== undefined ? { budgetMin } : {}),
+        ...(budgetMax !== undefined ? { budgetMax } : {}),
         requirements: details.requirements.trim() || undefined,
         serviceCategories: selectedServices.size > 0 ? Array.from(selectedServices) : undefined,
       };
@@ -606,7 +646,12 @@ export default function CreateEventScreen() {
         { text: "View event", onPress: () => router.replace(`/events/${event.id}` as any) },
       ]);
     } catch (err: any) {
-      Alert.alert("Error", err?.response?.data?.message ?? "Could not create event.");
+      const serverMessage = err?.response?.data?.message;
+      const message =
+        typeof serverMessage === "string" && serverMessage.length > 0
+          ? serverMessage
+          : (err?.message ?? "Could not create event.");
+      Alert.alert("Error", message);
     } finally {
       setSubmitting(false);
     }
@@ -648,6 +693,7 @@ export default function CreateEventScreen() {
               onDateChange={(d) => setDetails((p) => ({ ...p, eventDate: d }))}
               onTimeChange={(d) => setDetails((p) => ({ ...p, startTime: d }))}
               onChange={setDetail}
+              onLocationSelect={handleLocationSelect}
               errors={detailErrors}
             />
           )}

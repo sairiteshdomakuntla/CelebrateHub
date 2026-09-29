@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { z } from "zod";
 import { prisma } from "../../lib/prisma.js";
+import { syncProviderRating } from "../reviews/reviews.service.js";
 
 const PAGE_SIZE = 20;
 
@@ -546,10 +547,12 @@ export async function listReviews(req: Request, res: Response): Promise<void> {
       }),
     ]);
 
+    // Platform-wide average across every review (not the filtered page)
+    const agg = await prisma.review.aggregate({ _avg: { rating: true }, _count: { rating: true } });
     const avgRating =
-      reviews.length > 0
-        ? Number((reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1))
-        : 5.0;
+      agg._count.rating > 0 && agg._avg.rating != null
+        ? Number(agg._avg.rating.toFixed(1))
+        : null;
 
     res.json({
       success: true,
@@ -595,6 +598,13 @@ export async function updateReviewStatus(req: Request, res: Response): Promise<v
       },
     });
 
+    // Re-calculate the provider's public rating so hiding/flagging takes effect
+    try {
+      await syncProviderRating(updated.providerId);
+    } catch (syncErr) {
+      console.warn("Failed to resync provider rating after moderation:", syncErr);
+    }
+
     res.json({ success: true, data: updated });
   } catch (err: any) {
     if (err?.code === "P2025") {
@@ -609,7 +619,17 @@ export async function updateReviewStatus(req: Request, res: Response): Promise<v
 export async function deleteReview(req: Request, res: Response): Promise<void> {
   try {
     const id = req.params.id as string;
+    const review = await prisma.review.findUnique({ where: { id } });
+    if (!review) {
+      res.status(404).json({ success: false, message: "Review not found" });
+      return;
+    }
     await prisma.review.delete({ where: { id } });
+    try {
+      await syncProviderRating(review.providerId);
+    } catch (syncErr) {
+      console.warn("Failed to resync provider rating after review delete:", syncErr);
+    }
     res.json({ success: true, message: "Review deleted successfully" });
   } catch (err: any) {
     if (err?.code === "P2025") {

@@ -26,6 +26,21 @@ async function getProviderForUser(userId: string) {
 
 // ─── Lead Generation & Matching ───────────────────────────────────────────────
 
+// INSTANT_LEAD_MATCHING setting — when disabled, leads are not pushed out at
+// creation time; they are matched on-demand the next time a provider opens
+// their leads feed (see getProviderLeads).
+export async function isInstantLeadMatchingEnabled(): Promise<boolean> {
+  try {
+    const setting = await prisma.platformSetting.findUnique({
+      where: { key: "INSTANT_LEAD_MATCHING" },
+    });
+    if (!setting) return true;
+    return setting.value !== "false";
+  } catch {
+    return true;
+  }
+}
+
 export async function distributeLeadsForService(eventServiceId: string) {
   const service = await prisma.eventService.findUnique({
     where: { id: eventServiceId },
@@ -83,44 +98,92 @@ export async function distributeLeadsForService(eventServiceId: string) {
     // fallback to 5
   }
 
-  const targetedProviders = eligibleProviders.slice(0, maxProviders);
+  // Location-aware ranking: prioritize providers closest to the event venue
+  let sortedProviders = [...eligibleProviders];
+  const eventLat = service.event.latitude ? parseFloat(String(service.event.latitude)) : null;
+  const eventLng = service.event.longitude ? parseFloat(String(service.event.longitude)) : null;
 
-  for (const provider of targetedProviders) {
-    // Upsert LeadProvider
-    const existingLp = await prisma.leadProvider.findUnique({
-      where: {
-        leadId_providerId: {
-          leadId: lead.id,
-          providerId: provider.id,
-        },
-      },
+  if (eventLat !== null && eventLng !== null && !isNaN(eventLat) && !isNaN(eventLng)) {
+    const toRad = (deg: number) => (deg * Math.PI) / 180;
+    const calcDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
+      const R = 6371; // km
+      const dLat = toRad(lat2 - lat1);
+      const dLon = toRad(lon2 - lon1);
+      const a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+      return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    };
+
+    sortedProviders.sort((a, b) => {
+      const aLat = a.latitude ? parseFloat(String(a.latitude)) : null;
+      const aLng = a.longitude ? parseFloat(String(a.longitude)) : null;
+      const bLat = b.latitude ? parseFloat(String(b.latitude)) : null;
+      const bLng = b.longitude ? parseFloat(String(b.longitude)) : null;
+
+      const aHas = aLat !== null && aLng !== null && !isNaN(aLat) && !isNaN(aLng);
+      const bHas = bLat !== null && bLng !== null && !isNaN(bLat) && !isNaN(bLng);
+
+      if (aHas && !bHas) return -1;
+      if (!aHas && bHas) return 1;
+      if (!aHas && !bHas) return 0;
+
+      const distA = calcDistance(eventLat, eventLng, aLat!, aLng!);
+      const distB = calcDistance(eventLat, eventLng, bLat!, bLng!);
+
+      const aInRadius = a.serviceRadiusKm ? distA <= a.serviceRadiusKm : true;
+      const bInRadius = b.serviceRadiusKm ? distB <= b.serviceRadiusKm : true;
+
+      if (aInRadius && !bInRadius) return -1;
+      if (!aInRadius && bInRadius) return 1;
+
+      return distA - distB;
     });
+  }
 
-    if (!existingLp) {
-      await prisma.leadProvider.create({
-        data: {
-          leadId: lead.id,
-          providerId: provider.id,
-          status: "PENDING",
-          notifiedAt: new Date(),
-        },
-      });
+  const targetedProviders = sortedProviders.slice(0, maxProviders);
 
-      // Send in-app notification to provider
+  await Promise.all(
+    targetedProviders.map(async (provider) => {
       try {
-        await prisma.notification.create({
-          data: {
-            userId: provider.userId,
-            type: "LEAD",
-            title: `New Lead: ${service.category.name}`,
-            body: `Celebration request for ${service.event.title || service.event.type} in ${service.event.location}. Tap to review and accept!`,
+        const existingLp = await prisma.leadProvider.findUnique({
+          where: {
+            leadId_providerId: {
+              leadId: lead.id,
+              providerId: provider.id,
+            },
           },
         });
+
+        if (!existingLp) {
+          await prisma.leadProvider.create({
+            data: {
+              leadId: lead.id,
+              providerId: provider.id,
+              status: "PENDING",
+              notifiedAt: new Date(),
+            },
+          });
+
+          // Send in-app notification to provider
+          try {
+            await prisma.notification.create({
+              data: {
+                userId: provider.userId,
+                type: "LEAD",
+                title: `New Lead: ${service.category.name}`,
+                body: `Celebration request for ${service.event.title || service.event.type} in ${service.event.location}. Tap to review and accept!`,
+              },
+            });
+          } catch (err) {
+            console.warn("Could not create lead notification:", err);
+          }
+        }
       } catch (err) {
-        console.warn("Could not create lead notification:", err);
+        console.warn("Error matching provider to lead:", err);
       }
-    }
-  }
+    })
+  );
 
   return lead;
 }
@@ -131,12 +194,7 @@ export async function distributeLeadsForEvent(eventId: string) {
     select: { id: true },
   });
 
-  const results = [];
-  for (const svc of services) {
-    const lead = await distributeLeadsForService(svc.id);
-    if (lead) results.push(lead);
-  }
-  return results;
+  return Promise.all(services.map((svc) => distributeLeadsForService(svc.id)));
 }
 
 // Ensure all existing event services in DB have leads generated & distributed
