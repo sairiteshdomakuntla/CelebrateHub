@@ -97,12 +97,12 @@ export interface CreateContributionPayload {
 
 export const GIFT_CATEGORIES = [
   { key: "ALL",         label: "All Gifts",           icon: "grid",       color: "#1C1C1E", bg: "#F1EFEC" },
-  { key: "CASH_FUND",   label: "Cash Funds",          icon: "wallet",     color: "#1E7A3C", bg: "#EAF6EE" },
+  { key: "CASH_FUND",   label: "Cash Funds",          icon: "credit-card", color: "#1E7A3C", bg: "#EAF6EE" },
   { key: "HOME",        label: "Home & Decor",        icon: "home",       color: "#2F54B8", bg: "#EAF0FB" },
   { key: "KITCHEN",     label: "Kitchen & Dining",    icon: "coffee",     color: "#9C4221", bg: "#FBECE6" },
-  { key: "GADGETS",     label: "Tech & Gadgets",      icon: "laptop",     color: "#7A35A5", bg: "#F3EBF9" },
+  { key: "GADGETS",     label: "Tech & Gadgets",      icon: "monitor",    color: "#7A35A5", bg: "#F3EBF9" },
   { key: "EXPERIENCE",  label: "Travel & Experience", icon: "compass",    color: "#8A5E10", bg: "#FDF3E3" },
-  { key: "FASHION",     label: "Style & Jewels",      icon: "sparkles",   color: "#A22C5C", bg: "#FBEAF2" },
+  { key: "FASHION",     label: "Style & Jewels",      icon: "star",       color: "#A22C5C", bg: "#FBEAF2" },
   { key: "BABY",        label: "Baby & Kids",         icon: "heart",      color: "#0D7A70", bg: "#E6F5F3" },
   { key: "GENERAL",     label: "Wishlist",            icon: "gift",       color: "#4F46E5", bg: "#EEF2FF" },
 ] as const;

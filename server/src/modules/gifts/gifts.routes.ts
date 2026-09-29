@@ -5,6 +5,7 @@ import * as ctrl from "./gifts.controller.js";
 const router = Router();
 
 // ─── Public / Guest Accessible (with optional auth for host recognition) ──────
+router.get("/public/:eventId", ctrl.renderPublicRegistryPage);
 router.get("/event/:eventId", optionalAuth, ctrl.getGiftCircle);
 router.post("/items/:id/claim", optionalAuth, ctrl.claimGiftItem);
 router.post("/items/:id/unclaim", optionalAuth, ctrl.unclaimGiftItem);

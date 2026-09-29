@@ -16,6 +16,8 @@ const ICON_FALLBACKS: Record<string, AppIconName> = {
   party: "gift",
   celebration: "gift",
   ring: "heart",
+  wallet: "credit-card",
+  laptop: "monitor",
 };
 
 export function resolveIconName(name: string): AppIconName {

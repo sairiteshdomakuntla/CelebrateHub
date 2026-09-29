@@ -90,7 +90,8 @@ export const guestsApi = {
 export function generateInvitationMessage(
   event: { title?: string | null; type: string; eventDate: string; startTime?: string | null; location: string },
   hostName?: string,
-  guestName?: string
+  guestName?: string,
+  registryUrl?: string
 ) {
   const formattedDate = new Date(event.eventDate).toLocaleDateString("en-IN", {
     weekday: "long",
@@ -103,6 +104,9 @@ export function generateInvitationMessage(
   const title = event.title || `${event.type} Celebration`;
   const greeting = guestName ? `Dear ${guestName},\n\n` : "";
   const host = hostName ? `Warm regards,\n${hostName}` : "We look forward to seeing you!";
+  const linkSection = registryUrl
+    ? `\n\n🎁 View Digital Card & Gift Registry (No app needed):\n${registryUrl}`
+    : "";
 
-  return `${greeting}✨ You are cordially invited to celebrate with us! ✨\n\n🎉 Event: ${title}\n📅 Date: ${formattedDate}${timeStr}\n📍 Venue: ${event.location}\n\nKindly confirm your presence.\n\n${host}\n\n— Sent via CelebrateHub`;
+  return `${greeting}✨ You are cordially invited to celebrate with us! ✨\n\n🎉 Event: ${title}\n📅 Date: ${formattedDate}${timeStr}\n📍 Venue: ${event.location}${linkSection}\n\nKindly confirm your presence.\n\n${host}\n\n— Sent via CelebrateHub`;
 }

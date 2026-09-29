@@ -14,13 +14,17 @@ import guestsRoutes from "./modules/guests/guests.routes.js";
 import reviewsRoutes from "./modules/reviews/reviews.routes.js";
 import notificationsRoutes from "./modules/notifications/notifications.routes.js";
 import giftsRoutes from "./modules/gifts/gifts.routes.js";
+import { renderPublicRegistryPage } from "./modules/gifts/gifts.controller.js";
 
 const app = express();
 
-app.use(helmet());
+app.use(helmet({ contentSecurityPolicy: false }));
 app.use(cors({ origin: "*", credentials: true }));
 app.use(express.json());
 app.use(morgan("dev"));
+
+// ─── Direct Public Web Routes (No Auth Needed) ────────────────────────────────
+app.get("/registry/:eventId", renderPublicRegistryPage);
 
 // ─── Routes ────────────────────────────────────────────────────────────────
 

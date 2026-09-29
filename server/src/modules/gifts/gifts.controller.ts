@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import * as svc from "./gifts.service.js";
+import { renderPublicRegistryHtml } from "./gifts.public-html.js";
 import {
   createGiftItemSchema,
   updateGiftItemSchema,
@@ -132,5 +133,28 @@ export async function thankContribution(req: Request, res: Response): Promise<vo
     res.json({ success: true, data: updated });
   } catch (err: any) {
     res.status(err.statusCode ?? 500).json({ success: false, message: err.message ?? "Failed to update thank status" });
+  }
+}
+
+// ─── Render Public Registry HTML Webpage (no login needed for guests) ─────────
+
+export async function renderPublicRegistryPage(req: Request, res: Response): Promise<void> {
+  try {
+    const eventId = String(req.params.eventId);
+    const data = await svc.getEventGiftCircle(eventId);
+    const html = renderPublicRegistryHtml(data);
+    res.setHeader("Content-Type", "text/html; charset=utf-8");
+    res.send(html);
+  } catch (err: any) {
+    res.status(err.statusCode ?? 500).send(`
+      <!DOCTYPE html>
+      <html>
+      <head><title>CelebrateHub · Registry</title></head>
+      <body style="font-family:system-ui,-apple-system,sans-serif; text-align:center; padding:60px 20px; background:#F7F7F5; color:#1C1C1E;">
+        <h2 style="font-size:24px; margin-bottom:8px;">Celebration Registry Not Found</h2>
+        <p style="color:#71717A; max-width:400px; margin:0 auto 24px;">${err.message ?? "The requested celebration registry could not be found or has concluded."}</p>
+      </body>
+      </html>
+    `);
   }
 }

@@ -37,6 +37,7 @@ import { reviewsApi } from "@/lib/reviews.api";
 import { giftsApi } from "@/lib/gifts.api";
 import { VenueMapCard } from "@/components/map/venue-map-card";
 import { LocationPickerModal } from "@/components/map/location-picker-modal";
+import { BASE_URL } from "@/lib/api";
 
 function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString("en-IN", {
@@ -208,7 +209,8 @@ export default function EventDetailScreen() {
     if (cleanPhone.length === 10) {
       cleanPhone = "91" + cleanPhone;
     }
-    const message = generateInvitationMessage(event, undefined, guest.name);
+    const registryUrl = `${BASE_URL}/registry/${event.id}`;
+    const message = generateInvitationMessage(event, undefined, guest.name, registryUrl);
 
     try {
       await guestsApi.recordInvite(guest.id, "WHATSAPP");
@@ -248,7 +250,8 @@ export default function EventDetailScreen() {
       Alert.alert("Missing Phone", "Please provide a phone number for this guest.");
       return;
     }
-    const message = generateInvitationMessage(event, undefined, guest.name);
+    const registryUrl = `${BASE_URL}/registry/${event.id}`;
+    const message = generateInvitationMessage(event, undefined, guest.name, registryUrl);
     try {
       await guestsApi.recordInvite(guest.id, "SMS");
       setGuests((prev) =>
@@ -264,7 +267,8 @@ export default function EventDetailScreen() {
 
   async function handleShareCard() {
     if (!event) return;
-    const msg = generateInvitationMessage(event);
+    const registryUrl = `${BASE_URL}/registry/${event.id}`;
+    const msg = generateInvitationMessage(event, undefined, undefined, registryUrl);
     try {
       await Share.share({
         title: event.title || `${event.type} Invitation`,
@@ -1091,7 +1095,8 @@ export default function EventDetailScreen() {
                 <TouchableOpacity
                   onPress={() => {
                     setShowInviteCardModal(false);
-                    const msg = generateInvitationMessage(event);
+                    const registryUrl = `${BASE_URL}/registry/${event.id}`;
+                    const msg = generateInvitationMessage(event, undefined, undefined, registryUrl);
                     Linking.openURL(`https://wa.me/?text=${encodeURIComponent(msg)}`);
                   }}
                   className="flex-row items-center justify-center gap-2 py-3 rounded-xl bg-[#25D366]"

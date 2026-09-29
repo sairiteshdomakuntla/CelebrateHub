@@ -18,6 +18,8 @@ import { StatusBar } from "expo-status-bar";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { AppIcon } from "@/components/ui/pro-icon";
+import { BASE_URL } from "@/lib/api";
+import * as WebBrowser from "expo-web-browser";
 import {
   giftsApi,
   type GiftItem,
@@ -127,13 +129,14 @@ export default function GiftCircleScreen() {
       month: "long",
       year: "numeric",
     });
+    const publicUrl = `${BASE_URL}/registry/${eventId}`;
     const message =
       `🎁 *Gift Circle & Registry for ${eventName}* 🎉\n\n` +
-      `We invite you to view our gift wishlist and celebration funds organized by ${hostName}!\n` +
-      `You can pledge a gift, chip into group funds, or leave sweet blessings.\n\n` +
+      `We warmly invite you to view our celebration registry & wishlist organized by ${hostName}!\n` +
+      `You can view items, promise a gift, or send sweet blessings directly online:\n\n` +
       `📅 ${eventDate}\n` +
       `📍 ${data.event.location}\n\n` +
-      `👉 Open the registry in the CelebrateHub app: celebratehub://events/${eventId}\n` +
+      `👉 View & Contribute Online (No app needed):\n${publicUrl}\n\n` +
       `Let's celebrate together! ✨`;
 
     try {
@@ -469,6 +472,36 @@ export default function GiftCircleScreen() {
                 <Text className="text-white text-[14px] font-semibold">Add Gift</Text>
               </TouchableOpacity>
             )}
+          </View>
+        </View>
+
+        {/* ─── Public Guest Registry Share Banner (No login needed) ────────── */}
+        <View className="mx-4 mb-4 p-4 rounded-2xl bg-[#EEF2FF] border border-[#C7D2FE] flex-row items-center justify-between">
+          <View className="flex-1 mr-3">
+            <View className="flex-row items-center gap-1.5 mb-1">
+              <AppIcon name="globe" size={13} color="#4F46E5" />
+              <Text className="text-[#4F46E5] text-[11px] font-bold uppercase tracking-wider">
+                Public Guest Registry
+              </Text>
+            </View>
+            <Text className="text-[#3730A3] text-[12px] font-medium leading-relaxed">
+              Guests can view, claim gifts, and send cash blessings directly from any browser — no app or account required!
+            </Text>
+          </View>
+          <View className="gap-1.5">
+            <TouchableOpacity
+              onPress={handleShare}
+              className="bg-[#4F46E5] px-3.5 py-2 rounded-xl flex-row items-center gap-1.5 shadow-xs active:bg-[#4338CA]"
+            >
+              <AppIcon name="share-2" size={13} color="#FFFFFF" />
+              <Text className="text-white text-[12px] font-bold">Share Link</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => WebBrowser.openBrowserAsync(`${BASE_URL}/registry/${eventId}`)}
+              className="bg-white border border-[#C7D2FE] px-3 py-1.5 rounded-xl items-center active:bg-[#F5F7FF]"
+            >
+              <Text className="text-[#4F46E5] text-[11px] font-semibold">Preview Web</Text>
+            </TouchableOpacity>
           </View>
         </View>
 
