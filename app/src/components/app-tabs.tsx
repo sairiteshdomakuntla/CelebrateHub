@@ -1,8 +1,6 @@
 import { NativeTabs } from 'expo-router/unstable-native-tabs';
 import { useAuthStore } from '@/store/auth.store';
-
-const INK = '#1C1C1E';
-const MUTED = '#8E8E93';
+import { colors } from '@/theme';
 
 export default function AppTabs() {
   const { user } = useAuthStore();
@@ -11,11 +9,11 @@ export default function AppTabs() {
 
   return (
     <NativeTabs
-      backgroundColor="#FFFFFF"
-      indicatorColor="#F1EFEC"
-      tintColor={INK}
-      iconColor={{ default: MUTED, selected: INK }}
-      labelStyle={{ default: { color: MUTED }, selected: { color: INK } }}
+      backgroundColor={colors.surface}
+      indicatorColor={colors.surfaceRaised}
+      tintColor={colors.primary}
+      iconColor={{ default: colors.textMuted, selected: colors.primary }}
+      labelStyle={{ default: { color: colors.textMuted }, selected: { color: colors.primary } }}
       labelVisibilityMode="labeled"
     >
       <NativeTabs.Trigger name="index">

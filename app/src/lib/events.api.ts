@@ -104,11 +104,11 @@ export const EVENT_TYPE_META: Record<EventType, { label: string; emoji: string }
 };
 
 export const EVENT_STATUS_META: Record<EventStatus, { label: string; bg: string; text: string }> = {
-  DRAFT:       { label: "Draft",       bg: "#F1EFEC", text: "#6E6E73" },
-  PUBLISHED:   { label: "Published",   bg: "#EAF0FB", text: "#2F54B8" },
-  IN_PROGRESS: { label: "In Progress", bg: "#FDF3E3", text: "#8A5E10" },
-  COMPLETED:   { label: "Completed",   bg: "#EAF6EE", text: "#1E7A3C" },
-  CANCELLED:   { label: "Cancelled",   bg: "#FBECEB", text: "#B3261E" },
+  DRAFT:       { label: "Draft",       bg: "#2A2460", text: "#B8B3E0" },
+  PUBLISHED:   { label: "Published",   bg: "#1B2A55", text: "#8FB4FF" },
+  IN_PROGRESS: { label: "In Progress", bg: "#3D2F0F", text: "#FFC53D" },
+  COMPLETED:   { label: "Completed",   bg: "#123B34", text: "#6EE7B7" },
+  CANCELLED:   { label: "Cancelled",   bg: "#3F1420", text: "#FF8FA3" },
 };
 
 // ─── API ──────────────────────────────────────────────────────────────────────

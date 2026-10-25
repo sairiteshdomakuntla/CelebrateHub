@@ -38,12 +38,12 @@ export const NOTIF_META: Record<
   NotificationType,
   { icon: string; color: string; bg: string }
 > = {
-  LEAD:         { icon: "inbox",       color: "#2F54B8", bg: "#EAF0FB" },
-  BOOKING:      { icon: "calendar",    color: "#1E7A3C", bg: "#EAF6EE" },
-  EVENT:        { icon: "star",        color: "#8A5E10", bg: "#FDF3E3" },
-  SUBSCRIPTION: { icon: "shield",      color: "#9A3B26", bg: "#F9EFE9" },
-  REVIEW:       { icon: "message-circle", color: "#6B4FA0", bg: "#F1EBF9" },
-  SYSTEM:       { icon: "bell",        color: "#6E6E73", bg: "#F1EFEC" },
+  LEAD:         { icon: "inbox",          color: "#8FB4FF", bg: "#1B2A55" },
+  BOOKING:      { icon: "calendar",       color: "#6EE7B7", bg: "#123B34" },
+  EVENT:        { icon: "sparkles",       color: "#FFC53D", bg: "#3D2F0F" },
+  SUBSCRIPTION: { icon: "shield",         color: "#7C5CFF", bg: "#2A2460" },
+  REVIEW:       { icon: "message-circle", color: "#FF8FA3", bg: "#3F1420" },
+  SYSTEM:       { icon: "bell",           color: "#B8B3E0", bg: "#1E1A3F" },
 };
 
 // ─── API ──────────────────────────────────────────────────────────────────────

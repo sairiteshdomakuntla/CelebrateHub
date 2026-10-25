@@ -23,23 +23,23 @@ interface ButtonProps {
 }
 
 const variantStyles: Record<Variant, string> = {
-  primary: "bg-[#1C1C1E]",
-  secondary: "bg-white border border-[#E0DED8]",
+  primary: "bg-[#7C5CFF]",
+  secondary: "bg-[#1E1A3F] border border-[#322C63]",
   ghost: "bg-transparent",
-  danger: "bg-[#B3261E]",
+  danger: "bg-[#3F1420]",
 };
 
 const sizeStyles: Record<Size, string> = {
   sm: "px-4 py-2.5 min-h-[40px] rounded-xl",
   md: "px-5 py-3.5 min-h-[52px] rounded-xl",
-  lg: "px-6 py-4 min-h-[56px] rounded-xl",
+  lg: "px-6 py-4 min-h-[56px] rounded-[14px]",
 };
 
 const labelVariant: Record<Variant, string> = {
   primary: "text-white font-semibold",
-  secondary: "text-[#1C1C1E] font-semibold",
-  ghost: "text-[#6E6E73] font-medium",
-  danger: "text-white font-semibold",
+  secondary: "text-white font-semibold",
+  ghost: "text-[#B8B3E0] font-medium",
+  danger: "text-[#FF8FA3] font-semibold",
 };
 
 const labelSize: Record<Size, string> = {
@@ -76,11 +76,11 @@ export function Button({
       style={[
         variant === "primary"
           ? {
-              shadowColor: "#1C1C1E",
-              shadowOffset: { width: 0, height: 2 },
-              shadowOpacity: 0.12,
-              shadowRadius: 8,
-              elevation: 2,
+              shadowColor: "#7C5CFF",
+              shadowOffset: { width: 0, height: 4 },
+              shadowOpacity: 0.3,
+              shadowRadius: 12,
+              elevation: 4,
             }
           : undefined,
         style,
@@ -89,7 +89,7 @@ export function Button({
       {loading ? (
         <ActivityIndicator
           size="small"
-          color={variant === "secondary" ? "#1C1C1E" : "#FFFFFF"}
+          color={variant === "secondary" ? "#FFFFFF" : "#FFFFFF"}
         />
       ) : (
         <View className="flex-row items-center gap-2">

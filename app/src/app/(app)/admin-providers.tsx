@@ -81,11 +81,11 @@ function ProviderDetailSheet({
 
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
-      <View className="flex-1 bg-black/60 justify-end">
-        <View className="bg-white rounded-t-3xl">
+      <View className="flex-1 bg-black/75 justify-end">
+        <View className="bg-[#1E1A3F] border-t border-[#322C63] rounded-t-3xl max-h-[90%]">
           {/* Handle */}
           <View className="items-center pt-3 pb-1">
-            <View className="w-10 h-1 rounded-full bg-[#D1D1D6]" />
+            <View className="w-10 h-1.5 rounded-full bg-[#322C63]" />
           </View>
 
           <ScrollView
@@ -94,16 +94,16 @@ function ProviderDetailSheet({
             keyboardShouldPersistTaps="handled"
           >
             {/* Header */}
-            <View className="flex-row items-center justify-between py-4 border-b border-[#F0EEEA] mb-4">
+            <View className="flex-row items-center justify-between py-4 border-b border-[#322C63] mb-4">
               <View className="flex-1 mr-3">
-                <Text className="text-[#1C1C1E] text-[18px] font-bold">{provider.businessName}</Text>
-                <Text className="text-[#8E8E93] text-[13px] mt-0.5">{provider.user.name}</Text>
+                <Text className="text-white text-[18px] font-bold">{provider.businessName}</Text>
+                <Text className="text-[#B8B3E0] text-[13px] mt-0.5">{provider.user.name}</Text>
               </View>
               <TouchableOpacity
                 onPress={onClose}
-                className="w-8 h-8 rounded-full bg-[#F5F4F0] items-center justify-center"
+                className="w-8 h-8 rounded-full bg-[#2A2460] border border-[#322C63] items-center justify-center"
               >
-                <AppIcon name="x" size={16} color="#8E8E93" />
+                <AppIcon name="x" size={16} color="#B8B3E0" />
               </TouchableOpacity>
             </View>
 
@@ -118,18 +118,18 @@ function ProviderDetailSheet({
             </View>
 
             {/* Provider info */}
-            <View className="bg-[#F9F9F8] border border-[#EEEEEC] rounded-2xl p-4 gap-3 mb-4">
+            <View className="bg-[#2A2460] border border-[#322C63] rounded-2xl p-4 gap-3 mb-4">
               <View className="flex-row items-center gap-3">
-                <View className="w-8 h-8 rounded-lg bg-white border border-[#E8E6E1] items-center justify-center">
-                  <AppIcon name="mail" size={14} color="#6E6E73" />
+                <View className="w-8 h-8 rounded-lg bg-[#1E1A3F] border border-[#322C63] items-center justify-center">
+                  <AppIcon name="mail" size={14} color="#B8B3E0" />
                 </View>
                 <View className="flex-1">
-                  <Text className="text-[#8E8E93] text-[10px] uppercase font-bold">Email</Text>
-                  <Text className="text-[#1C1C1E] text-[13px] font-medium">{provider.user.email}</Text>
+                  <Text className="text-[#B8B3E0] text-[10px] uppercase font-bold tracking-wider">Email</Text>
+                  <Text className="text-white text-[13px] font-medium">{provider.user.email}</Text>
                 </View>
                 <TouchableOpacity
                   onPress={() => Linking.openURL(`mailto:${provider.user.email}`)}
-                  className="w-8 h-8 rounded-full bg-[#1C1C1E] items-center justify-center"
+                  className="w-8 h-8 rounded-full bg-[#7C5CFF] items-center justify-center"
                 >
                   <AppIcon name="send" size={12} color="#FFFFFF" />
                 </TouchableOpacity>
@@ -137,42 +137,42 @@ function ProviderDetailSheet({
 
               {provider.user.phone && (
                 <View className="flex-row items-center gap-3">
-                  <View className="w-8 h-8 rounded-lg bg-white border border-[#E8E6E1] items-center justify-center">
-                    <AppIcon name="phone" size={14} color="#6E6E73" />
+                  <View className="w-8 h-8 rounded-lg bg-[#1E1A3F] border border-[#322C63] items-center justify-center">
+                    <AppIcon name="phone" size={14} color="#B8B3E0" />
                   </View>
                   <View className="flex-1">
-                    <Text className="text-[#8E8E93] text-[10px] uppercase font-bold">Phone</Text>
-                    <Text className="text-[#1C1C1E] text-[13px] font-medium">{provider.user.phone}</Text>
+                    <Text className="text-[#B8B3E0] text-[10px] uppercase font-bold tracking-wider">Phone</Text>
+                    <Text className="text-white text-[13px] font-medium">{provider.user.phone}</Text>
                   </View>
                   <TouchableOpacity
                     onPress={() => Linking.openURL(`tel:${provider.user.phone}`)}
-                    className="w-8 h-8 rounded-full bg-[#10B981] items-center justify-center"
+                    className="w-8 h-8 rounded-full bg-[#123B34] border border-[#6EE7B7]/40 items-center justify-center"
                   >
-                    <AppIcon name="phone" size={12} color="#FFFFFF" />
+                    <AppIcon name="phone" size={12} color="#6EE7B7" />
                   </TouchableOpacity>
                 </View>
               )}
 
               {provider.serviceArea && (
                 <View className="flex-row items-center gap-3">
-                  <View className="w-8 h-8 rounded-lg bg-white border border-[#E8E6E1] items-center justify-center">
-                    <AppIcon name="map-pin" size={14} color="#6E6E73" />
+                  <View className="w-8 h-8 rounded-lg bg-[#1E1A3F] border border-[#322C63] items-center justify-center">
+                    <AppIcon name="map-pin" size={14} color="#B8B3E0" />
                   </View>
                   <View className="flex-1">
-                    <Text className="text-[#8E8E93] text-[10px] uppercase font-bold">Service Area</Text>
-                    <Text className="text-[#1C1C1E] text-[13px] font-medium">{provider.serviceArea}</Text>
+                    <Text className="text-[#B8B3E0] text-[10px] uppercase font-bold tracking-wider">Service Area</Text>
+                    <Text className="text-white text-[13px] font-medium">{provider.serviceArea}</Text>
                   </View>
                 </View>
               )}
 
               {(provider.pricingMin || provider.pricingMax) && (
                 <View className="flex-row items-center gap-3">
-                  <View className="w-8 h-8 rounded-lg bg-white border border-[#E8E6E1] items-center justify-center">
-                    <AppIcon name="dollar-sign" size={14} color="#6E6E73" />
+                  <View className="w-8 h-8 rounded-lg bg-[#1E1A3F] border border-[#322C63] items-center justify-center">
+                    <AppIcon name="dollar-sign" size={14} color="#B8B3E0" />
                   </View>
                   <View className="flex-1">
-                    <Text className="text-[#8E8E93] text-[10px] uppercase font-bold">Pricing Range</Text>
-                    <Text className="text-[#1C1C1E] text-[13px] font-medium">
+                    <Text className="text-[#B8B3E0] text-[10px] uppercase font-bold tracking-wider">Pricing Range</Text>
+                    <Text className="text-white text-[13px] font-medium">
                       ₹{provider.pricingMin?.toLocaleString("en-IN") ?? "—"} –{" "}
                       ₹{provider.pricingMax?.toLocaleString("en-IN") ?? "—"}
                     </Text>
@@ -181,12 +181,12 @@ function ProviderDetailSheet({
               )}
 
               <View className="flex-row items-center gap-3">
-                <View className="w-8 h-8 rounded-lg bg-white border border-[#E8E6E1] items-center justify-center">
-                  <AppIcon name="star" size={14} color="#6E6E73" />
+                <View className="w-8 h-8 rounded-lg bg-[#1E1A3F] border border-[#322C63] items-center justify-center">
+                  <AppIcon name="star" size={14} color="#FFC53D" />
                 </View>
                 <View className="flex-1">
-                  <Text className="text-[#8E8E93] text-[10px] uppercase font-bold">Rating</Text>
-                  <Text className="text-[#1C1C1E] text-[13px] font-medium">
+                  <Text className="text-[#B8B3E0] text-[10px] uppercase font-bold tracking-wider">Rating</Text>
+                  <Text className="text-white text-[13px] font-medium">
                     {provider.ratingCount > 0
                       ? `${Number(provider.ratingAvg).toFixed(1)} / 5.0 (${provider.ratingCount} reviews)`
                       : "No reviews yet"}
@@ -198,21 +198,21 @@ function ProviderDetailSheet({
             {/* Service categories */}
             {provider.categories && provider.categories.length > 0 && (
               <View className="mb-4">
-                <Text className="text-[#6E6E73] text-[12px] font-semibold uppercase tracking-wider mb-2">
+                <Text className="text-[#B8B3E0] text-[12px] font-semibold uppercase tracking-wider mb-2">
                   Service Categories
                 </Text>
                 <View className="flex-row flex-wrap gap-2">
                   {provider.categories.map((c) => (
                     <View
                       key={c.id}
-                      className="flex-row items-center gap-1.5 bg-[#F1EFEC] border border-[#E3E1DC] rounded-full px-3 py-1.5"
+                      className="flex-row items-center gap-1.5 bg-[#2A2460] border border-[#322C63] rounded-full px-3 py-1.5"
                     >
                       <AppIcon
                         name={(c.category.icon as any) || "briefcase"}
                         size={11}
-                        color="#6E6E73"
+                        color="#B8B3E0"
                       />
-                      <Text className="text-[#3A3A3C] text-[12px] font-medium">{c.category.name}</Text>
+                      <Text className="text-[#E0DCFF] text-[12px] font-medium">{c.category.name}</Text>
                     </View>
                   ))}
                 </View>
@@ -222,26 +222,26 @@ function ProviderDetailSheet({
             {/* Description */}
             {provider.description && (
               <View className="mb-4">
-                <Text className="text-[#6E6E73] text-[12px] font-semibold uppercase tracking-wider mb-2">
+                <Text className="text-[#B8B3E0] text-[12px] font-semibold uppercase tracking-wider mb-2">
                   About
                 </Text>
-                <Text className="text-[#3A3A3C] text-[13px] leading-[20px]">{provider.description}</Text>
+                <Text className="text-[#E0DCFF] text-[13px] leading-[20px]">{provider.description}</Text>
               </View>
             )}
 
             {/* Audit notes */}
-            <Text className="text-[#6E6E73] text-[12px] font-semibold uppercase tracking-wider mb-2">
+            <Text className="text-[#B8B3E0] text-[12px] font-semibold uppercase tracking-wider mb-2">
               Admin Notes (Audit)
             </Text>
             <TextInput
               value={notes}
               onChangeText={setNotes}
               placeholder="Add reason for approval, rejection, or any compliance notes..."
-              placeholderTextColor="#A7A7AB"
+              placeholderTextColor="#7C77A8"
               multiline
               numberOfLines={3}
               textAlignVertical="top"
-              className="bg-[#F7F7F5] border border-[#E3E1DC] rounded-xl px-4 py-3 text-[13px] text-[#1C1C1E] min-h-[72px] mb-5"
+              className="bg-[#2A2460] border border-[#322C63] rounded-xl px-4 py-3 text-[13px] text-white min-h-[72px] mb-5"
             />
 
             {/* Action buttons */}
@@ -259,14 +259,14 @@ function ProviderDetailSheet({
                     )
                   }
                   disabled={!!loading}
-                  className="flex-row items-center justify-center gap-2 py-3.5 rounded-xl bg-[#059669]"
+                  className="flex-row items-center justify-center gap-2 py-3.5 rounded-xl bg-[#123B34] border border-[#6EE7B7]/40 active:opacity-80"
                 >
                   {loading === "VERIFIED" ? (
-                    <ActivityIndicator color="#FFFFFF" />
+                    <ActivityIndicator color="#6EE7B7" />
                   ) : (
                     <>
-                      <AppIcon name="check-circle" size={16} color="#FFFFFF" />
-                      <Text className="text-white font-bold text-[14px]">Verify Provider</Text>
+                      <AppIcon name="check-circle" size={16} color="#6EE7B7" />
+                      <Text className="text-[#6EE7B7] font-bold text-[14px]">Verify Provider</Text>
                     </>
                   )}
                 </TouchableOpacity>
@@ -285,14 +285,14 @@ function ProviderDetailSheet({
                     )
                   }
                   disabled={!!loading}
-                  className="flex-row items-center justify-center gap-2 py-3.5 rounded-xl bg-[#FBECEB] border border-[#E8C4C2]"
+                  className="flex-row items-center justify-center gap-2 py-3.5 rounded-xl bg-[#3F1420] border border-[#FF8FA3]/30 active:opacity-80"
                 >
                   {loading === "REJECTED" ? (
-                    <ActivityIndicator color="#B3261E" />
+                    <ActivityIndicator color="#FF8FA3" />
                   ) : (
                     <>
-                      <AppIcon name="x-circle" size={16} color="#B3261E" />
-                      <Text className="text-[#B3261E] font-bold text-[14px]">Reject Application</Text>
+                      <AppIcon name="x-circle" size={16} color="#FF8FA3" />
+                      <Text className="text-[#FF8FA3] font-bold text-[14px]">Reject Application</Text>
                     </>
                   )}
                 </TouchableOpacity>
@@ -315,14 +315,14 @@ function ProviderDetailSheet({
                     )
                   }
                   disabled={!!loading}
-                  className="flex-row items-center justify-center gap-2 py-3.5 rounded-xl bg-[#F1EFEC] border border-[#E3E1DC]"
+                  className="flex-row items-center justify-center gap-2 py-3.5 rounded-xl bg-[#2A2460] border border-[#322C63] active:opacity-80"
                 >
                   {loading === "SUSPENDED" ? (
-                    <ActivityIndicator color="#6E6E73" />
+                    <ActivityIndicator color="#B8B3E0" />
                   ) : (
                     <>
-                      <AppIcon name="slash" size={16} color="#6E6E73" />
-                      <Text className="text-[#6E6E73] font-bold text-[14px]">Suspend Provider</Text>
+                      <AppIcon name="slash" size={16} color="#B8B3E0" />
+                      <Text className="text-[#B8B3E0] font-bold text-[14px]">Suspend Provider</Text>
                     </>
                   )}
                 </TouchableOpacity>
@@ -333,14 +333,14 @@ function ProviderDetailSheet({
                 <TouchableOpacity
                   onPress={() => handleAction("PENDING")}
                   disabled={!!loading}
-                  className="flex-row items-center justify-center gap-2 py-3.5 rounded-xl bg-[#FDF3E3] border border-[#F0DFB8]"
+                  className="flex-row items-center justify-center gap-2 py-3.5 rounded-xl bg-[#3D2F0F] border border-[#FFC53D]/40 active:opacity-80"
                 >
                   {loading === "PENDING" ? (
-                    <ActivityIndicator color="#8A5E10" />
+                    <ActivityIndicator color="#FFC53D" />
                   ) : (
                     <>
-                      <AppIcon name="refresh-cw" size={16} color="#8A5E10" />
-                      <Text className="text-[#8A5E10] font-bold text-[14px]">Reset to Pending</Text>
+                      <AppIcon name="refresh-cw" size={16} color="#FFC53D" />
+                      <Text className="text-[#FFC53D] font-bold text-[14px]">Reset to Pending</Text>
                     </>
                   )}
                 </TouchableOpacity>
@@ -369,18 +369,18 @@ function ProviderCard({
     <TouchableOpacity
       onPress={onPress}
       activeOpacity={0.7}
-      className="bg-white border border-[#EBEAE6] rounded-2xl p-4 mb-3"
+      className="bg-[#1E1A3F] border border-[#322C63] rounded-2xl p-4 mb-3"
     >
       <View className="flex-row items-center gap-3">
         {/* Avatar */}
-        <View className="w-12 h-12 rounded-2xl bg-[#1C1C1E] items-center justify-center">
-          <Text className="text-white text-[16px] font-bold">{initial}</Text>
+        <View className="w-12 h-12 rounded-2xl bg-[#2A2460] border border-[#322C63] items-center justify-center">
+          <Text className="text-[#7C5CFF] text-[16px] font-bold">{initial}</Text>
         </View>
 
         {/* Info */}
         <View className="flex-1">
           <View className="flex-row items-center gap-2 flex-wrap">
-            <Text className="text-[#1C1C1E] text-[15px] font-bold">{provider.businessName}</Text>
+            <Text className="text-white text-[15px] font-bold">{provider.businessName}</Text>
             <View
               style={{ backgroundColor: verMeta.bg }}
               className="px-2 py-0.5 rounded-full"
@@ -390,37 +390,37 @@ function ProviderCard({
               </Text>
             </View>
           </View>
-          <Text className="text-[#8E8E93] text-[12px] mt-0.5">{provider.user.name}</Text>
+          <Text className="text-[#B8B3E0] text-[12px] mt-0.5">{provider.user.name}</Text>
           {provider.serviceArea && (
             <View className="flex-row items-center gap-1 mt-1">
-              <AppIcon name="map-pin" size={10} color="#8E8E93" />
-              <Text className="text-[#8E8E93] text-[11px]">{provider.serviceArea}</Text>
+              <AppIcon name="map-pin" size={10} color="#B8B3E0" />
+              <Text className="text-[#B8B3E0] text-[11px]">{provider.serviceArea}</Text>
             </View>
           )}
         </View>
 
-        <AppIcon name="chevron-right" size={16} color="#C7C7CC" />
+        <AppIcon name="chevron-right" size={16} color="#7C77A8" />
       </View>
 
       {/* Category chips */}
       {provider.categories && provider.categories.length > 0 && (
-        <View className="flex-row flex-wrap gap-1.5 mt-3 pt-3 border-t border-[#F0EEEA]">
+        <View className="flex-row flex-wrap gap-1.5 mt-3 pt-3 border-t border-[#322C63]">
           {provider.categories.slice(0, 4).map((c) => (
             <View
               key={c.id}
-              className="flex-row items-center gap-1 bg-[#F7F7F5] rounded-full px-2 py-0.5"
+              className="flex-row items-center gap-1 bg-[#2A2460] border border-[#322C63]/60 rounded-full px-2.5 py-0.5"
             >
               <AppIcon
                 name={(c.category.icon as any) || "briefcase"}
                 size={9}
-                color="#6E6E73"
+                color="#B8B3E0"
               />
-              <Text className="text-[#6E6E73] text-[11px]">{c.category.name}</Text>
+              <Text className="text-[#B8B3E0] text-[11px]">{c.category.name}</Text>
             </View>
           ))}
           {provider.categories.length > 4 && (
-            <View className="flex-row items-center bg-[#F7F7F5] rounded-full px-2 py-0.5">
-              <Text className="text-[#6E6E73] text-[11px]">
+            <View className="flex-row items-center bg-[#2A2460] border border-[#322C63]/60 rounded-full px-2.5 py-0.5">
+              <Text className="text-[#B8B3E0] text-[11px]">
                 +{provider.categories.length - 4} more
               </Text>
             </View>
@@ -431,8 +431,8 @@ function ProviderCard({
       {/* Rating row */}
       {provider.ratingCount > 0 && (
         <View className="flex-row items-center gap-1 mt-2">
-          <AppIcon name="star" size={11} color="#F59E0B" />
-          <Text className="text-[#6E6E73] text-[11px] font-medium">
+          <AppIcon name="star" size={11} color="#FFC53D" />
+          <Text className="text-[#B8B3E0] text-[11px] font-medium">
             {provider.ratingCount > 0
               ? `${Number(provider.ratingAvg).toFixed(1)} (${provider.ratingCount})`
               : "No reviews"}
@@ -541,21 +541,21 @@ export default function AdminProvidersScreen() {
   const pendingCount = counts["PENDING"] || 0;
 
   return (
-    <View className="flex-1 bg-[#F7F7F5]">
-      <StatusBar style="dark" />
+    <View className="flex-1 bg-[#120F2B]">
+      <StatusBar style="light" />
       <SafeAreaView className="flex-1">
         {/* Top nav */}
         <View className="flex-row items-center px-5 pt-4 pb-3">
           <TouchableOpacity
             onPress={() => router.back()}
-            className="w-9 h-9 rounded-full bg-white border border-[#E8E6E1] items-center justify-center mr-3"
+            className="w-9 h-9 rounded-full bg-[#1E1A3F] border border-[#322C63] items-center justify-center mr-3"
           >
-            <AppIcon name="arrow-left" size={16} color="#3A3A3C" />
+            <AppIcon name="arrow-left" size={16} color="#FFFFFF" />
           </TouchableOpacity>
           <View className="flex-1">
-            <Text className="text-[#1C1C1E] text-[18px] font-bold">Provider Verification</Text>
+            <Text className="text-white text-[18px] font-bold">Provider Verification</Text>
             {pendingCount > 0 && (
-              <Text className="text-[#D97706] text-[12px] font-medium mt-0.5">
+              <Text className="text-[#FFC53D] text-[12px] font-medium mt-0.5">
                 {pendingCount} awaiting review
               </Text>
             )}
@@ -564,8 +564,8 @@ export default function AdminProvidersScreen() {
 
         {/* Search bar */}
         <View className="mx-5 mb-3">
-          <View className="flex-row items-center gap-3 bg-white border border-[#E8E6E1] rounded-xl px-3.5 py-2.5">
-            <AppIcon name="search" size={15} color="#8E8E93" />
+          <View className="flex-row items-center gap-3 bg-[#1E1A3F] border border-[#322C63] rounded-xl px-3.5 py-2.5">
+            <AppIcon name="search" size={15} color="#B8B3E0" />
             <TextInput
               value={searchText}
               onChangeText={(t) => {
@@ -573,13 +573,13 @@ export default function AdminProvidersScreen() {
                 setPage(1);
               }}
               placeholder="Search by business, name, or area..."
-              placeholderTextColor="#A7A7AB"
-              className="flex-1 text-[14px] text-[#1C1C1E]"
+              placeholderTextColor="#7C77A8"
+              className="flex-1 text-[14px] text-white"
               returnKeyType="search"
             />
             {searchText.length > 0 && (
               <TouchableOpacity onPress={() => setSearchText("")}>
-                <AppIcon name="x" size={14} color="#8E8E93" />
+                <AppIcon name="x" size={14} color="#B8B3E0" />
               </TouchableOpacity>
             )}
           </View>
@@ -605,18 +605,18 @@ export default function AdminProvidersScreen() {
                 }}
                 className={`flex-row items-center gap-1.5 px-3.5 py-2 rounded-full border ${
                   isActive
-                    ? "bg-[#1C1C1E] border-[#1C1C1E]"
-                    : "bg-white border-[#E8E6E1]"
+                    ? "bg-[#7C5CFF] border-[#7C5CFF]"
+                    : "bg-[#1E1A3F] border-[#322C63]"
                 }`}
               >
                 <AppIcon
                   name={tab.icon as any}
                   size={12}
-                  color={isActive ? "#FFFFFF" : "#6E6E73"}
+                  color={isActive ? "#FFFFFF" : "#B8B3E0"}
                 />
                 <Text
                   className={`text-[12px] font-semibold ${
-                    isActive ? "text-white" : "text-[#6E6E73]"
+                    isActive ? "text-white" : "text-[#B8B3E0]"
                   }`}
                 >
                   {tab.label}
@@ -624,12 +624,12 @@ export default function AdminProvidersScreen() {
                 {count !== undefined && (
                   <View
                     className={`min-w-[18px] h-[18px] rounded-full items-center justify-center px-1 ${
-                      hasBadge ? "bg-[#F59E0B]" : isActive ? "bg-white/20" : "bg-[#F1EFEC]"
+                      hasBadge ? "bg-[#FFC53D]" : isActive ? "bg-white/25" : "bg-[#2A2460]"
                     }`}
                   >
                     <Text
                       className={`text-[10px] font-bold ${
-                        hasBadge ? "text-white" : isActive ? "text-white" : "text-[#6E6E73]"
+                        hasBadge ? "text-[#120F2B]" : isActive ? "text-white" : "text-[#B8B3E0]"
                       }`}
                     >
                       {count}
@@ -644,15 +644,15 @@ export default function AdminProvidersScreen() {
         {/* List */}
         {loading ? (
           <View className="flex-1 items-center justify-center">
-            <ActivityIndicator size="large" color="#1C1C1E" />
-            <Text className="text-[#8E8E93] text-[13px] mt-3">Loading providers...</Text>
+            <ActivityIndicator size="large" color="#7C5CFF" />
+            <Text className="text-[#B8B3E0] text-[13px] mt-3">Loading providers...</Text>
           </View>
         ) : (
           <ScrollView
             contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 40 }}
             showsVerticalScrollIndicator={false}
             refreshControl={
-              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#1C1C1E" />
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#7C5CFF" />
             }
             onScroll={({ nativeEvent }) => {
               const { layoutMeasurement, contentOffset, contentSize } = nativeEvent;
@@ -664,11 +664,11 @@ export default function AdminProvidersScreen() {
           >
             {providers.length === 0 ? (
               <View className="items-center py-16">
-                <View className="w-16 h-16 rounded-2xl bg-[#F1EFEC] items-center justify-center mb-3">
-                  <AppIcon name="users" size={28} color="#8E8E93" />
+                <View className="w-16 h-16 rounded-2xl bg-[#1E1A3F] border border-[#322C63] items-center justify-center mb-3">
+                  <AppIcon name="users" size={28} color="#B8B3E0" />
                 </View>
-                <Text className="text-[#1C1C1E] text-[15px] font-semibold">No providers found</Text>
-                <Text className="text-[#8E8E93] text-[13px] text-center mt-1 px-8 leading-5">
+                <Text className="text-white text-[15px] font-semibold">No providers found</Text>
+                <Text className="text-[#B8B3E0] text-[13px] text-center mt-1 px-8 leading-5">
                   {activeTab === "PENDING"
                     ? "Great news — the verification queue is clear!"
                     : "No providers match the selected filter."}
@@ -678,13 +678,13 @@ export default function AdminProvidersScreen() {
               <>
                 {/* Summary bar */}
                 <View className="flex-row items-center justify-between mb-3">
-                  <Text className="text-[#8E8E93] text-[12px]">
+                  <Text className="text-[#B8B3E0] text-[12px]">
                     {providers.length} of {counts[activeTab] ?? "?"} providers
                   </Text>
                   {activeTab === "PENDING" && pendingCount > 0 && (
-                    <View className="flex-row items-center gap-1.5 bg-[#FDF3E3] px-2.5 py-1 rounded-full">
-                      <AppIcon name="alert-circle" size={11} color="#D97706" />
-                      <Text className="text-[#D97706] text-[11px] font-bold">Action required</Text>
+                    <View className="flex-row items-center gap-1.5 bg-[#3D2F0F] border border-[#FFC53D]/30 px-2.5 py-1 rounded-full">
+                      <AppIcon name="alert-circle" size={11} color="#FFC53D" />
+                      <Text className="text-[#FFC53D] text-[11px] font-bold">Action required</Text>
                     </View>
                   )}
                 </View>
@@ -695,7 +695,7 @@ export default function AdminProvidersScreen() {
 
                 {loadingMore && (
                   <View className="items-center py-4">
-                    <ActivityIndicator color="#1C1C1E" />
+                    <ActivityIndicator color="#7C5CFF" />
                   </View>
                 )}
               </>

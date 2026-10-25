@@ -58,58 +58,58 @@ function EventCard({ event, index, onPress, onDelete }: {
       <TouchableOpacity
         onPress={onPress}
         activeOpacity={0.78}
-        className="bg-white border border-[#E8E6E1] rounded-2xl p-4"
+        className="bg-[#1E1A3F] border border-[#322C63] rounded-2xl p-4 shadow-sm"
       >
         {/* Header row */}
         <View className="flex-row items-start justify-between">
           <View className="flex-row items-center gap-2.5 flex-1 mr-3">
-            <View className="w-11 h-11 rounded-xl bg-[#F7F7F5] border border-[#EFEEEA] items-center justify-center">
+            <View className="w-11 h-11 rounded-xl bg-[#2A2460] border border-[#322C63] items-center justify-center">
               <Text className="text-[22px]">{meta.emoji}</Text>
             </View>
             <View className="flex-1">
-              <Text className="text-[#1C1C1E] text-[15px] font-semibold" numberOfLines={1}>
+              <Text className="text-white text-[15px] font-semibold" numberOfLines={1}>
                 {event.title || meta.label}
               </Text>
-              <Text className="text-[#6E6E73] text-[12px] mt-0.5">
+              <Text className="text-[#B8B3E0] text-[12px] mt-0.5">
                 {meta.label}
               </Text>
             </View>
           </View>
           <TouchableOpacity
             onPress={onDelete}
-            className="w-8 h-8 rounded-full bg-[#F7F7F5] items-center justify-center"
+            className="w-8 h-8 rounded-full bg-[#2A2460] items-center justify-center border border-[#322C63]"
           >
-            <AppIcon name="trash-2" size={14} color="#B3261E" />
+            <AppIcon name="trash-2" size={14} color="#FF8FA3" />
           </TouchableOpacity>
         </View>
 
         {/* Date & location */}
         <View className="mt-3 gap-1.5">
           <View className="flex-row items-center gap-1.5">
-            <AppIcon name="calendar" size={13} color="#6E6E73" />
-            <Text className="text-[#3A3A3C] text-[13px]">{formatDate(event.eventDate)}</Text>
+            <AppIcon name="calendar" size={13} color="#B8B3E0" />
+            <Text className="text-white text-[13px]">{formatDate(event.eventDate)}</Text>
             {event.startTime && (
-              <Text className="text-[#A7A7AB] text-[12px]">· {event.startTime}</Text>
+              <Text className="text-[#B8B3E0] text-[12px]">· {event.startTime}</Text>
             )}
           </View>
           <View className="flex-row items-center gap-1.5">
-            <AppIcon name="map-pin" size={13} color="#6E6E73" />
-            <Text className="text-[#3A3A3C] text-[13px]" numberOfLines={1}>{event.location}</Text>
+            <AppIcon name="map-pin" size={13} color="#B8B3E0" />
+            <Text className="text-[#B8B3E0] text-[13px]" numberOfLines={1}>{event.location}</Text>
           </View>
         </View>
 
         {/* Stats row */}
-        <View className="flex-row items-center gap-3 mt-3 pt-3 border-t border-[#F0EEEA]">
+        <View className="flex-row items-center gap-3 mt-3 pt-3 border-t border-[#322C63]">
           {event.guestCount && (
             <View className="flex-row items-center gap-1">
-              <AppIcon name="users" size={12} color="#A7A7AB" />
-              <Text className="text-[#6E6E73] text-[12px]">{event.guestCount} guests</Text>
+              <AppIcon name="users" size={12} color="#B8B3E0" />
+              <Text className="text-[#B8B3E0] text-[12px]">{event.guestCount} guests</Text>
             </View>
           )}
           {event.services.length > 0 && (
             <View className="flex-row items-center gap-1">
-              <AppIcon name="briefcase" size={12} color="#A7A7AB" />
-              <Text className="text-[#6E6E73] text-[12px]">{event.services.length} service{event.services.length !== 1 ? "s" : ""}</Text>
+              <AppIcon name="briefcase" size={12} color="#B8B3E0" />
+              <Text className="text-[#B8B3E0] text-[12px]">{event.services.length} service{event.services.length !== 1 ? "s" : ""}</Text>
             </View>
           )}
           <View className="flex-1 items-end">
@@ -176,19 +176,19 @@ export default function EventsScreen() {
   }
 
   return (
-    <View className="flex-1 bg-[#F7F7F5]">
-      <StatusBar style="dark" />
+    <View className="flex-1 bg-[#120F2B]">
+      <StatusBar style="light" />
       <SafeAreaView className="flex-1">
         <Animated.View style={headerStyle} className="px-5 pt-4 pb-3 flex-row items-center justify-between">
           <View>
-            <Text className="text-[#1C1C1E] text-[26px] font-bold tracking-tight">My Events</Text>
-            <Text className="text-[#6E6E73] text-[13px] mt-0.5">
+            <Text className="text-white text-[26px] font-bold tracking-tight">My Events</Text>
+            <Text className="text-[#B8B3E0] text-[13px] mt-0.5">
               {events.length} event{events.length !== 1 ? "s" : ""}
             </Text>
           </View>
           <TouchableOpacity
             onPress={() => router.push("/events/create" as any)}
-            className="bg-[#1C1C1E] flex-row items-center gap-1.5 px-4 py-2.5 rounded-xl"
+            className="bg-[#7C5CFF] flex-row items-center gap-1.5 px-4 py-2.5 rounded-xl shadow-sm"
             activeOpacity={0.85}
           >
             <AppIcon name="plus" size={14} color="#FFFFFF" />
@@ -198,23 +198,23 @@ export default function EventsScreen() {
 
         {loading ? (
           <View className="flex-1 items-center justify-center">
-            <ActivityIndicator size="large" color="#1C1C1E" />
+            <ActivityIndicator size="large" color="#7C5CFF" />
           </View>
         ) : events.length === 0 ? (
           <ScrollView
             contentContainerStyle={{ flex: 1, alignItems: "center", justifyContent: "center", paddingHorizontal: 32 }}
-            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#1C1C1E" />}
+            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#7C5CFF" />}
           >
-            <View className="w-16 h-16 rounded-2xl bg-white border border-[#E8E6E1] items-center justify-center mb-4">
+            <View className="w-16 h-16 rounded-2xl bg-[#1E1A3F] border border-[#322C63] items-center justify-center mb-4">
               <Text className="text-[28px]">🎉</Text>
             </View>
-            <Text className="text-[#1C1C1E] text-[18px] font-bold text-center">No events yet</Text>
-            <Text className="text-[#6E6E73] text-[14px] text-center mt-2 mb-6">
+            <Text className="text-white text-[18px] font-bold text-center">No events yet</Text>
+            <Text className="text-[#B8B3E0] text-[14px] text-center mt-2 mb-6">
               Create your first event and we'll help you find the right vendors.
             </Text>
             <TouchableOpacity
               onPress={() => router.push("/events/create" as any)}
-              className="bg-[#1C1C1E] px-6 py-3.5 rounded-xl"
+              className="bg-[#7C5CFF] px-6 py-3.5 rounded-xl shadow-md"
               activeOpacity={0.85}
             >
               <Text className="text-white text-[14px] font-semibold">Plan an event</Text>
@@ -224,7 +224,7 @@ export default function EventsScreen() {
           <ScrollView
             contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 40 }}
             showsVerticalScrollIndicator={false}
-            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#1C1C1E" />}
+            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#7C5CFF" />}
           >
             {events.map((event, i) => (
               <EventCard

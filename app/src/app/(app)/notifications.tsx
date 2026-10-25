@@ -55,14 +55,14 @@ function NotifCard({
       activeOpacity={item.isRead ? 1 : 0.7}
       className={`flex-row gap-3 p-4 rounded-2xl mb-2.5 border ${
         item.isRead
-          ? "bg-white border-[#EBEAE6]"
-          : "bg-[#F9F8FF] border-[#DDD8FF]"
+          ? "bg-[#1E1A3F] border-[#322C63]"
+          : "bg-[#2A2460] border-[#7C5CFF]/40 shadow-sm"
       }`}
     >
       {/* Type icon */}
       <View
         style={{ backgroundColor: meta.bg }}
-        className="w-11 h-11 rounded-2xl items-center justify-center flex-shrink-0 mt-0.5"
+        className="w-11 h-11 rounded-2xl items-center justify-center flex-shrink-0 mt-0.5 border border-white/5"
       >
         <AppIcon name={meta.icon as any} size={18} color={meta.color} />
       </View>
@@ -72,29 +72,29 @@ function NotifCard({
         <View className="flex-row items-start justify-between gap-2">
           <Text
             className={`text-[14px] leading-[19px] flex-1 ${
-              item.isRead ? "text-[#3A3A3C] font-medium" : "text-[#1C1C1E] font-bold"
+              item.isRead ? "text-[#B8B3E0] font-medium" : "text-white font-bold"
             }`}
             numberOfLines={2}
           >
             {item.title}
           </Text>
-          <Text className="text-[#A7A7AB] text-[11px] mt-0.5 flex-shrink-0">
+          <Text className="text-[#6C6694] text-[11px] mt-0.5 flex-shrink-0">
             {formatRelative(item.createdAt)}
           </Text>
         </View>
 
         <Text
-          className="text-[#6E6E73] text-[13px] leading-[18px] mt-1"
+          className="text-[#B8B3E0] text-[13px] leading-[18px] mt-1"
           numberOfLines={3}
         >
           {item.body}
         </Text>
 
         {/* Type chip */}
-        <View className="flex-row items-center justify-between mt-2">
+        <View className="flex-row items-center justify-between mt-2.5">
           <View
             style={{ backgroundColor: meta.bg }}
-            className="self-start px-2 py-0.5 rounded-full"
+            className="self-start px-2 py-0.5 rounded-full border border-white/5"
           >
             <Text style={{ color: meta.color }} className="text-[10px] font-bold uppercase tracking-wider">
               {item.type}
@@ -105,16 +105,16 @@ function NotifCard({
           <TouchableOpacity
             onPress={() => onDelete(item.id)}
             hitSlop={{ top: 8, left: 8, bottom: 8, right: 8 }}
-            className="w-7 h-7 rounded-full bg-[#F5F4F0] items-center justify-center"
+            className="w-7 h-7 rounded-full bg-[#1E1A3F] border border-[#322C63] items-center justify-center active:bg-[#322C63]"
           >
-            <AppIcon name="x" size={12} color="#A7A7AB" />
+            <AppIcon name="x" size={12} color="#B8B3E0" />
           </TouchableOpacity>
         </View>
       </View>
 
       {/* Unread dot */}
       {!item.isRead && (
-        <View className="absolute top-4 left-3 w-2 h-2 rounded-full bg-[#6366F1]" />
+        <View className="absolute top-4 left-3 w-2 h-2 rounded-full bg-[#7C5CFF]" />
       )}
     </TouchableOpacity>
   );
@@ -248,22 +248,22 @@ export default function NotificationsScreen() {
   const hasRead = notifications.some((n) => n.isRead);
 
   return (
-    <View className="flex-1 bg-[#F7F7F5]">
-      <StatusBar style="dark" />
+    <View className="flex-1 bg-[#120F2B]">
+      <StatusBar style="light" />
       <SafeAreaView className="flex-1">
         {/* Header */}
-        <View className="flex-row items-center px-5 pt-4 pb-3">
+        <View className="flex-row items-center px-5 pt-4 pb-3 border-b border-[#322C63]">
           <TouchableOpacity
             onPress={() => router.back()}
-            className="w-9 h-9 rounded-full bg-white border border-[#E8E6E1] items-center justify-center mr-3"
+            className="w-9 h-9 rounded-full bg-[#1E1A3F] border border-[#322C63] items-center justify-center mr-3 active:bg-[#2A2460]"
           >
-            <AppIcon name="arrow-left" size={16} color="#3A3A3C" />
+            <AppIcon name="arrow-left" size={16} color="#FFFFFF" />
           </TouchableOpacity>
 
           <View className="flex-1">
-            <Text className="text-[#1C1C1E] text-[18px] font-bold">Notifications</Text>
+            <Text className="text-white text-[18px] font-bold">Notifications</Text>
             {unreadCount > 0 && (
-              <Text className="text-[#6366F1] text-[12px] font-medium mt-0.5">
+              <Text className="text-[#FFC53D] text-[12px] font-semibold mt-0.5">
                 {unreadCount} unread
               </Text>
             )}
@@ -275,14 +275,14 @@ export default function NotificationsScreen() {
               <TouchableOpacity
                 onPress={handleMarkAllRead}
                 disabled={markingAll}
-                className="flex-row items-center gap-1.5 bg-[#EEF0FF] border border-[#C7CAFF] px-3 py-1.5 rounded-full"
+                className="flex-row items-center gap-1.5 bg-[#7C5CFF]/20 border border-[#7C5CFF]/30 px-3 py-1.5 rounded-full active:bg-[#7C5CFF]/30"
               >
                 {markingAll ? (
-                  <ActivityIndicator size="small" color="#6366F1" />
+                  <ActivityIndicator size="small" color="#7C5CFF" />
                 ) : (
                   <>
-                    <AppIcon name="check-circle" size={13} color="#6366F1" />
-                    <Text className="text-[#6366F1] text-[12px] font-semibold">All read</Text>
+                    <AppIcon name="check-circle" size={13} color="#7C5CFF" />
+                    <Text className="text-[#7C5CFF] text-[12px] font-bold">All read</Text>
                   </>
                 )}
               </TouchableOpacity>
@@ -292,12 +292,12 @@ export default function NotificationsScreen() {
               <TouchableOpacity
                 onPress={handleClearRead}
                 disabled={clearing}
-                className="w-8 h-8 rounded-full bg-white border border-[#E8E6E1] items-center justify-center"
+                className="w-8 h-8 rounded-full bg-[#1E1A3F] border border-[#322C63] items-center justify-center active:bg-[#2A2460]"
               >
                 {clearing ? (
-                  <ActivityIndicator size="small" color="#8E8E93" />
+                  <ActivityIndicator size="small" color="#B8B3E0" />
                 ) : (
-                  <AppIcon name="trash-2" size={14} color="#8E8E93" />
+                  <AppIcon name="trash-2" size={14} color="#B8B3E0" />
                 )}
               </TouchableOpacity>
             )}
@@ -305,7 +305,7 @@ export default function NotificationsScreen() {
         </View>
 
         {/* Filter tabs */}
-        <View className="flex-row mx-5 mb-3 gap-2">
+        <View className="flex-row mx-5 my-3 gap-2">
           {FILTER_TABS.map((tab) => {
             const isActive = filter === tab.key;
             return (
@@ -315,22 +315,22 @@ export default function NotificationsScreen() {
                   setFilter(tab.key);
                   setPage(1);
                 }}
-                className={`flex-row items-center gap-1.5 px-4 py-2 rounded-full border ${
+                className={`flex-row items-center gap-1.5 px-4 py-2 rounded-full border transition-all ${
                   isActive
-                    ? "bg-[#1C1C1E] border-[#1C1C1E]"
-                    : "bg-white border-[#E8E6E1]"
+                    ? "bg-[#7C5CFF] border-[#7C5CFF] shadow-sm"
+                    : "bg-[#1E1A3F] border-[#322C63]"
                 }`}
               >
                 <Text
                   className={`text-[13px] font-semibold ${
-                    isActive ? "text-white" : "text-[#6E6E73]"
+                    isActive ? "text-white font-bold" : "text-[#B8B3E0]"
                   }`}
                 >
                   {tab.label}
                 </Text>
                 {tab.key === "UNREAD" && unreadCount > 0 && (
-                  <View className="bg-[#6366F1] min-w-[18px] h-[18px] rounded-full items-center justify-center px-1">
-                    <Text className="text-white text-[10px] font-bold">{unreadCount}</Text>
+                  <View className="bg-[#FFC53D] min-w-[18px] h-[18px] rounded-full items-center justify-center px-1">
+                    <Text className="text-[#120F2B] text-[10px] font-black">{unreadCount}</Text>
                   </View>
                 )}
               </TouchableOpacity>
@@ -341,8 +341,8 @@ export default function NotificationsScreen() {
         {/* List */}
         {loading ? (
           <View className="flex-1 items-center justify-center">
-            <ActivityIndicator size="large" color="#1C1C1E" />
-            <Text className="text-[#8E8E93] text-[13px] mt-3">Loading notifications...</Text>
+            <ActivityIndicator size="large" color="#7C5CFF" />
+            <Text className="text-[#B8B3E0] text-[13px] mt-3">Loading notifications...</Text>
           </View>
         ) : (
           <ScrollView
@@ -352,7 +352,7 @@ export default function NotificationsScreen() {
               <RefreshControl
                 refreshing={refreshing}
                 onRefresh={onRefresh}
-                tintColor="#1C1C1E"
+                tintColor="#7C5CFF"
               />
             }
             onScroll={({ nativeEvent }) => {
@@ -366,13 +366,13 @@ export default function NotificationsScreen() {
             {notifications.length === 0 ? (
               <View className="items-center py-20">
                 {/* Illustrative icon */}
-                <View className="w-20 h-20 rounded-3xl bg-[#F1EFEC] items-center justify-center mb-4">
-                  <AppIcon name="bell-off" size={32} color="#C7C7CC" />
+                <View className="w-20 h-20 rounded-3xl bg-[#1E1A3F] border border-[#322C63] items-center justify-center mb-4 shadow-sm">
+                  <AppIcon name="bell-off" size={32} color="#7C5CFF" />
                 </View>
-                <Text className="text-[#1C1C1E] text-[16px] font-bold">
+                <Text className="text-white text-[16px] font-bold">
                   {filter === "UNREAD" ? "You're all caught up!" : "No notifications yet"}
                 </Text>
-                <Text className="text-[#8E8E93] text-[13px] text-center mt-1.5 px-10 leading-5">
+                <Text className="text-[#B8B3E0] text-[13px] text-center mt-1.5 px-10 leading-5">
                   {filter === "UNREAD"
                     ? "No unread notifications at the moment."
                     : "Lead alerts, booking updates and review notifications will appear here."}
@@ -381,7 +381,7 @@ export default function NotificationsScreen() {
             ) : (
               <>
                 {/* Group label */}
-                <Text className="text-[#8E8E93] text-[12px] font-semibold uppercase tracking-wider mb-3">
+                <Text className="text-[#B8B3E0] text-[12px] font-semibold uppercase tracking-wider mb-3">
                   {filter === "UNREAD" ? `${unreadCount} Unread` : `${notifications.length} notifications`}
                 </Text>
 
@@ -396,12 +396,12 @@ export default function NotificationsScreen() {
 
                 {loadingMore && (
                   <View className="items-center py-4">
-                    <ActivityIndicator color="#1C1C1E" />
+                    <ActivityIndicator color="#7C5CFF" />
                   </View>
                 )}
 
                 {page >= totalPages && notifications.length > 0 && (
-                  <Text className="text-center text-[#C7C7CC] text-[12px] mt-2">
+                  <Text className="text-center text-[#6C6694] text-[12px] mt-2">
                     You've reached the end
                   </Text>
                 )}

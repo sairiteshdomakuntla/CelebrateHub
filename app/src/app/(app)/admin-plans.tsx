@@ -198,10 +198,10 @@ export default function AdminPlansScreen() {
 
   if (loading) {
     return (
-      <SafeAreaView className="flex-1 bg-[#FAF9F5] items-center justify-center">
-        <StatusBar style="dark" />
-        <ActivityIndicator size="large" color="#1C1C1E" />
-        <Text className="text-[#6E6E73] text-[14px] mt-3">Loading subscription plans...</Text>
+      <SafeAreaView className="flex-1 bg-[#120F2B] items-center justify-center">
+        <StatusBar style="light" />
+        <ActivityIndicator size="large" color="#7C5CFF" />
+        <Text className="text-[#B8B3E0] text-[14px] mt-3">Loading subscription plans...</Text>
       </SafeAreaView>
     );
   }
@@ -209,29 +209,29 @@ export default function AdminPlansScreen() {
   const stats = data?.stats;
 
   return (
-    <SafeAreaView className="flex-1 bg-[#FAF9F5]" edges={["top"]}>
-      <StatusBar style="dark" />
+    <SafeAreaView className="flex-1 bg-[#120F2B]" edges={["top"]}>
+      <StatusBar style="light" />
 
       {/* ─── Top Header ────────────────────────────────────────────────────── */}
-      <View className="flex-row items-center justify-between px-4 py-3 bg-white border-b border-[#F0EEEA]">
+      <View className="flex-row items-center justify-between px-4 py-3 bg-[#120F2B] border-b border-[#322C63]">
         <TouchableOpacity
           onPress={() => router.back()}
-          className="w-10 h-10 rounded-full bg-[#F5F4F0] items-center justify-center"
+          className="w-10 h-10 rounded-full bg-[#1E1A3F] border border-[#322C63] items-center justify-center"
           activeOpacity={0.7}
         >
-          <AppIcon name="arrow-left" size={18} color="#1C1C1E" />
+          <AppIcon name="arrow-left" size={18} color="#FFFFFF" />
         </TouchableOpacity>
 
         <View className="items-center flex-1 px-2">
-          <Text className="text-[#1C1C1E] text-[16px] font-bold">Subscription Plans</Text>
-          <Text className="text-[#6E6E73] text-[11px] font-semibold tracking-wide uppercase">
+          <Text className="text-white text-[16px] font-bold">Subscription Plans</Text>
+          <Text className="text-[#B8B3E0] text-[11px] font-semibold tracking-wide uppercase">
             Pricing & Lead Tiers
           </Text>
         </View>
 
         <TouchableOpacity
           onPress={openCreateModal}
-          className="flex-row items-center gap-1 py-1.5 px-3 rounded-full bg-[#1C1C1E]"
+          className="flex-row items-center gap-1.5 py-2 px-3.5 rounded-full bg-[#7C5CFF]"
           activeOpacity={0.8}
         >
           <AppIcon name="plus" size={13} color="#FFFFFF" />
@@ -242,28 +242,28 @@ export default function AdminPlansScreen() {
       <ScrollView
         className="flex-1"
         contentContainerStyle={{ paddingBottom: 48 }}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#1C1C1E" />}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#7C5CFF" />}
         showsVerticalScrollIndicator={false}
       >
         {/* ─── Revenue & Metrics Card ──────────────────────────────────────── */}
-        <View className="m-4 p-5 rounded-3xl bg-[#1C1C1E] shadow-sm">
+        <View className="m-4 p-5 rounded-3xl bg-[#1E1A3F] border border-[#322C63] shadow-sm">
           <View className="flex-row items-center justify-between mb-3">
             <View className="flex-row items-center gap-2">
-              <View className="w-8 h-8 rounded-full bg-white/10 items-center justify-center">
-                <AppIcon name="credit-card" size={15} color="#FFFFFF" />
+              <View className="w-8 h-8 rounded-full bg-[#2A2460] border border-[#322C63] items-center justify-center">
+                <AppIcon name="credit-card" size={15} color="#7C5CFF" />
               </View>
               <Text className="text-white text-[16px] font-extrabold">Subscription Revenue</Text>
             </View>
 
-            <View className="bg-emerald-500/20 px-2.5 py-1 rounded-full border border-emerald-500/30">
-              <Text className="text-emerald-400 text-[11px] font-bold">
+            <View className="bg-[#123B34] px-2.5 py-1 rounded-full border border-[#6EE7B7]/40">
+              <Text className="text-[#6EE7B7] text-[11px] font-bold">
                 {stats?.activePlans || 0} of {stats?.totalPlans || 0} Active
               </Text>
             </View>
           </View>
 
           <View className="mt-1 mb-3">
-            <Text className="text-[#A1A1AA] text-[11px] font-semibold uppercase tracking-wider">
+            <Text className="text-[#B8B3E0] text-[11px] font-semibold uppercase tracking-wider">
               Est. Monthly Recurring Revenue
             </Text>
             <Text className="text-white text-[28px] font-black mt-0.5">
@@ -271,26 +271,26 @@ export default function AdminPlansScreen() {
             </Text>
           </View>
 
-          <View className="flex-row items-center justify-between pt-3 border-t border-white/10">
+          <View className="flex-row items-center justify-between pt-3 border-t border-[#322C63]">
             <View className="items-center flex-1">
-              <Text className="text-[#A1A1AA] text-[11px]">Total Plans</Text>
+              <Text className="text-[#B8B3E0] text-[11px]">Total Plans</Text>
               <Text className="text-white text-[17px] font-bold mt-0.5">{stats?.totalPlans || 0}</Text>
             </View>
-            <View className="h-6 w-px bg-white/15" />
+            <View className="h-6 w-px bg-[#322C63]" />
             <View className="items-center flex-1">
-              <Text className="text-[#A1A1AA] text-[11px]">Active Subscribers</Text>
-              <Text className="text-[#34D399] text-[17px] font-bold mt-0.5">{stats?.totalSubscribers || 0}</Text>
+              <Text className="text-[#B8B3E0] text-[11px]">Active Subscribers</Text>
+              <Text className="text-[#6EE7B7] text-[17px] font-bold mt-0.5">{stats?.totalSubscribers || 0}</Text>
             </View>
-            <View className="h-6 w-px bg-white/15" />
+            <View className="h-6 w-px bg-[#322C63]" />
             <View className="items-center flex-1">
-              <Text className="text-[#A1A1AA] text-[11px]">Billing Engine</Text>
-              <Text className="text-[#818CF8] text-[15px] font-bold mt-0.5">Razorpay</Text>
+              <Text className="text-[#B8B3E0] text-[11px]">Billing Engine</Text>
+              <Text className="text-[#7C5CFF] text-[15px] font-bold mt-0.5">Razorpay</Text>
             </View>
           </View>
         </View>
 
         {/* ─── Role Filters (All vs Vendor vs Customer) ───────────────────── */}
-        <View className="flex-row mx-4 mb-3 p-1 bg-[#EBE8E3] rounded-2xl">
+        <View className="flex-row mx-4 mb-3 p-1 bg-[#1E1A3F] border border-[#322C63] rounded-2xl">
           {[
             { key: "ALL", label: "All Tiers", icon: "grid" },
             { key: "PROVIDER", label: "Vendor Plans", icon: "briefcase" },
@@ -302,17 +302,17 @@ export default function AdminPlansScreen() {
                 key={tab.key}
                 onPress={() => setRoleFilter(tab.key as any)}
                 className={`flex-1 py-2.5 rounded-xl items-center flex-row justify-center gap-1.5 ${
-                  isSel ? "bg-white shadow-xs" : "bg-transparent"
+                  isSel ? "bg-[#7C5CFF]" : "bg-transparent"
                 }`}
               >
                 <AppIcon
                   name={tab.icon as any}
                   size={12}
-                  color={isSel ? "#1C1C1E" : "#6E6E73"}
+                  color={isSel ? "#FFFFFF" : "#B8B3E0"}
                 />
                 <Text
                   className={`text-[12px] font-bold ${
-                    isSel ? "text-[#1C1C1E]" : "text-[#6E6E73]"
+                    isSel ? "text-white" : "text-[#B8B3E0]"
                   }`}
                 >
                   {tab.label}
@@ -335,10 +335,10 @@ export default function AdminPlansScreen() {
                 key={f.key}
                 onPress={() => setStatusFilter(f.key as any)}
                 className={`px-3 py-1.5 rounded-lg border ${
-                  sel ? "bg-[#1C1C1E] border-[#1C1C1E]" : "bg-white border-[#E5E3DD]"
+                  sel ? "bg-[#7C5CFF] border-[#7C5CFF]" : "bg-[#1E1A3F] border-[#322C63]"
                 }`}
               >
-                <Text className={`text-[11px] font-bold ${sel ? "text-white" : "text-[#6E6E73]"}`}>
+                <Text className={`text-[11px] font-bold ${sel ? "text-white" : "text-[#B8B3E0]"}`}>
                   {f.label}
                 </Text>
               </TouchableOpacity>
@@ -349,10 +349,10 @@ export default function AdminPlansScreen() {
         {/* ─── Plans List ──────────────────────────────────────────────────── */}
         <View className="px-4">
           {filteredPlans.length === 0 ? (
-            <View className="p-8 bg-white border border-[#E8E6E1] rounded-2xl items-center justify-center mt-2">
-              <AppIcon name="credit-card" size={28} color="#8E8E93" />
-              <Text className="text-[#1C1C1E] text-[15px] font-bold mt-2">No plans found</Text>
-              <Text className="text-[#8E8E93] text-[12px] mt-0.5 text-center">
+            <View className="p-8 bg-[#1E1A3F] border border-[#322C63] rounded-2xl items-center justify-center mt-2">
+              <AppIcon name="credit-card" size={28} color="#B8B3E0" />
+              <Text className="text-white text-[15px] font-bold mt-2">No plans found</Text>
+              <Text className="text-[#B8B3E0] text-[12px] mt-0.5 text-center">
                 Tap "+ New Plan" above to create pricing tiers for vendors or customers.
               </Text>
             </View>
@@ -362,25 +362,27 @@ export default function AdminPlansScreen() {
               return (
                 <View
                   key={p.id}
-                  className={`p-4 mb-3 bg-white border rounded-2xl shadow-xs ${
-                    p.isActive ? "border-[#E8E6E1]" : "border-[#E5E5EA] opacity-80"
+                  className={`p-4 mb-3 bg-[#1E1A3F] border rounded-2xl ${
+                    p.isActive ? "border-[#322C63]" : "border-[#322C63]/60 opacity-80"
                   }`}
                 >
                   {/* Top Bar: Role & Status */}
                   <View className="flex-row items-center justify-between mb-2">
                     <View
-                      className={`flex-row items-center gap-1.5 px-2.5 py-1 rounded-md ${
-                        isVendor ? "bg-[#FDF3E3]" : "bg-[#EEF2FF]"
+                      className={`flex-row items-center gap-1.5 px-2.5 py-1 rounded-md border ${
+                        isVendor
+                          ? "bg-[#3D2F0F] border-[#FFC53D]/40"
+                          : "bg-[#1B2A55] border-[#8FB4FF]/40"
                       }`}
                     >
                       <AppIcon
                         name={isVendor ? "briefcase" : "user"}
                         size={11}
-                        color={isVendor ? "#8A5E10" : "#4F46E5"}
+                        color={isVendor ? "#FFC53D" : "#8FB4FF"}
                       />
                       <Text
                         className={`text-[10px] font-extrabold uppercase tracking-wide ${
-                          isVendor ? "text-[#8A5E10]" : "text-[#4F46E5]"
+                          isVendor ? "text-[#FFC53D]" : "text-[#8FB4FF]"
                         }`}
                       >
                         {isVendor ? "Vendor Tier" : "Host Club"}
@@ -389,13 +391,15 @@ export default function AdminPlansScreen() {
 
                     <View className="flex-row items-center gap-2">
                       <View
-                        className={`px-2 py-0.5 rounded-full ${
-                          p.isActive ? "bg-emerald-50" : "bg-amber-50"
+                        className={`px-2 py-0.5 rounded-full border ${
+                          p.isActive
+                            ? "bg-[#123B34] border-[#6EE7B7]/40"
+                            : "bg-[#3D2F0F] border-[#FFC53D]/40"
                         }`}
                       >
                         <Text
                           className={`text-[10px] font-bold ${
-                            p.isActive ? "text-emerald-700" : "text-amber-700"
+                            p.isActive ? "text-[#6EE7B7]" : "text-[#FFC53D]"
                           }`}
                         >
                           {p.isActive ? "ACTIVE" : "INACTIVE"}
@@ -406,15 +410,15 @@ export default function AdminPlansScreen() {
 
                   {/* Title & Price */}
                   <View className="flex-row items-baseline justify-between mt-1">
-                    <Text className="text-[#1C1C1E] text-[17px] font-extrabold flex-1 pr-2">
+                    <Text className="text-white text-[17px] font-extrabold flex-1 pr-2">
                       {p.name}
                     </Text>
                     <View className="items-end">
-                      <Text className="text-[#1C1C1E] text-[18px] font-black">
+                      <Text className="text-white text-[18px] font-black">
                         {p.price === 0 ? "Free" : `₹${p.price.toLocaleString("en-IN")}`}
                       </Text>
                       {p.price > 0 && (
-                        <Text className="text-[#8E8E93] text-[10px] font-semibold uppercase">
+                        <Text className="text-[#B8B3E0] text-[10px] font-semibold uppercase">
                           / {p.interval.toLowerCase()}
                         </Text>
                       )}
@@ -422,28 +426,28 @@ export default function AdminPlansScreen() {
                   </View>
 
                   {/* Slug */}
-                  <Text className="text-[#8E8E93] text-[11px] font-mono mt-0.5">
+                  <Text className="text-[#B8B3E0] text-[11px] font-mono mt-0.5">
                     slug: {p.slug}
                   </Text>
 
                   {/* Description */}
                   {p.description ? (
-                    <Text className="text-[#52525B] text-[13px] mt-2 leading-[18px]">
+                    <Text className="text-[#E0DCFF] text-[13px] mt-2 leading-[18px]">
                       {p.description}
                     </Text>
                   ) : null}
 
                   {/* Subscribers & Actions */}
-                  <View className="flex-row items-center justify-between mt-3 pt-3 border-t border-[#F0EEEA]">
+                  <View className="flex-row items-center justify-between mt-3 pt-3 border-t border-[#322C63]">
                     <View className="flex-row items-center gap-2">
-                      <View className="flex-row items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#FAF9F5]">
-                        <AppIcon name="users" size={11} color="#059669" />
-                        <Text className="text-[#059669] text-[11px] font-bold">
+                      <View className="flex-row items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#2A2460] border border-[#322C63]/60">
+                        <AppIcon name="users" size={11} color="#6EE7B7" />
+                        <Text className="text-[#6EE7B7] text-[11px] font-bold">
                           {p.activeSubscribers} Active
                         </Text>
                       </View>
 
-                      <Text className="text-[#8E8E93] text-[11px]">
+                      <Text className="text-[#B8B3E0] text-[11px]">
                         ({p._count.subscriptions} total ever)
                       </Text>
                     </View>
@@ -451,30 +455,30 @@ export default function AdminPlansScreen() {
                     <View className="flex-row items-center gap-1.5">
                       <TouchableOpacity
                         onPress={() => openEditModal(p)}
-                        className="w-8 h-8 rounded-xl bg-[#F5F4F0] items-center justify-center"
+                        className="w-8 h-8 rounded-xl bg-[#2A2460] border border-[#322C63] items-center justify-center"
                         activeOpacity={0.7}
                       >
-                        <AppIcon name="edit-2" size={13} color="#3A3A3C" />
+                        <AppIcon name="edit-2" size={13} color="#B8B3E0" />
                       </TouchableOpacity>
 
                       <TouchableOpacity
                         onPress={() => handleToggleActive(p)}
-                        className="w-8 h-8 rounded-xl bg-[#F5F4F0] items-center justify-center"
+                        className="w-8 h-8 rounded-xl bg-[#2A2460] border border-[#322C63] items-center justify-center"
                         activeOpacity={0.7}
                       >
                         <AppIcon
                           name={p.isActive ? "eye-off" : "eye"}
                           size={13}
-                          color={p.isActive ? "#D97706" : "#059669"}
+                          color={p.isActive ? "#FFC53D" : "#6EE7B7"}
                         />
                       </TouchableOpacity>
 
                       <TouchableOpacity
                         onPress={() => handleDelete(p)}
-                        className="w-8 h-8 rounded-xl bg-[#FEE2E2] items-center justify-center"
+                        className="w-8 h-8 rounded-xl bg-[#3F1420] border border-[#FF8FA3]/30 items-center justify-center"
                         activeOpacity={0.7}
                       >
-                        <AppIcon name="trash-2" size={13} color="#B3261E" />
+                        <AppIcon name="trash-2" size={13} color="#FF8FA3" />
                       </TouchableOpacity>
                     </View>
                   </View>
@@ -487,22 +491,22 @@ export default function AdminPlansScreen() {
 
       {/* ─── MODAL: Add / Edit Subscription Plan ──────────────────────────── */}
       <Modal visible={showModal} transparent animationType="slide">
-        <View className="flex-1 bg-black/50 justify-end">
-          <View className="bg-white rounded-t-3xl max-h-[88%] p-5 pb-8">
-            <View className="flex-row items-center justify-between pb-3 border-b border-[#F0EEEA]">
+        <View className="flex-1 bg-black/75 justify-end">
+          <View className="bg-[#1E1A3F] border-t border-[#322C63] rounded-t-3xl max-h-[88%] p-5 pb-8">
+            <View className="flex-row items-center justify-between pb-3 border-b border-[#322C63]">
               <View>
-                <Text className="text-[#1C1C1E] text-[17px] font-bold">
+                <Text className="text-white text-[17px] font-bold">
                   {editingPlan ? "Edit Subscription Tier" : "Create Subscription Plan"}
                 </Text>
-                <Text className="text-[#8E8E93] text-[12px]">
+                <Text className="text-[#B8B3E0] text-[12px]">
                   Configure price, billing frequency, and features
                 </Text>
               </View>
               <TouchableOpacity
                 onPress={() => setShowModal(false)}
-                className="w-8 h-8 rounded-full bg-[#F5F4F0] items-center justify-center"
+                className="w-8 h-8 rounded-full bg-[#2A2460] border border-[#322C63] items-center justify-center"
               >
-                <AppIcon name="x" size={16} color="#6E6E73" />
+                <AppIcon name="x" size={16} color="#B8B3E0" />
               </TouchableOpacity>
             </View>
 
@@ -510,7 +514,7 @@ export default function AdminPlansScreen() {
               {/* Target Role Selector */}
               {!editingPlan && (
                 <View className="mb-3">
-                  <Text className="text-[#3A3A3C] text-[12px] font-semibold mb-1.5">
+                  <Text className="text-[#B8B3E0] text-[12px] font-semibold mb-1.5">
                     Target Audience *
                   </Text>
                   <View className="flex-row gap-2">
@@ -521,18 +525,18 @@ export default function AdminPlansScreen() {
                       }}
                       className={`flex-1 py-2.5 rounded-xl border flex-row items-center justify-center gap-1.5 ${
                         targetRole === "PROVIDER"
-                          ? "bg-[#1C1C1E] border-[#1C1C1E]"
-                          : "bg-white border-[#E5E3DD]"
+                          ? "bg-[#7C5CFF] border-[#7C5CFF]"
+                          : "bg-[#2A2460] border-[#322C63]"
                       }`}
                     >
                       <AppIcon
                         name="briefcase"
                         size={13}
-                        color={targetRole === "PROVIDER" ? "#FFFFFF" : "#6E6E73"}
+                        color={targetRole === "PROVIDER" ? "#FFFFFF" : "#B8B3E0"}
                       />
                       <Text
                         className={`text-[12px] font-bold ${
-                          targetRole === "PROVIDER" ? "text-white" : "text-[#3A3A3C]"
+                          targetRole === "PROVIDER" ? "text-white" : "text-[#B8B3E0]"
                         }`}
                       >
                         Service Vendor
@@ -546,18 +550,18 @@ export default function AdminPlansScreen() {
                       }}
                       className={`flex-1 py-2.5 rounded-xl border flex-row items-center justify-center gap-1.5 ${
                         targetRole === "CUSTOMER"
-                          ? "bg-[#1C1C1E] border-[#1C1C1E]"
-                          : "bg-white border-[#E5E3DD]"
+                          ? "bg-[#7C5CFF] border-[#7C5CFF]"
+                          : "bg-[#2A2460] border-[#322C63]"
                       }`}
                     >
                       <AppIcon
                         name="user"
                         size={13}
-                        color={targetRole === "CUSTOMER" ? "#FFFFFF" : "#6E6E73"}
+                        color={targetRole === "CUSTOMER" ? "#FFFFFF" : "#B8B3E0"}
                       />
                       <Text
                         className={`text-[12px] font-bold ${
-                          targetRole === "CUSTOMER" ? "text-white" : "text-[#3A3A3C]"
+                          targetRole === "CUSTOMER" ? "text-white" : "text-[#B8B3E0]"
                         }`}
                       >
                         Event Host
@@ -568,19 +572,19 @@ export default function AdminPlansScreen() {
               )}
 
               {/* Plan Name */}
-              <Text className="text-[#3A3A3C] text-[12px] font-semibold mb-1">
+              <Text className="text-[#B8B3E0] text-[12px] font-semibold mb-1">
                 Plan Name *
               </Text>
               <TextInput
                 value={name}
                 onChangeText={handleNameChange}
                 placeholder="e.g. Growth Pro, Unlimited Leads, VIP Club"
-                placeholderTextColor="#A1A1AA"
-                className="py-3 px-3.5 rounded-xl border border-[#E5E3DD] bg-[#FAF9F5] text-[#1C1C1E] text-[14px] mb-3"
+                placeholderTextColor="#7C77A8"
+                className="py-3 px-3.5 rounded-xl border border-[#322C63] bg-[#2A2460] text-white text-[14px] mb-3"
               />
 
               {/* Plan Slug */}
-              <Text className="text-[#3A3A3C] text-[12px] font-semibold mb-1">
+              <Text className="text-[#B8B3E0] text-[12px] font-semibold mb-1">
                 System Identifier / Slug *
               </Text>
               <TextInput
@@ -588,14 +592,14 @@ export default function AdminPlansScreen() {
                 onChangeText={setSlug}
                 placeholder="e.g. provider-growth-monthly"
                 autoCapitalize="none"
-                placeholderTextColor="#A1A1AA"
-                className="py-3 px-3.5 rounded-xl border border-[#E5E3DD] bg-[#FAF9F5] text-[#1C1C1E] text-[14px] mb-3 font-mono"
+                placeholderTextColor="#7C77A8"
+                className="py-3 px-3.5 rounded-xl border border-[#322C63] bg-[#2A2460] text-white text-[14px] mb-3 font-mono"
               />
 
               {/* Price & Billing Interval Row */}
               <View className="flex-row gap-3 mb-3">
                 <View className="flex-1">
-                  <Text className="text-[#3A3A3C] text-[12px] font-semibold mb-1">
+                  <Text className="text-[#B8B3E0] text-[12px] font-semibold mb-1">
                     Price (₹ INR) *
                   </Text>
                   <TextInput
@@ -603,13 +607,13 @@ export default function AdminPlansScreen() {
                     onChangeText={setPrice}
                     placeholder="999 (0 for free tier)"
                     keyboardType="numeric"
-                    placeholderTextColor="#A1A1AA"
-                    className="py-3 px-3.5 rounded-xl border border-[#E5E3DD] bg-[#FAF9F5] text-[#1C1C1E] text-[15px] font-bold"
+                    placeholderTextColor="#7C77A8"
+                    className="py-3 px-3.5 rounded-xl border border-[#322C63] bg-[#2A2460] text-white text-[15px] font-bold"
                   />
                 </View>
 
                 <View className="flex-1">
-                  <Text className="text-[#3A3A3C] text-[12px] font-semibold mb-1">
+                  <Text className="text-[#B8B3E0] text-[12px] font-semibold mb-1">
                     Billing Interval *
                   </Text>
                   <View className="flex-row gap-1">
@@ -617,13 +621,13 @@ export default function AdminPlansScreen() {
                       onPress={() => setInterval("MONTHLY")}
                       className={`flex-1 py-3 rounded-xl items-center border ${
                         interval === "MONTHLY"
-                          ? "bg-[#1C1C1E] border-[#1C1C1E]"
-                          : "bg-[#FAF9F5] border-[#E5E3DD]"
+                          ? "bg-[#7C5CFF] border-[#7C5CFF]"
+                          : "bg-[#2A2460] border-[#322C63]"
                       }`}
                     >
                       <Text
                         className={`text-[12px] font-bold ${
-                          interval === "MONTHLY" ? "text-white" : "text-[#3A3A3C]"
+                          interval === "MONTHLY" ? "text-white" : "text-[#B8B3E0]"
                         }`}
                       >
                         Monthly
@@ -634,13 +638,13 @@ export default function AdminPlansScreen() {
                       onPress={() => setInterval("YEARLY")}
                       className={`flex-1 py-3 rounded-xl items-center border ${
                         interval === "YEARLY"
-                          ? "bg-[#1C1C1E] border-[#1C1C1E]"
-                          : "bg-[#FAF9F5] border-[#E5E3DD]"
+                          ? "bg-[#7C5CFF] border-[#7C5CFF]"
+                          : "bg-[#2A2460] border-[#322C63]"
                       }`}
                     >
                       <Text
                         className={`text-[12px] font-bold ${
-                          interval === "YEARLY" ? "text-white" : "text-[#3A3A3C]"
+                          interval === "YEARLY" ? "text-white" : "text-[#B8B3E0]"
                         }`}
                       >
                         Yearly
@@ -651,7 +655,7 @@ export default function AdminPlansScreen() {
               </View>
 
               {/* Description / Features */}
-              <Text className="text-[#3A3A3C] text-[12px] font-semibold mb-1">
+              <Text className="text-[#B8B3E0] text-[12px] font-semibold mb-1">
                 Plan Description & Feature Highlights
               </Text>
               <TextInput
@@ -660,24 +664,24 @@ export default function AdminPlansScreen() {
                 placeholder="Unlimited qualified leads, instant push alerts, verified badge..."
                 multiline
                 numberOfLines={3}
-                placeholderTextColor="#A1A1AA"
-                className="py-3 px-3.5 rounded-xl border border-[#E5E3DD] bg-[#FAF9F5] text-[#1C1C1E] text-[14px] mb-3"
+                placeholderTextColor="#7C77A8"
+                className="py-3 px-3.5 rounded-xl border border-[#322C63] bg-[#2A2460] text-white text-[14px] mb-3"
               />
 
               {/* Active Toggle */}
-              <View className="flex-row items-center justify-between p-3.5 rounded-xl bg-[#F7F7F5] border border-[#EBE8E3] mb-4">
+              <View className="flex-row items-center justify-between p-3.5 rounded-xl bg-[#2A2460] border border-[#322C63] mb-4">
                 <View className="flex-1 pr-3">
-                  <Text className="text-[#1C1C1E] text-[13px] font-bold">
+                  <Text className="text-white text-[13px] font-bold">
                     Available on Razorpay Storefront
                   </Text>
-                  <Text className="text-[#8E8E93] text-[11px]">
+                  <Text className="text-[#B8B3E0] text-[11px]">
                     When active, users can purchase this plan during checkout.
                   </Text>
                 </View>
                 <Switch
                   value={isActive}
                   onValueChange={setIsActive}
-                  trackColor={{ false: "#E5E3DD", true: "#059669" }}
+                  trackColor={{ false: "#322C63", true: "#10B981" }}
                   thumbColor="#FFFFFF"
                 />
               </View>
@@ -686,7 +690,7 @@ export default function AdminPlansScreen() {
               <TouchableOpacity
                 onPress={handleSave}
                 disabled={saving}
-                className="py-3.5 bg-[#1C1C1E] rounded-xl items-center active:opacity-90"
+                className="py-3.5 bg-[#7C5CFF] rounded-xl items-center active:opacity-90"
               >
                 {saving ? (
                   <ActivityIndicator color="#FFFFFF" size="small" />

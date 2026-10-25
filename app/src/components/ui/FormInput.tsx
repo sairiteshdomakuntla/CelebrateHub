@@ -72,17 +72,17 @@ export function FormInput({
   );
 
   const borderColor = error
-    ? "#B3261E"
+    ? "#FF8FA3"
     : focusAnim.interpolate({
         inputRange: [0, 1],
-        outputRange: ["#E3E1DC", "#1C1C1E"],
+        outputRange: ["#322C63", "#7C5CFF"],
       });
 
   const shadowOpacity = error
     ? 0
     : focusAnim.interpolate({
         inputRange: [0, 1],
-        outputRange: [0, 0.06],
+        outputRange: [0, 0.2],
       });
 
   return (
@@ -97,7 +97,7 @@ export function FormInput({
       >
         <Text
           style={{
-            color: "#3A3A3C",
+            color: "#B8B3E0",
             fontSize: 13,
             fontWeight: "600",
           }}
@@ -111,11 +111,11 @@ export function FormInput({
         style={{
           flexDirection: "row",
           alignItems: "center",
-          backgroundColor: "white",
+          backgroundColor: "#1E1A3F",
           borderRadius: 12,
           borderWidth: 1,
           borderColor: borderColor as any,
-          shadowColor: "#1C1C1E",
+          shadowColor: "#7C5CFF",
           shadowOffset: { width: 0, height: 0 },
           shadowOpacity: shadowOpacity as any,
           shadowRadius: 8,
@@ -131,13 +131,13 @@ export function FormInput({
         <RNTextInput
           style={{
             flex: 1,
-            color: "#1C1C1E",
+            color: "#FFFFFF",
             fontSize: 15,
             paddingVertical: 14,
             paddingLeft: leftIcon ? 8 : 16,
             paddingRight: isPassword ? 0 : 16,
           }}
-          placeholderTextColor="#A7A7AB"
+          placeholderTextColor="#7C77A6"
           secureTextEntry={isPassword && !visible}
           onFocus={handleFocus}
           onBlur={handleBlur}
@@ -151,7 +151,7 @@ export function FormInput({
             style={{ paddingHorizontal: 16, paddingVertical: 14 }}
             hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
           >
-            <Text style={{ color: "#6E6E73", fontSize: 13, fontWeight: "600" }}>
+            <Text style={{ color: "#B8B3E0", fontSize: 13, fontWeight: "600" }}>
               {visible ? "Hide" : "Show"}
             </Text>
           </TouchableOpacity>
@@ -159,12 +159,12 @@ export function FormInput({
       </Animated.View>
 
       {!!error && (
-        <Text style={{ color: "#B3261E", fontSize: 12, marginTop: 6 }}>
+        <Text style={{ color: "#FF8FA3", fontSize: 12, marginTop: 6 }}>
           {error}
         </Text>
       )}
       {!error && !!hint && (
-        <Text style={{ color: "#A7A7AB", fontSize: 12, marginTop: 6 }}>
+        <Text style={{ color: "#7C77A6", fontSize: 12, marginTop: 6 }}>
           {hint}
         </Text>
       )}

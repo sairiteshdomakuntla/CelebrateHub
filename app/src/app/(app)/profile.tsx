@@ -21,15 +21,15 @@ import { authApi, type AuthUser } from "@/lib/auth.api";
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 const ROLE_STYLE: Record<string, { bg: string; text: string; border: string }> = {
-  ADMIN:    { bg: "#EAF0FB", text: "#2F54B8", border: "#CCD9F2" },
-  PROVIDER: { bg: "#FDF3E3", text: "#8A5E10", border: "#F0DFB8" },
-  CUSTOMER: { bg: "#EAF6EE", text: "#1E7A3C", border: "#CDE8D5" },
+  ADMIN:    { bg: "#1B2A55", text: "#8FB4FF", border: "#263D6E" },
+  PROVIDER: { bg: "#3D2F0F", text: "#FFC53D", border: "#5A4510" },
+  CUSTOMER: { bg: "#123B34", text: "#6EE7B7", border: "#1A5447" },
 };
 
 const STATUS_STYLE: Record<string, { bg: string; text: string }> = {
-  ACTIVE:    { bg: "#EAF6EE", text: "#1E7A3C" },
-  INACTIVE:  { bg: "#F1EFEC", text: "#6E6E73" },
-  SUSPENDED: { bg: "#FBECEB", text: "#B3261E" },
+  ACTIVE:    { bg: "#123B34", text: "#6EE7B7" },
+  INACTIVE:  { bg: "#2A2460", text: "#B8B3E0" },
+  SUSPENDED: { bg: "#3F1420", text: "#FF8FA3" },
 };
 
 // ─── Editable field row ───────────────────────────────────────────────────────
@@ -63,19 +63,19 @@ function EditableRow({
   useEffect(() => { setDraft(value); }, [value]);
 
   return (
-    <View className={`py-3 ${last ? "" : "border-b border-[#EFEEEA]"}`}>
+    <View className={`py-3 ${last ? "" : "border-b border-[#322C63]"}`}>
       <View className="flex-row items-center justify-between">
-        <Text className="text-[#6E6E73] text-[12px] font-semibold uppercase tracking-wider mb-1">
+        <Text className="text-[#B8B3E0] text-[12px] font-semibold uppercase tracking-wider mb-1">
           {label}
         </Text>
         {!editing && (
           <TouchableOpacity
             onPress={onEdit}
             hitSlop={{ top: 8, left: 8, bottom: 8, right: 8 }}
-            className="flex-row items-center gap-1 px-2.5 py-1 rounded-full bg-[#F5F4F0]"
+            className="flex-row items-center gap-1 px-2.5 py-1 rounded-full bg-[#2A2460]"
           >
-            <AppIcon name="edit-2" size={11} color="#6E6E73" />
-            <Text className="text-[#6E6E73] text-[11px] font-semibold">Edit</Text>
+            <AppIcon name="edit-2" size={11} color="#B8B3E0" />
+            <Text className="text-[#B8B3E0] text-[11px] font-semibold">Edit</Text>
           </TouchableOpacity>
         )}
       </View>
@@ -86,30 +86,30 @@ function EditableRow({
             value={draft}
             onChangeText={setDraft}
             placeholder={placeholder ?? label}
-            placeholderTextColor="#A7A7AB"
+            placeholderTextColor="#7C77A6"
             keyboardType={keyboardType}
             autoCapitalize={autoCapitalize}
             autoFocus
-            className="bg-[#F7F7F5] border border-[#6366F1]/40 rounded-xl px-3.5 py-2.5 text-[14px] text-[#1C1C1E] mb-2"
+            className="bg-[#2A2460] border border-[#7C5CFF]/40 rounded-xl px-3.5 py-2.5 text-[14px] text-white mb-2"
           />
           <View className="flex-row gap-2">
             <TouchableOpacity
               onPress={() => onDone(draft.trim())}
-              className="flex-1 bg-[#1C1C1E] rounded-xl py-2.5 items-center"
+              className="flex-1 bg-[#7C5CFF] rounded-xl py-2.5 items-center"
             >
               <Text className="text-white text-[13px] font-bold">Save</Text>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => { setDraft(value); onCancel(); }}
-              className="flex-1 bg-[#F5F4F0] border border-[#E3E1DC] rounded-xl py-2.5 items-center"
+              className="flex-1 bg-[#2A2460] border border-[#322C63] rounded-xl py-2.5 items-center"
             >
-              <Text className="text-[#6E6E73] text-[13px] font-semibold">Cancel</Text>
+              <Text className="text-[#B8B3E0] text-[13px] font-semibold">Cancel</Text>
             </TouchableOpacity>
           </View>
         </View>
       ) : (
-        <Text className="text-[#1C1C1E] text-[15px] font-medium">
-          {value || <Text className="text-[#A7A7AB]">Not set</Text>}
+        <Text className="text-white text-[15px] font-medium">
+          {value || <Text className="text-[#7C77A6]">Not set</Text>}
         </Text>
       )}
     </View>
@@ -168,80 +168,80 @@ function ChangePasswordModal({
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
-        className="flex-1 bg-black/60 justify-end"
+        className="flex-1 bg-black/70 justify-end"
       >
-        <View className="bg-white rounded-t-3xl px-6 pt-4 pb-10">
+        <View className="bg-[#1E1A3F] rounded-t-3xl px-6 pt-4 pb-10">
           {/* Handle */}
           <View className="items-center mb-4">
-            <View className="w-10 h-1 rounded-full bg-[#D1D1D6]" />
+            <View className="w-10 h-1 rounded-full bg-[#322C63]" />
           </View>
 
           <View className="flex-row items-center justify-between mb-5">
-            <Text className="text-[#1C1C1E] text-[18px] font-bold">Change Password</Text>
+            <Text className="text-white text-[18px] font-bold">Change Password</Text>
             <TouchableOpacity
               onPress={() => { reset(); onClose(); }}
-              className="w-8 h-8 rounded-full bg-[#F5F4F0] items-center justify-center"
+              className="w-8 h-8 rounded-full bg-[#2A2460] items-center justify-center"
             >
-              <AppIcon name="x" size={15} color="#8E8E93" />
+              <AppIcon name="x" size={15} color="#B8B3E0" />
             </TouchableOpacity>
           </View>
 
           {/* Current password */}
-          <Text className="text-[#6E6E73] text-[12px] font-semibold uppercase tracking-wider mb-1.5">
+          <Text className="text-[#B8B3E0] text-[12px] font-semibold uppercase tracking-wider mb-1.5">
             Current Password
           </Text>
-          <View className="flex-row items-center bg-[#F7F7F5] border border-[#E3E1DC] rounded-xl px-3.5 mb-4">
+          <View className="flex-row items-center bg-[#2A2460] border border-[#322C63] rounded-xl px-3.5 mb-4">
             <TextInput
               value={currentPw}
               onChangeText={setCurrentPw}
               placeholder="••••••••"
-              placeholderTextColor="#A7A7AB"
+              placeholderTextColor="#7C77A6"
               secureTextEntry={!showCurrent}
-              className="flex-1 py-3 text-[14px] text-[#1C1C1E]"
+              className="flex-1 py-3 text-[14px] text-white"
             />
             <TouchableOpacity onPress={() => setShowCurrent(!showCurrent)}>
-              <AppIcon name={showCurrent ? "eye-off" : "eye"} size={16} color="#8E8E93" />
+              <AppIcon name={showCurrent ? "eye-off" : "eye"} size={16} color="#B8B3E0" />
             </TouchableOpacity>
           </View>
 
           {/* New password */}
-          <Text className="text-[#6E6E73] text-[12px] font-semibold uppercase tracking-wider mb-1.5">
+          <Text className="text-[#B8B3E0] text-[12px] font-semibold uppercase tracking-wider mb-1.5">
             New Password
           </Text>
-          <View className="flex-row items-center bg-[#F7F7F5] border border-[#E3E1DC] rounded-xl px-3.5 mb-4">
+          <View className="flex-row items-center bg-[#2A2460] border border-[#322C63] rounded-xl px-3.5 mb-4">
             <TextInput
               value={newPw}
               onChangeText={setNewPw}
               placeholder="Min. 8 characters"
-              placeholderTextColor="#A7A7AB"
+              placeholderTextColor="#7C77A6"
               secureTextEntry={!showNew}
-              className="flex-1 py-3 text-[14px] text-[#1C1C1E]"
+              className="flex-1 py-3 text-[14px] text-white"
             />
             <TouchableOpacity onPress={() => setShowNew(!showNew)}>
-              <AppIcon name={showNew ? "eye-off" : "eye"} size={16} color="#8E8E93" />
+              <AppIcon name={showNew ? "eye-off" : "eye"} size={16} color="#B8B3E0" />
             </TouchableOpacity>
           </View>
 
           {/* Confirm password */}
-          <Text className="text-[#6E6E73] text-[12px] font-semibold uppercase tracking-wider mb-1.5">
+          <Text className="text-[#B8B3E0] text-[12px] font-semibold uppercase tracking-wider mb-1.5">
             Confirm New Password
           </Text>
-          <View className={`flex-row items-center bg-[#F7F7F5] border rounded-xl px-3.5 mb-6 ${
-            confirmPw && confirmPw !== newPw ? "border-[#B3261E]" : "border-[#E3E1DC]"
+          <View className={`flex-row items-center bg-[#2A2460] border rounded-xl px-3.5 mb-6 ${
+            confirmPw && confirmPw !== newPw ? "border-[#FF8FA3]" : "border-[#322C63]"
           }`}>
             <TextInput
               value={confirmPw}
               onChangeText={setConfirmPw}
               placeholder="Re-enter new password"
-              placeholderTextColor="#A7A7AB"
+              placeholderTextColor="#7C77A6"
               secureTextEntry={!showNew}
-              className="flex-1 py-3 text-[14px] text-[#1C1C1E]"
+              className="flex-1 py-3 text-[14px] text-white"
             />
             {confirmPw.length > 0 && (
               <AppIcon
                 name={confirmPw === newPw ? "check" : "x"}
                 size={16}
-                color={confirmPw === newPw ? "#1E7A3C" : "#B3261E"}
+                color={confirmPw === newPw ? "#6EE7B7" : "#FF8FA3"}
               />
             )}
           </View>
@@ -249,7 +249,14 @@ function ChangePasswordModal({
           <TouchableOpacity
             onPress={handleSubmit}
             disabled={loading}
-            className="bg-[#1C1C1E] rounded-2xl py-4 items-center"
+            className="bg-[#7C5CFF] rounded-2xl py-4 items-center"
+            style={{
+              shadowColor: "#7C5CFF",
+              shadowOffset: { width: 0, height: 4 },
+              shadowOpacity: 0.3,
+              shadowRadius: 12,
+              elevation: 4,
+            }}
           >
             {loading ? (
               <ActivityIndicator color="#FFFFFF" />
@@ -267,9 +274,9 @@ function ChangePasswordModal({
 
 function InfoRow({ label, value, last = false }: { label: string; value: string; last?: boolean }) {
   return (
-    <View className={`flex-row items-center justify-between py-3 ${last ? "" : "border-b border-[#EFEEEA]"}`}>
-      <Text className="text-[#6E6E73] text-[14px]">{label}</Text>
-      <Text className="text-[#1C1C1E] text-[14px] font-medium">{value}</Text>
+    <View className={`flex-row items-center justify-between py-3 ${last ? "" : "border-b border-[#322C63]"}`}>
+      <Text className="text-[#B8B3E0] text-[14px]">{label}</Text>
+      <Text className="text-white text-[14px] font-medium">{value}</Text>
     </View>
   );
 }
@@ -345,15 +352,15 @@ export default function ProfileScreen() {
 
   if (loading) {
     return (
-      <View className="flex-1 bg-[#F7F7F5] items-center justify-center">
-        <ActivityIndicator color="#1C1C1E" size="large" />
+      <View className="flex-1 bg-[#120F2B] items-center justify-center">
+        <ActivityIndicator color="#7C5CFF" size="large" />
       </View>
     );
   }
 
   return (
-    <View className="flex-1 bg-[#F7F7F5]">
-      <StatusBar style="dark" />
+    <View className="flex-1 bg-[#120F2B]">
+      <StatusBar style="light" />
       <SafeAreaView className="flex-1">
         <ScrollView
           contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 48 }}
@@ -362,14 +369,14 @@ export default function ProfileScreen() {
         >
           {/* ── Avatar & header ── */}
           <View className="items-center pt-8 pb-6">
-            <View className="w-20 h-20 rounded-full bg-[#1C1C1E] items-center justify-center mb-4">
+            <View className="w-20 h-20 rounded-full bg-[#7C5CFF] items-center justify-center mb-4">
               <Text className="text-white text-[30px] font-bold">{initial}</Text>
             </View>
 
-            <Text className="text-[#1C1C1E] text-[22px] font-bold tracking-tight">
+            <Text className="text-white text-[22px] font-bold tracking-tight">
               {user?.name}
             </Text>
-            <Text className="text-[#6E6E73] text-[14px] mt-1">
+            <Text className="text-[#B8B3E0] text-[14px] mt-1">
               {user?.email ?? user?.phone ?? ""}
             </Text>
 
@@ -392,28 +399,28 @@ export default function ProfileScreen() {
 
           {/* ── Provider business card ── */}
           {profile?.provider && (
-            <View className="bg-white border border-[#E8E6E1] rounded-2xl p-5 mb-3">
+            <View className="bg-[#1E1A3F] border border-[#322C63] rounded-2xl p-5 mb-3">
               <View className="flex-row items-center gap-2 mb-3">
-                <AppIcon name="briefcase" size={15} color="#6E6E73" />
-                <Text className="text-[#6E6E73] text-[12px] font-semibold uppercase tracking-widest">
+                <AppIcon name="briefcase" size={15} color="#B8B3E0" />
+                <Text className="text-[#B8B3E0] text-[12px] font-semibold uppercase tracking-widest">
                   Business
                 </Text>
               </View>
-              <Text className="text-[#1C1C1E] text-[16px] font-bold">
+              <Text className="text-white text-[16px] font-bold">
                 {profile.provider.businessName}
               </Text>
               {profile.provider.serviceArea && (
-                <Text className="text-[#6E6E73] text-[14px] mt-0.5">{profile.provider.serviceArea}</Text>
+                <Text className="text-[#B8B3E0] text-[14px] mt-0.5">{profile.provider.serviceArea}</Text>
               )}
               <View className="flex-row items-center gap-3 mt-3">
                 <View className="flex-row items-center gap-1.5">
-                  <AppIcon name="star" size={14} color="#9A6A14" />
-                  <Text className="text-[#1C1C1E] text-[14px] font-semibold">
+                  <AppIcon name="star" size={14} color="#FFC53D" />
+                  <Text className="text-white text-[14px] font-semibold">
                     {profile.provider.ratingCount > 0
                       ? Number(profile.provider.ratingAvg).toFixed(1)
                       : "—"}
                   </Text>
-                  <Text className="text-[#A7A7AB] text-[12px]">
+                  <Text className="text-[#7C77A6] text-[12px]">
                     {profile.provider.ratingCount > 0
                       ? `(${profile.provider.ratingCount} reviews)`
                       : "No reviews yet"}
@@ -421,12 +428,12 @@ export default function ProfileScreen() {
                 </View>
                 <View
                   className={`px-2.5 py-1 rounded-full ${
-                    profile.provider.isAvailable ? "bg-[#EAF6EE]" : "bg-[#F1EFEC]"
+                    profile.provider.isAvailable ? "bg-[#123B34]" : "bg-[#2A2460]"
                   }`}
                 >
                   <Text
                     className={`text-[12px] font-semibold ${
-                      profile.provider.isAvailable ? "text-[#1E7A3C]" : "text-[#6E6E73]"
+                      profile.provider.isAvailable ? "text-[#6EE7B7]" : "text-[#B8B3E0]"
                     }`}
                   >
                     {profile.provider.isAvailable ? "Available" : "Unavailable"}
@@ -437,13 +444,13 @@ export default function ProfileScreen() {
           )}
 
           {/* ── Editable details ── */}
-          <View className="bg-white border border-[#E8E6E1] rounded-2xl px-5 py-1 mb-3">
-            <View className="flex-row items-center gap-2 pt-4 pb-2 border-b border-[#EFEEEA]">
-              <AppIcon name="user" size={14} color="#6E6E73" />
-              <Text className="text-[#6E6E73] text-[11px] font-bold uppercase tracking-wider">
+          <View className="bg-[#1E1A3F] border border-[#322C63] rounded-2xl px-5 py-1 mb-3">
+            <View className="flex-row items-center gap-2 pt-4 pb-2 border-b border-[#322C63]">
+              <AppIcon name="user" size={14} color="#B8B3E0" />
+              <Text className="text-[#B8B3E0] text-[11px] font-bold uppercase tracking-wider">
                 Personal details
               </Text>
-              {saving && <ActivityIndicator size="small" color="#6366F1" style={{ marginLeft: 6 }} />}
+              {saving && <ActivityIndicator size="small" color="#7C5CFF" style={{ marginLeft: 6 }} />}
             </View>
 
             <EditableRow
@@ -483,10 +490,10 @@ export default function ProfileScreen() {
           </View>
 
           {/* ── Account info (read-only) ── */}
-          <View className="bg-white border border-[#E8E6E1] rounded-2xl px-5 py-1 mb-3">
-            <View className="flex-row items-center gap-2 pt-4 pb-2 border-b border-[#EFEEEA]">
-              <AppIcon name="info" size={14} color="#6E6E73" />
-              <Text className="text-[#6E6E73] text-[11px] font-bold uppercase tracking-wider">
+          <View className="bg-[#1E1A3F] border border-[#322C63] rounded-2xl px-5 py-1 mb-3">
+            <View className="flex-row items-center gap-2 pt-4 pb-2 border-b border-[#322C63]">
+              <AppIcon name="info" size={14} color="#B8B3E0" />
+              <Text className="text-[#B8B3E0] text-[11px] font-bold uppercase tracking-wider">
                 Account details
               </Text>
             </View>
@@ -519,43 +526,43 @@ export default function ProfileScreen() {
           </View>
 
           {/* ── Security ── */}
-          <View className="bg-white border border-[#E8E6E1] rounded-2xl mb-3 overflow-hidden">
+          <View className="bg-[#1E1A3F] border border-[#322C63] rounded-2xl mb-3 overflow-hidden">
             <TouchableOpacity
               onPress={() => setShowPasswordModal(true)}
               activeOpacity={0.7}
               className="flex-row items-center gap-3 px-5 py-4"
             >
-              <View className="w-10 h-10 rounded-xl bg-[#F1EFEC] items-center justify-center">
-                <AppIcon name="lock" size={17} color="#3A3A3C" />
+              <View className="w-10 h-10 rounded-xl bg-[#2A2460] items-center justify-center">
+                <AppIcon name="lock" size={17} color="#B8B3E0" />
               </View>
               <View className="flex-1">
-                <Text className="text-[#1C1C1E] text-[15px] font-semibold">Change Password</Text>
-                <Text className="text-[#8E8E93] text-[12px] mt-0.5">
+                <Text className="text-white text-[15px] font-semibold">Change Password</Text>
+                <Text className="text-[#7C77A6] text-[12px] mt-0.5">
                   Update your account password
                 </Text>
               </View>
-              <AppIcon name="chevron-right" size={16} color="#C7C7CC" />
+              <AppIcon name="chevron-right" size={16} color="#7C77A6" />
             </TouchableOpacity>
 
             {user?.role !== "ADMIN" && (
               <>
-                <View className="h-px bg-[#F0EEEA] mx-5" />
+                <View className="h-px bg-[#322C63] mx-5" />
 
                 <TouchableOpacity
                   onPress={() => router.push("/subscriptions" as any)}
                   activeOpacity={0.7}
                   className="flex-row items-center gap-3 px-5 py-4"
                 >
-                  <View className="w-10 h-10 rounded-xl bg-[#1C1C1E] items-center justify-center">
+                  <View className="w-10 h-10 rounded-xl bg-[#7C5CFF] items-center justify-center">
                     <AppIcon name="shield" size={17} color="#FFFFFF" />
                   </View>
                   <View className="flex-1">
-                    <Text className="text-[#1C1C1E] text-[15px] font-semibold">Membership & Plans</Text>
-                    <Text className="text-[#8E8E93] text-[12px] mt-0.5">
+                    <Text className="text-white text-[15px] font-semibold">Membership & Plans</Text>
+                    <Text className="text-[#7C77A6] text-[12px] mt-0.5">
                       Manage subscription & Razorpay billing
                     </Text>
                   </View>
-                  <AppIcon name="chevron-right" size={16} color="#C7C7CC" />
+                  <AppIcon name="chevron-right" size={16} color="#7C77A6" />
                 </TouchableOpacity>
               </>
             )}
@@ -566,19 +573,19 @@ export default function ProfileScreen() {
             onPress={handleLogout}
             disabled={loggingOut}
             activeOpacity={0.8}
-            className="flex-row items-center justify-center gap-2 bg-white border border-[#EAD9D2] rounded-2xl py-4 mt-1"
+            className="flex-row items-center justify-center gap-2 bg-[#1E1A3F] border border-[#3F1420] rounded-2xl py-4 mt-1"
           >
             {loggingOut ? (
-              <ActivityIndicator color="#B3261E" size="small" />
+              <ActivityIndicator color="#FF8FA3" size="small" />
             ) : (
               <View className="flex-row items-center gap-2">
-                <AppIcon name="log-out" size={16} color="#B3261E" />
-                <Text className="text-[#B3261E] text-[15px] font-semibold">Sign out</Text>
+                <AppIcon name="log-out" size={16} color="#FF8FA3" />
+                <Text className="text-[#FF8FA3] text-[15px] font-semibold">Sign out</Text>
               </View>
             )}
           </TouchableOpacity>
 
-          <Text className="text-[#A7A7AB] text-[12px] text-center mt-6">
+          <Text className="text-[#7C77A6] text-[12px] text-center mt-6">
             CelebrateHub · v1.0.0
           </Text>
         </ScrollView>

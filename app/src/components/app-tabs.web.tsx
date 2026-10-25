@@ -8,6 +8,7 @@ import {
 } from 'expo-router/ui';
 import { Pressable, View, StyleSheet, Text } from 'react-native';
 import { useAuthStore } from '@/store/auth.store';
+import { colors } from '@/theme';
 
 export default function AppTabs() {
   const { user } = useAuthStore();
@@ -41,13 +42,15 @@ export function TabButton({ children, isFocused, ...props }: TabTriggerSlotProps
       <View
         style={[
           styles.tabButtonView,
-          { backgroundColor: isFocused ? '#1C1C1E' : 'transparent' },
+          {
+            backgroundColor: isFocused ? colors.primary : 'transparent',
+          },
         ]}>
         <Text
           style={{
             fontSize: 13,
             fontWeight: '600',
-            color: isFocused ? '#FFFFFF' : '#6E6E73',
+            color: isFocused ? colors.text : colors.textMuted,
           }}>
           {children}
         </Text>
@@ -85,15 +88,15 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     gap: 8,
     maxWidth: 800,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: '#E8E6E1',
+    borderColor: colors.border,
   },
   brandText: {
     marginRight: 'auto',
     fontSize: 14,
     fontWeight: '700',
-    color: '#1C1C1E',
+    color: colors.text,
     letterSpacing: -0.2,
   },
   pressed: {
@@ -105,3 +108,4 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
 });
+

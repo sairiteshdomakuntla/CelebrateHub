@@ -40,10 +40,10 @@ function Section({
   children: React.ReactNode;
 }) {
   return (
-    <View className="bg-white border border-[#E8E6E1] rounded-2xl p-4 mb-4">
+    <View className="bg-[#1E1A3F] border border-[#322C63] rounded-2xl p-4 mb-4">
       <View className="flex-row items-center gap-2 mb-4">
-        <AppIcon name={icon as any} size={14} color="#6E6E73" />
-        <Text className="text-[#6E6E73] text-[12px] font-semibold uppercase tracking-widest">
+        <AppIcon name={icon as any} size={14} color="#7C5CFF" />
+        <Text className="text-[#B8B3E0] text-[12px] font-semibold uppercase tracking-widest">
           {title}
         </Text>
       </View>
@@ -108,19 +108,19 @@ function BusinessSection({
   return (
     <Section title="Business Profile" icon="briefcase">
       {/* Availability toggle */}
-      <View className="flex-row items-center justify-between bg-[#F7F7F5] rounded-xl px-4 py-3.5 mb-4">
+      <View className="flex-row items-center justify-between bg-[#2A2460] border border-[#322C63] rounded-xl px-4 py-3.5 mb-4">
         <View className="flex-row items-center gap-2">
           <View
-            className={`w-2 h-2 rounded-full ${isAvailable ? "bg-[#4ADE80]" : "bg-[#6E6E73]"}`}
+            className={`w-2 h-2 rounded-full ${isAvailable ? "bg-[#6EE7B7]" : "bg-[#B8B3E0]"}`}
           />
-          <Text className="text-[#1C1C1E] text-[14px] font-medium">
-            {isAvailable ? "Open for new leads" : "Unavailable"}
+          <Text className="text-white text-[14px] font-medium">
+            {isAvailable ? "Open for new celebration leads" : "Currently Unavailable"}
           </Text>
         </View>
         <Switch
           value={isAvailable}
           onValueChange={setIsAvailable}
-          trackColor={{ false: "#E3E1DC", true: "#1C1C1E" }}
+          trackColor={{ false: "#322C63", true: "#7C5CFF" }}
           thumbColor="#FFFFFF"
         />
       </View>
@@ -140,34 +140,34 @@ function BusinessSection({
       />
 
       {/* Interactive Service Area & Radius Selector Card */}
-      <View className="mb-4 bg-[#F7F7F5] rounded-xl p-3.5 border border-[#E8E6E1]">
+      <View className="mb-4 bg-[#2A2460] rounded-xl p-3.5 border border-[#322C63]">
         <View className="flex-row items-center justify-between mb-1.5">
           <View className="flex-row items-center gap-1.5">
-            <AppIcon name="map-pin" size={14} color="#8B5CF6" />
-            <Text className="text-[#1C1C1E] text-[13px] font-semibold">Service Area & Radius</Text>
+            <AppIcon name="map-pin" size={14} color="#7C5CFF" />
+            <Text className="text-white text-[13px] font-semibold">Service Area & Radius</Text>
           </View>
           <TouchableOpacity
             onPress={() => setShowLocationPicker(true)}
-            className="px-2.5 py-1.5 rounded-lg bg-[#1C1C1E] flex-row items-center gap-1 active:opacity-80"
+            className="px-2.5 py-1.5 rounded-lg bg-[#7C5CFF] flex-row items-center gap-1 active:bg-[#6848e0]"
           >
             <AppIcon name="crosshair" size={11} color="#FFFFFF" />
             <Text className="text-white text-[11px] font-bold">Pick on Map</Text>
           </TouchableOpacity>
         </View>
-        <Text className="text-[#6E6E73] text-[12px] leading-4">
+        <Text className="text-[#B8B3E0] text-[12px] leading-4">
           {serviceArea
             ? `${serviceArea} • ${serviceRadiusKm} km coverage perimeter`
             : "Set your central hub and coverage perimeter to match with nearby event leads."}
         </Text>
         {latitude && longitude && (
           <View className="mt-2 flex-row items-center gap-2">
-            <View className="bg-[#8B5CF6]/15 px-2 py-0.5 rounded-md border border-[#8B5CF6]/30">
-              <Text className="text-[#7C3AED] text-[10px] font-mono font-bold">
+            <View className="bg-[#7C5CFF]/20 px-2 py-0.5 rounded-md border border-[#7C5CFF]/30">
+              <Text className="text-[#7C5CFF] text-[10px] font-mono font-bold">
                 GPS: {latitude.toFixed(4)}, {longitude.toFixed(4)}
               </Text>
             </View>
-            <View className="bg-[#10B981]/15 px-2 py-0.5 rounded-md border border-[#10B981]/30">
-              <Text className="text-[#059669] text-[10px] font-bold">{serviceRadiusKm} km radius</Text>
+            <View className="bg-[#123B34] px-2 py-0.5 rounded-md border border-[#6EE7B7]/30">
+              <Text className="text-[#6EE7B7] text-[10px] font-bold">{serviceRadiusKm} km radius</Text>
             </View>
           </View>
         )}
@@ -258,8 +258,8 @@ function CategoriesSection({
 
   return (
     <Section title="Service Categories" icon="tag">
-      <Text className="text-[#6E6E73] text-[13px] mb-3">
-        Select all service types you offer.
+      <Text className="text-[#B8B3E0] text-[13px] mb-3">
+        Select all service types you offer to be matched with customer requests.
       </Text>
       <View className="flex-row flex-wrap gap-2 mb-4">
         {allCategories.map((cat) => {
@@ -269,18 +269,18 @@ function CategoriesSection({
               key={cat.id}
               onPress={() => toggle(cat.id)}
               activeOpacity={0.75}
-              className={`flex-row items-center gap-1.5 px-3 py-2 rounded-xl border ${
-                active ? "bg-[#1C1C1E] border-[#1C1C1E]" : "bg-[#F7F7F5] border-[#E3E1DC]"
+              className={`flex-row items-center gap-1.5 px-3 py-2 rounded-xl border transition-all ${
+                active ? "bg-[#7C5CFF] border-[#7C5CFF]" : "bg-[#2A2460] border-[#322C63]"
               }`}
             >
               <AppIcon
                 name={(cat.icon as any) || "briefcase"}
                 size={13}
-                color={active ? "#FFFFFF" : "#6E6E73"}
+                color={active ? "#FFFFFF" : "#B8B3E0"}
               />
               <Text
                 className={`text-[12px] font-medium ${
-                  active ? "text-white" : "text-[#3A3A3C]"
+                  active ? "text-white font-bold" : "text-[#B8B3E0]"
                 }`}
               >
                 {cat.name}
@@ -362,27 +362,27 @@ function AvailabilitySection({
 
   return (
     <Section title="Weekly Availability" icon="clock">
-      <Text className="text-[#6E6E73] text-[13px] mb-4">
-        Set the days and hours you're available for bookings.
+      <Text className="text-[#B8B3E0] text-[13px] mb-4">
+        Set the days and hours you're available for celebration bookings.
       </Text>
       {DAYS_OF_WEEK.map((day) => {
         const slot = slots[day.key];
         return (
-          <View key={day.key} className="mb-3">
+          <View key={day.key} className="mb-3 bg-[#2A2460] p-3 rounded-xl border border-[#322C63]">
             <View className="flex-row items-center justify-between">
-              <Text className="text-[#1C1C1E] text-[14px] font-medium w-24">{day.label}</Text>
+              <Text className="text-white text-[14px] font-semibold w-24">{day.label}</Text>
               <Switch
                 value={slot.enabled}
                 onValueChange={() => toggle(day.key)}
-                trackColor={{ false: "#E3E1DC", true: "#1C1C1E" }}
+                trackColor={{ false: "#322C63", true: "#7C5CFF" }}
                 thumbColor="#FFFFFF"
               />
             </View>
             {slot.enabled && (
-              <View className="flex-row gap-3 mt-2">
+              <View className="flex-row gap-3 mt-3 pt-2 border-t border-[#322C63]">
                 <View className="flex-1">
                   <FormInput
-                    label="Start"
+                    label="Start Time"
                     placeholder="09:00"
                     value={slot.startTime}
                     onChangeText={(v) => setTime(day.key, "startTime", v)}
@@ -391,7 +391,7 @@ function AvailabilitySection({
                 </View>
                 <View className="flex-1">
                   <FormInput
-                    label="End"
+                    label="End Time"
                     placeholder="18:00"
                     value={slot.endTime}
                     onChangeText={(v) => setTime(day.key, "endTime", v)}
@@ -425,7 +425,7 @@ function ReviewsSection({ providerId }: { providerId: string }) {
   if (loading) {
     return (
       <Section title="Client Reviews & Ratings" icon="star">
-        <ActivityIndicator color="#1C1C1E" className="py-4" />
+        <ActivityIndicator color="#7C5CFF" className="py-4" />
       </Section>
     );
   }
@@ -436,9 +436,9 @@ function ReviewsSection({ providerId }: { providerId: string }) {
   return (
     <Section title="Client Reviews & Ratings" icon="star">
       {/* Metric summary */}
-      <View className="flex-row items-center bg-[#F7F7F5] rounded-xl p-3.5 mb-3 gap-4">
-        <View className="items-center justify-center pr-3 border-r border-[#E3E1DC]">
-          <Text className="text-[26px] font-bold text-[#1C1C1E]">
+      <View className="flex-row items-center bg-[#2A2460] border border-[#322C63] rounded-xl p-3.5 mb-3 gap-4">
+        <View className="items-center justify-center pr-3 border-r border-[#322C63]">
+          <Text className="text-[26px] font-bold text-white">
             {stats?.total ? (stats.averageRating || 0).toFixed(1) : "—"}
           </Text>
           <View className="flex-row items-center gap-0.5 mt-0.5">
@@ -447,11 +447,11 @@ function ReviewsSection({ providerId }: { providerId: string }) {
                 key={s}
                 name="star"
                 size={11}
-                color={s <= Math.round(stats?.averageRating || 0) ? "#F59E0B" : "#D1D5DB"}
+                color={s <= Math.round(stats?.averageRating || 0) ? "#FFC53D" : "#322C63"}
               />
             ))}
           </View>
-          <Text className="text-[11px] text-[#8E8E93] mt-1 font-medium">
+          <Text className="text-[11px] text-[#B8B3E0] mt-1 font-medium">
             {stats?.total || 0} {stats?.total === 1 ? "review" : "reviews"}
           </Text>
         </View>
@@ -463,14 +463,14 @@ function ReviewsSection({ providerId }: { providerId: string }) {
             const pct = stats?.total ? (count / stats.total) * 100 : 0;
             return (
               <View key={star} className="flex-row items-center gap-2">
-                <Text className="text-[10px] font-bold text-[#8E8E93] w-3">{star}★</Text>
-                <View className="flex-1 h-1.5 bg-[#E5E4E0] rounded-full overflow-hidden">
+                <Text className="text-[10px] font-bold text-[#B8B3E0] w-3">{star}★</Text>
+                <View className="flex-1 h-1.5 bg-[#1E1A3F] rounded-full overflow-hidden">
                   <View
                     style={{ width: `${pct}%` }}
-                    className="h-full bg-[#F59E0B] rounded-full"
+                    className="h-full bg-[#FFC53D] rounded-full"
                   />
                 </View>
-                <Text className="text-[10px] text-[#8E8E93] w-4 text-right">{count}</Text>
+                <Text className="text-[10px] text-[#B8B3E0] w-4 text-right">{count}</Text>
               </View>
             );
           })}
@@ -480,22 +480,22 @@ function ReviewsSection({ providerId }: { providerId: string }) {
       {/* Review list */}
       {reviews.length === 0 ? (
         <View className="py-4 items-center">
-          <Text className="text-[#8E8E93] text-[13px] text-center">
+          <Text className="text-[#B8B3E0] text-[13px] text-center">
             No customer reviews yet. As you fulfill event bookings, client ratings will appear here.
           </Text>
         </View>
       ) : (
-        <View className="divide-y divide-[#F0EEEA]">
+        <View className="divide-y divide-[#322C63]">
           {reviews.map((r) => (
             <View key={r.id} className="py-3">
               <View className="flex-row items-center justify-between mb-1">
                 <View className="flex-row items-center gap-2">
-                  <View className="w-7 h-7 rounded-full bg-[#EAE8E3] items-center justify-center">
-                    <Text className="text-[#1C1C1E] text-[11px] font-bold">
+                  <View className="w-7 h-7 rounded-full bg-[#2A2460] border border-[#322C63] items-center justify-center">
+                    <Text className="text-white text-[11px] font-bold">
                       {r.author?.name ? r.author.name[0].toUpperCase() : "C"}
                     </Text>
                   </View>
-                  <Text className="text-[#1C1C1E] text-[13px] font-semibold">
+                  <Text className="text-white text-[13px] font-semibold">
                     {r.author?.name || "Customer"}
                   </Text>
                 </View>
@@ -505,25 +505,25 @@ function ReviewsSection({ providerId }: { providerId: string }) {
                       key={s}
                       name="star"
                       size={10}
-                      color={s <= r.rating ? "#F59E0B" : "#D1D5DB"}
+                      color={s <= r.rating ? "#FFC53D" : "#322C63"}
                     />
                   ))}
                 </View>
               </View>
 
               {r.booking?.lead?.eventService?.category?.name && (
-                <Text className="text-[10px] font-semibold uppercase tracking-wider text-[#8E8E93] mb-1">
+                <Text className="text-[10px] font-semibold uppercase tracking-wider text-[#FFC53D] mb-1">
                   Service: {r.booking.lead.eventService.category.name}
                 </Text>
               )}
 
               {r.comment && (
-                <Text className="text-[#3A3A3C] text-[12px] leading-4">
+                <Text className="text-[#B8B3E0] text-[12px] leading-4">
                   "{r.comment}"
                 </Text>
               )}
 
-              <Text className="text-[#A7A7AB] text-[10px] mt-1">
+              <Text className="text-[#6C6694] text-[10px] mt-1">
                 {new Date(r.createdAt).toLocaleDateString("en-IN", {
                   day: "numeric",
                   month: "short",
@@ -575,9 +575,9 @@ export default function ProviderProfileScreen() {
 
   if (loading) {
     return (
-      <View className="flex-1 bg-[#F7F7F5] items-center justify-center">
-        <StatusBar style="dark" />
-        <ActivityIndicator size="large" color="#1C1C1E" />
+      <View className="flex-1 bg-[#120F2B] items-center justify-center">
+        <StatusBar style="light" />
+        <ActivityIndicator size="large" color="#7C5CFF" />
       </View>
     );
   }
@@ -587,32 +587,32 @@ export default function ProviderProfileScreen() {
   const verMeta = VERIFICATION_META[profile.verificationStatus];
 
   return (
-    <View className="flex-1 bg-[#F7F7F5]">
-      <StatusBar style="dark" />
+    <View className="flex-1 bg-[#120F2B]">
+      <StatusBar style="light" />
       <SafeAreaView className="flex-1">
         {/* Nav */}
-        <View className="flex-row items-center px-5 pt-4 pb-3">
+        <View className="flex-row items-center px-5 pt-4 pb-3 border-b border-[#322C63]">
           <TouchableOpacity
             onPress={() => router.back()}
-            className="w-9 h-9 rounded-full bg-white border border-[#E8E6E1] items-center justify-center mr-3"
+            className="w-9 h-9 rounded-full bg-[#1E1A3F] border border-[#322C63] items-center justify-center mr-3 active:bg-[#2A2460]"
           >
-            <AppIcon name="arrow-left" size={16} color="#3A3A3C" />
+            <AppIcon name="arrow-left" size={16} color="#FFFFFF" />
           </TouchableOpacity>
-          <Text className="text-[#1C1C1E] text-[18px] font-bold flex-1">Business Profile</Text>
+          <Text className="text-white text-[18px] font-bold flex-1">Business Profile</Text>
         </View>
 
         <ScrollView
-          contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 48 }}
+          contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 16, paddingBottom: 48 }}
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
           refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#1C1C1E" />
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#7C5CFF" />
           }
         >
           {/* Summary card */}
-          <View className="bg-[#1C1C1E] rounded-2xl p-5 mb-4">
-            <View className="w-14 h-14 rounded-2xl bg-white/10 items-center justify-center mb-3">
-              <Text className="text-white text-[20px] font-bold">
+          <View className="bg-[#1E1A3F] border border-[#322C63] rounded-2xl p-5 mb-4 shadow-sm">
+            <View className="w-14 h-14 rounded-2xl bg-[#7C5CFF]/20 border border-[#7C5CFF]/30 items-center justify-center mb-3">
+              <Text className="text-[#FFC53D] text-[20px] font-bold">
                 {profile.businessName[0].toUpperCase()}
               </Text>
             </View>
@@ -621,19 +621,19 @@ export default function ProviderProfileScreen() {
             </Text>
             {profile.serviceArea && (
               <View className="flex-row items-center gap-1.5 mt-1">
-                <AppIcon name="map-pin" size={12} color="#FFFFFF80" />
-                <Text className="text-white/60 text-[13px]">{profile.serviceArea}</Text>
+                <AppIcon name="map-pin" size={12} color="#7C5CFF" />
+                <Text className="text-[#B8B3E0] text-[13px]">{profile.serviceArea}</Text>
               </View>
             )}
             <View className="flex-row items-center gap-2 mt-3">
-              <View style={{ backgroundColor: verMeta.bg }} className="px-3 py-1.5 rounded-full">
+              <View style={{ backgroundColor: verMeta.bg }} className="px-3 py-1.5 rounded-full border border-white/10">
                 <Text style={{ color: verMeta.text }} className="text-[12px] font-semibold">
                   {verMeta.label}
                 </Text>
               </View>
-              <View className="flex-row items-center gap-1">
-                <AppIcon name="star" size={12} color="#F59E0B" />
-                <Text className="text-white/80 text-[12px]">
+              <View className="flex-row items-center gap-1 bg-[#2A2460] px-2.5 py-1 rounded-full border border-[#322C63]">
+                <AppIcon name="star" size={12} color="#FFC53D" />
+                <Text className="text-[#FFC53D] text-[12px] font-bold">
                   {Number(profile.ratingAvg).toFixed(1)} ({profile.ratingCount})
                 </Text>
               </View>
@@ -642,10 +642,10 @@ export default function ProviderProfileScreen() {
 
           {/* Verification notice if pending */}
           {profile.verificationStatus === "PENDING" && (
-            <View className="flex-row items-start gap-3 bg-[#FDF3E3] border border-[#F0DFB8] rounded-2xl p-4 mb-4">
-              <AppIcon name="info" size={16} color="#8A5E10" />
-              <Text className="text-[#8A5E10] text-[13px] flex-1 leading-[19px]">
-                Your profile is under review. You'll receive leads once verification is complete.
+            <View className="flex-row items-start gap-3 bg-[#3D2F0F] border border-[#FFC53D]/30 rounded-2xl p-4 mb-4">
+              <AppIcon name="info" size={16} color="#FFC53D" />
+              <Text className="text-[#FFC53D] text-[13px] flex-1 leading-[19px]">
+                Your profile is under review by CelebrateHub moderation. You'll receive live leads once verification is complete.
               </Text>
             </View>
           )}

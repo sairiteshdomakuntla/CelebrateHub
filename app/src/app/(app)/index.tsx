@@ -33,9 +33,9 @@ function getGreeting(): string {
 }
 
 const ROLE_META: Record<string, { label: string; bg: string; text: string; border: string }> = {
-  ADMIN: { label: "Admin", bg: "#EAF0FB", text: "#2F54B8", border: "#CCD9F2" },
-  PROVIDER: { label: "Provider", bg: "#FDF3E3", text: "#8A5E10", border: "#F0DFB8" },
-  CUSTOMER: { label: "Customer", bg: "#EAF6EE", text: "#1E7A3C", border: "#CDE8D5" },
+  ADMIN: { label: "Admin", bg: "#1B2A55", text: "#8FB4FF", border: "#263D6E" },
+  PROVIDER: { label: "Provider", bg: "#3D2F0F", text: "#FFC53D", border: "#5A4510" },
+  CUSTOMER: { label: "Customer", bg: "#123B34", text: "#6EE7B7", border: "#1A5447" },
 };
 
 type IconName = AppIconName;
@@ -71,12 +71,13 @@ function ActionRow({
   }));
 
   const tones: Record<string, { bg: string; icon: string; border: string }> = {
-    dark: { bg: "#1C1C1E", icon: "#FFFFFF", border: "#1C1C1E" },
-    neutral: { bg: "#F1EFEC", icon: "#3A3A3C", border: "#E8E6E1" },
-    accent: { bg: "#F9EFE9", icon: "#9A3B26", border: "#EFD9CC" },
-    success: { bg: "#EAF6EE", icon: "#1E7A3C", border: "#CDE8D5" },
-    info: { bg: "#EAF0FB", icon: "#2F54B8", border: "#CCD9F2" },
-    warning: { bg: "#FDF3E3", icon: "#8A5E10", border: "#F0DFB8" },
+    dark: { bg: "#7C5CFF", icon: "#FFFFFF", border: "#7C5CFF" },
+    neutral: { bg: "#2A2460", icon: "#B8B3E0", border: "#322C63" },
+    accent: { bg: "#3D2F0F", icon: "#FFC53D", border: "#5A4510" },
+    success: { bg: "#123B34", icon: "#6EE7B7", border: "#1A5447" },
+    info: { bg: "#1B2A55", icon: "#8FB4FF", border: "#263D6E" },
+    warning: { bg: "#3D2F0F", icon: "#FFC53D", border: "#5A4510" },
+    danger: { bg: "#3F1420", icon: "#FF8FA3", border: "#5A1C2E" },
   };
   const t = tones[tone] ?? tones.neutral;
 
@@ -85,7 +86,7 @@ function ActionRow({
       <TouchableOpacity
         onPress={onPress}
         activeOpacity={0.75}
-        className="flex-row items-center bg-white rounded-2xl border border-[#E8E6E1] p-4"
+        className="flex-row items-center bg-[#1E1A3F] rounded-2xl border border-[#322C63] p-4"
       >
         <View
           style={{
@@ -99,21 +100,21 @@ function ActionRow({
 
         <View className="flex-1 ml-3.5">
           <View className="flex-row items-center gap-2">
-            <Text className="text-[#1C1C1E] text-[15px] font-semibold">
+            <Text className="text-white text-[15px] font-semibold">
               {title}
             </Text>
             {badge && (
-              <View className="bg-[#1C1C1E] px-2 py-0.5 rounded-full">
+              <View className="bg-[#7C5CFF] px-2 py-0.5 rounded-full">
                 <Text className="text-white text-[10px] font-semibold uppercase tracking-wide">
                   {badge}
                 </Text>
               </View>
             )}
           </View>
-          <Text className="text-[#6E6E73] text-[13px] leading-[18px] mt-0.5">{subtitle}</Text>
+          <Text className="text-[#B8B3E0] text-[13px] leading-[18px] mt-0.5">{subtitle}</Text>
         </View>
 
-        <AppIcon name="chevron-right" size={15} color="#C7C7CC" />
+        <AppIcon name="chevron-right" size={15} color="#7C77A6" />
       </TouchableOpacity>
     </Animated.View>
   );
@@ -131,14 +132,14 @@ function StatCard({
   loading?: boolean;
 }) {
   return (
-    <View className="flex-1 bg-white border border-[#E8E6E1] rounded-2xl p-4">
-      <AppIcon name={icon} size={18} color="#6E6E73" />
+    <View className="flex-1 bg-[#1E1A3F] border border-[#322C63] rounded-2xl p-4">
+      <AppIcon name={icon} size={18} color="#B8B3E0" />
       {loading ? (
-        <ActivityIndicator size="small" color="#1C1C1E" style={{ marginTop: 10 }} />
+        <ActivityIndicator size="small" color="#7C5CFF" style={{ marginTop: 10 }} />
       ) : (
-        <Text className="text-[#1C1C1E] text-[22px] font-bold mt-2 tracking-tight">{value}</Text>
+        <Text className="text-white text-[22px] font-bold mt-2 tracking-tight">{value}</Text>
       )}
-      <Text className="text-[#6E6E73] text-[12px] mt-0.5">{label}</Text>
+      <Text className="text-[#B8B3E0] text-[12px] mt-0.5">{label}</Text>
     </View>
   );
 }
@@ -280,19 +281,19 @@ export default function HomeScreen() {
 
   if (resolving && !user) {
     return (
-      <View className="flex-1 bg-[#F7F7F5] items-center justify-center">
-        <StatusBar style="dark" />
-        <View className="w-14 h-14 rounded-2xl bg-[#1C1C1E] items-center justify-center mb-4">
+      <View className="flex-1 bg-[#120F2B] items-center justify-center">
+        <StatusBar style="light" />
+        <View className="w-14 h-14 rounded-2xl bg-[#7C5CFF] items-center justify-center mb-4">
           <Text className="text-white text-[18px] font-bold">CH</Text>
         </View>
-        <ActivityIndicator size="small" color="#1C1C1E" />
+        <ActivityIndicator size="small" color="#7C5CFF" />
       </View>
     );
   }
 
   return (
-    <View className="flex-1 bg-[#F7F7F5]">
-      <StatusBar style="dark" />
+    <View className="flex-1 bg-[#120F2B]">
+      <StatusBar style="light" />
       <SafeAreaView className="flex-1">
         <ScrollView
           showsVerticalScrollIndicator={false}
@@ -301,7 +302,7 @@ export default function HomeScreen() {
             <RefreshControl
               refreshing={refreshing}
               onRefresh={onRefresh}
-              tintColor="#1C1C1E"
+              tintColor="#7C5CFF"
             />
           }
         >
@@ -314,15 +315,15 @@ export default function HomeScreen() {
               onPress={() => router.push("/profile" as any)}
               className="flex-row items-center gap-3 flex-1 mr-3"
             >
-              <View className="w-11 h-11 rounded-full bg-[#1C1C1E] items-center justify-center">
+              <View className="w-11 h-11 rounded-full bg-[#7C5CFF] items-center justify-center">
                 <Text className="text-white font-bold text-[17px]">
                   {user?.name ? user.name[0].toUpperCase() : "U"}
                 </Text>
               </View>
               <View className="flex-1">
-                <Text className="text-[#6E6E73] text-[13px]">{getGreeting()}</Text>
+                <Text className="text-[#B8B3E0] text-[13px]">{getGreeting()}</Text>
                 <Text
-                  className="text-[#1C1C1E] text-[20px] font-bold tracking-tight"
+                  className="text-white text-[20px] font-bold tracking-tight"
                   numberOfLines={1}
                 >
                   {user?.name?.split(" ")[0] ?? "Welcome"}
@@ -344,12 +345,12 @@ export default function HomeScreen() {
               <TouchableOpacity
                 onPress={() => router.push("/notifications" as any)}
                 activeOpacity={0.7}
-                className="w-10 h-10 rounded-full bg-white border border-[#E8E6E1] items-center justify-center"
+                className="w-10 h-10 rounded-full bg-[#1E1A3F] border border-[#322C63] items-center justify-center"
                 accessibilityLabel="Notifications"
               >
-                <AppIcon name="bell" size={17} color="#3A3A3C" />
+                <AppIcon name="bell" size={17} color="#B8B3E0" />
                 {unreadNotifCount > 0 && (
-                  <View className="absolute top-0.5 right-0.5 min-w-[16px] h-4 rounded-full bg-[#6366F1] items-center justify-center px-0.5">
+                  <View className="absolute top-0.5 right-0.5 min-w-[16px] h-4 rounded-full bg-[#D6307F] items-center justify-center px-0.5">
                     <Text className="text-white text-[9px] font-bold">
                       {unreadNotifCount > 99 ? "99+" : unreadNotifCount}
                     </Text>
@@ -361,32 +362,42 @@ export default function HomeScreen() {
                 onPress={confirmLogout}
                 disabled={loggingOut}
                 activeOpacity={0.7}
-                className="w-10 h-10 rounded-full bg-white border border-[#E8E6E1] items-center justify-center"
+                className="w-10 h-10 rounded-full bg-[#1E1A3F] border border-[#322C63] items-center justify-center"
                 accessibilityLabel="Sign out"
               >
                 {loggingOut ? (
-                  <ActivityIndicator size="small" color="#1C1C1E" />
+                  <ActivityIndicator size="small" color="#B8B3E0" />
                 ) : (
-                  <AppIcon name="log-out" size={17} color="#3A3A3C" />
+                  <AppIcon name="log-out" size={17} color="#B8B3E0" />
                 )}
               </TouchableOpacity>
             </View>
           </Animated.View>
 
-          {/* Summary card */}
-          <View className="rounded-2xl bg-[#1C1C1E] p-5 mb-4">
+          {/* Summary card — gradient-style hero */}
+          <View
+            className="rounded-2xl p-5 mb-4"
+            style={{
+              backgroundColor: "#7C5CFF",
+              shadowColor: "#7C5CFF",
+              shadowOffset: { width: 0, height: 8 },
+              shadowOpacity: 0.35,
+              shadowRadius: 20,
+              elevation: 8,
+            }}
+          >
             <View className="flex-row items-center justify-between mb-3">
               <View className="flex-row items-center gap-2">
-                <View className="w-9 h-9 rounded-[10px] bg-white/10 items-center justify-center">
+                <View className="w-9 h-9 rounded-[10px] bg-white/15 items-center justify-center">
                   <Text className="text-white text-[13px] font-bold">CH</Text>
                 </View>
-                <Text className="text-white/70 text-[12px] font-medium">
+                <Text className="text-white/80 text-[12px] font-medium">
                   {role === "ADMIN" ? "Operations overview" : role === "PROVIDER" ? "Business overview" : "CelebrateHub"}
                 </Text>
               </View>
-              <View className="flex-row items-center gap-1.5 bg-[#2E7D46]/25 border border-[#2E7D46]/40 px-2.5 py-1 rounded-full">
-                <View className="w-1.5 h-1.5 rounded-full bg-[#4ADE80]" />
-                <Text className="text-[#B7E4C7] text-[11px] font-semibold">
+              <View className="flex-row items-center gap-1.5 bg-white/15 border border-white/20 px-2.5 py-1 rounded-full">
+                <View className="w-1.5 h-1.5 rounded-full bg-[#6EE7B7]" />
+                <Text className="text-white/90 text-[11px] font-semibold">
                   Systems normal
                 </Text>
               </View>
@@ -399,7 +410,7 @@ export default function HomeScreen() {
                 ? "Provider workspace"
                 : "Plan your next celebration"}
             </Text>
-            <Text className="text-white/60 text-[13px] leading-[19px] mt-1.5">
+            <Text className="text-white/70 text-[13px] leading-[19px] mt-1.5">
               {role === "ADMIN"
                 ? "User management, provider verification and platform controls in one place."
                 : role === "PROVIDER"
@@ -459,7 +470,7 @@ export default function HomeScreen() {
             )}
           </View>
 
-          <Text className="text-[#6E6E73] text-[12px] font-semibold uppercase tracking-widest mb-3">
+          <Text className="text-[#7C77A6] text-[12px] font-semibold uppercase tracking-widest mb-3">
             {role === "ADMIN" ? "Management" : "Quick actions"}
           </Text>
 
@@ -587,23 +598,23 @@ export default function HomeScreen() {
             onPress={confirmLogout}
             disabled={loggingOut}
             activeOpacity={0.8}
-            className="flex-row items-center justify-center gap-2 py-3.5 px-4 rounded-2xl bg-white border border-[#EAD9D2] mt-3"
+            className="flex-row items-center justify-center gap-2 py-3.5 px-4 rounded-2xl bg-[#1E1A3F] border border-[#3F1420] mt-3"
           >
             {loggingOut ? (
-              <ActivityIndicator size="small" color="#B3261E" />
+              <ActivityIndicator size="small" color="#FF8FA3" />
             ) : (
               <View className="flex-row items-center gap-2">
-                <AppIcon name="log-out" size={16} color="#B3261E" />
-                <Text className="text-[#B3261E] text-[14px] font-semibold">Sign out</Text>
+                <AppIcon name="log-out" size={16} color="#FF8FA3" />
+                <Text className="text-[#FF8FA3] text-[14px] font-semibold">Sign out</Text>
               </View>
             )}
           </TouchableOpacity>
 
           <View className="items-center mt-6">
-            <Text className="text-[#A7A7AB] text-[12px]">
+            <Text className="text-[#7C77A6] text-[12px]">
               Signed in as {user?.email ?? user?.phone ?? "user"}
             </Text>
-            <Text className="text-[#C7C7CC] text-[11px] mt-1">
+            <Text className="text-[#5A5590] text-[11px] mt-1">
               CelebrateHub · v1.0.0
             </Text>
           </View>
@@ -612,4 +623,3 @@ export default function HomeScreen() {
     </View>
   );
 }
-

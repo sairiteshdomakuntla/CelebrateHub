@@ -37,7 +37,7 @@ export function resolveIconName(name: string): AppIconName {
 export function AppIcon({
   name,
   size = 18,
-  color = "#1C1C1E",
+  color = "#FFFFFF",
   style,
 }: {
   name: string;
@@ -74,13 +74,13 @@ export function IconTile({
   size?: number;
 }) {
   const tones: Record<string, { bg: string; icon: string; border: string }> = {
-    neutral: { bg: "#F1EFEC", icon: "#3A3A3C", border: "#E8E6E1" },
-    dark: { bg: "#1C1C1E", icon: "#FFFFFF", border: "#1C1C1E" },
-    accent: { bg: "#F9EFE9", icon: "#9A3B26", border: "#EFD9CC" },
-    success: { bg: "#EAF6EE", icon: "#1E7A3C", border: "#CDE8D5" },
-    warning: { bg: "#FDF3E3", icon: "#9A6A14", border: "#F0DFB8" },
-    danger: { bg: "#FBECEB", icon: "#B3261E", border: "#F2C7C3" },
-    info: { bg: "#EAF0FB", icon: "#2F54B8", border: "#CCD9F2" },
+    neutral: { bg: "#2A2460", icon: "#B8B3E0", border: "#322C63" },
+    dark: { bg: "#7C5CFF", icon: "#FFFFFF", border: "#7C5CFF" },
+    accent: { bg: "#3D2F0F", icon: "#FFC53D", border: "#5A4510" },
+    success: { bg: "#123B34", icon: "#6EE7B7", border: "#1A5447" },
+    warning: { bg: "#3D2F0F", icon: "#FFC53D", border: "#5A4510" },
+    danger: { bg: "#3F1420", icon: "#FF8FA3", border: "#5A1C2E" },
+    info: { bg: "#1B2A55", icon: "#8FB4FF", border: "#263D6E" },
   };
   const t = tones[tone];
   const iconName = resolveIconName(name);
@@ -110,7 +110,7 @@ export function BrandMark({ size = 56 }: { size?: number }) {
         width: size,
         height: size,
         borderRadius: size * 0.28,
-        backgroundColor: "#1C1C1E",
+        backgroundColor: "#7C5CFF",
         alignItems: "center",
         justifyContent: "center",
       }}
