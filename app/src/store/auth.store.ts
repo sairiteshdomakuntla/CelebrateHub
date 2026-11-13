@@ -19,6 +19,7 @@ interface AuthState {
 
   initialize: () => Promise<void>;
   login: (payload: LoginPayload) => Promise<void>;
+  googleSignIn: (idToken: string) => Promise<void>;
   register: (payload: RegisterPayload) => Promise<void>;
   registerProvider: (payload: RegisterProviderPayload) => Promise<void>;
   logout: () => Promise<void>;
@@ -54,6 +55,24 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     set({ isLoading: true });
     try {
       const result = await authApi.login(payload);
+      await storeTokens(result.accessToken, result.refreshToken);
+      await storeUserProfile(result.user);
+      set({
+        user: result.user,
+        accessToken: result.accessToken,
+        refreshToken: result.refreshToken,
+        isLoading: false,
+      });
+    } catch (err) {
+      set({ isLoading: false });
+      throw err;
+    }
+  },
+
+  googleSignIn: async (idToken: string) => {
+    set({ isLoading: true });
+    try {
+      const result = await authApi.googleSignIn(idToken);
       await storeTokens(result.accessToken, result.refreshToken);
       await storeUserProfile(result.user);
       set({

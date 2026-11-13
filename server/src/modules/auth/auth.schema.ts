@@ -71,3 +71,8 @@ export type RegisterProviderDto = z.infer<typeof RegisterProviderSchema>;
 export type LoginDto = z.infer<typeof LoginSchema>;
 export type RefreshTokenDto = z.infer<typeof RefreshTokenSchema>;
 export type CreateUserDto = z.infer<typeof CreateUserSchema>;
+
+export const GoogleSignInSchema = z.object({
+  idToken: z.string().min(1, "Google ID token is required"),
+});
+export type GoogleSignInDto = z.infer<typeof GoogleSignInSchema>;

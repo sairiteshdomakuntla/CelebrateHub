@@ -14,13 +14,13 @@ function refreshTokenExpiresAt(): Date {
   return d;
 }
 
-function buildTokenPair(userId: string, role: string) {
+export function buildTokenPair(userId: string, role: string) {
   const accessToken = signAccessToken({ userId, role });
   const refreshToken = signRefreshToken({ userId, role });
   return { accessToken, refreshToken };
 }
 
-async function persistSession(
+export async function persistSession(
   userId: string,
   refreshToken: string,
   ipAddress?: string,
@@ -37,7 +37,7 @@ async function persistSession(
   });
 }
 
-async function assignDefaultFreePlan(userId: string, role: string, tx: any = prisma) {
+export async function assignDefaultFreePlan(userId: string, role: string, tx: any = prisma) {
   if (role === "ADMIN") return;
   try {
     const slug = role === "PROVIDER" ? "provider-starter" : "customer-standard";
@@ -336,7 +336,7 @@ export async function adminCreateUser(dto: CreateUserDto) {
 
 // ─── Sanitize ─────────────────────────────────────────────────────────────────
 
-function sanitizeUser(user: {
+export function sanitizeUser(user: {
   id: string;
   name: string;
   email: string | null;

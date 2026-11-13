@@ -6,8 +6,10 @@ import {
   LoginSchema,
   RefreshTokenSchema,
   CreateUserSchema,
+  GoogleSignInSchema,
 } from "./auth.schema.js";
 import * as authService from "./auth.service.js";
+import * as googleService from "./google.service.js";
 
 function getMeta(req: Request) {
   return {
@@ -77,6 +79,17 @@ export async function adminCreateUser(req: Request, res: Response): Promise<void
     const dto = CreateUserSchema.parse(req.body);
     const result = await authService.adminCreateUser(dto);
     res.status(201).json({ success: true, data: result });
+  } catch (err) {
+    handleError(err, res);
+  }
+}
+
+// POST /api/auth/google
+export async function googleSignIn(req: Request, res: Response): Promise<void> {
+  try {
+    const { idToken } = GoogleSignInSchema.parse(req.body);
+    const result = await googleService.googleSignIn(idToken, getMeta(req));
+    res.status(200).json({ success: true, data: result });
   } catch (err) {
     handleError(err, res);
   }

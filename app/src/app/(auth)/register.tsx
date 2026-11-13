@@ -17,12 +17,15 @@ import { FormInput } from "@/components/ui/FormInput";
 import { BrandMark } from "@/components/ui/pro-icon";
 import { eventsApi } from "@/lib/events.api";
 import { LocationPickerModal } from "@/components/map/location-picker-modal";
+import { useGoogleAuth } from "@/hooks/use-google-auth";
 import axios from "axios";
 
 export default function RegisterScreen() {
   const router = useRouter();
   const params = useLocalSearchParams<{ role?: string }>();
-  const { register, registerProvider, isLoading } = useAuthStore();
+  const { register, registerProvider, googleSignIn, isLoading } = useAuthStore();
+  const { isReady, promptAsync, idToken, clearToken } = useGoogleAuth();
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
 
   const [selectedRole, setSelectedRole] = useState<"CUSTOMER" | "PROVIDER">(
     params.role === "provider" ? "PROVIDER" : "CUSTOMER"
@@ -52,6 +55,34 @@ export default function RegisterScreen() {
   const [categoriesError, setCategoriesError] = useState(false);
 
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  // Handle Google ID token once received from the OAuth flow
+  useEffect(() => {
+    if (!idToken) return;
+    (async () => {
+      setIsGoogleLoading(true);
+      try {
+        await googleSignIn(idToken);
+        clearToken();
+        router.replace("/(app)" as any);
+      } catch (err) {
+        let message = "Google sign-up failed. Please try again.";
+        if (axios.isAxiosError(err)) message = err.response?.data?.message ?? message;
+        else if (err instanceof Error) message = err.message;
+        Alert.alert("Sign-up failed", message);
+      } finally {
+        setIsGoogleLoading(false);
+      }
+    })();
+  }, [idToken]);
+
+  async function handleGoogleSignUp() {
+    try {
+      await promptAsync();
+    } catch (err) {
+      Alert.alert("Google Sign-Up", "Could not open Google sign-in. Please try again.");
+    }
+  }
 
   // Load live service categories from API — never fall back to invented IDs
   const loadCategories = useCallback(async () => {
@@ -288,6 +319,36 @@ export default function RegisterScreen() {
                   <Text className="text-[#B8A060] text-[12px] leading-[17px] mt-0.5">
                     Your profile will be created with instant lead matching. You can update pricing, portfolio images, and subscriptions anytime.
                   </Text>
+                </View>
+              </View>
+            )}
+
+            {/* Google Sign-Up — Customer role only */}
+            {selectedRole === "CUSTOMER" && (
+              <View className="mb-4">
+                <TouchableOpacity
+                  onPress={handleGoogleSignUp}
+                  disabled={!isReady || isGoogleLoading || isLoading}
+                  activeOpacity={0.8}
+                  className="flex-row items-center justify-center bg-[#1E1A3F] border border-[#322C63] rounded-xl py-3.5 px-4"
+                  style={{ opacity: (!isReady || isGoogleLoading) ? 0.5 : 1 }}
+                >
+                  {isGoogleLoading ? (
+                    <ActivityIndicator size="small" color="#B8B3E0" />
+                  ) : (
+                    <>
+                      <Text className="text-[20px] mr-2.5">G</Text>
+                      <Text className="text-white text-[15px] font-semibold">
+                        Sign up with Google
+                      </Text>
+                    </>
+                  )}
+                </TouchableOpacity>
+
+                <View className="flex-row items-center my-4">
+                  <View className="flex-1 h-px bg-[#322C63]" />
+                  <Text className="text-[#7C77A6] text-[12px] mx-3 font-medium">OR</Text>
+                  <View className="flex-1 h-px bg-[#322C63]" />
                 </View>
               </View>
             )}

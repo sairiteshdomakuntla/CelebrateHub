@@ -108,6 +108,11 @@ export const authApi = {
     await api.post("/api/auth/logout", { refreshToken });
   },
 
+  googleSignIn: async (idToken: string): Promise<AuthResponse> => {
+    const { data } = await api.post("/api/auth/google", { idToken });
+    return data.data;
+  },
+
   createUser: async (payload: CreateUserPayload): Promise<{ user: AuthUser }> => {
     const { data } = await api.post("/api/auth/admin/create-user", payload);
     return data.data;

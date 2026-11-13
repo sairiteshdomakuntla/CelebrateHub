@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   KeyboardAvoidingView,
   Alert,
+  ActivityIndicator,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -15,6 +16,7 @@ import { useAuthStore } from "@/store/auth.store";
 import { FormInput } from "@/components/ui/FormInput";
 import { Button } from "@/components/ui/Button";
 import { BrandMark } from "@/components/ui/pro-icon";
+import { useGoogleAuth } from "@/hooks/use-google-auth";
 import axios from "axios";
 
 type LoginMethod = "email" | "phone";
@@ -43,7 +45,9 @@ const PORTAL_META: Record<string, { pill: string; title: string; subtitle: strin
 export default function LoginScreen() {
   const router = useRouter();
   const { role } = useLocalSearchParams<{ role?: string }>();
-  const { login, isLoading } = useAuthStore();
+  const { login, googleSignIn, isLoading } = useAuthStore();
+  const { isReady, promptAsync, idToken, clearToken } = useGoogleAuth();
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
 
   const meta = PORTAL_META[role ?? "customer"] ?? PORTAL_META.customer;
 
@@ -52,6 +56,34 @@ export default function LoginScreen() {
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  // Handle Google ID token once received from the OAuth flow
+  useEffect(() => {
+    if (!idToken) return;
+    (async () => {
+      setIsGoogleLoading(true);
+      try {
+        await googleSignIn(idToken);
+        clearToken();
+        router.replace("/(app)" as any);
+      } catch (err) {
+        let message = "Google sign-in failed. Please try again.";
+        if (axios.isAxiosError(err)) message = err.response?.data?.message ?? message;
+        else if (err instanceof Error) message = err.message;
+        Alert.alert("Sign-in failed", message);
+      } finally {
+        setIsGoogleLoading(false);
+      }
+    })();
+  }, [idToken]);
+
+  async function handleGoogleSignIn() {
+    try {
+      await promptAsync();
+    } catch (err) {
+      Alert.alert("Google Sign-In", "Could not open Google sign-in. Please try again.");
+    }
+  }
 
   function validate(): boolean {
     const newErrors: Record<string, string> = {};
@@ -188,6 +220,33 @@ export default function LoginScreen() {
               size="lg"
               loading={isLoading}
             />
+
+            {/* ─── Divider ─── */}
+            <View className="flex-row items-center my-5">
+              <View className="flex-1 h-px bg-[#322C63]" />
+              <Text className="text-[#7C77A6] text-[12px] mx-3 font-medium">OR</Text>
+              <View className="flex-1 h-px bg-[#322C63]" />
+            </View>
+
+            {/* ─── Google Sign-In ─── */}
+            <TouchableOpacity
+              onPress={handleGoogleSignIn}
+              disabled={!isReady || isGoogleLoading || isLoading}
+              activeOpacity={0.8}
+              className="flex-row items-center justify-center bg-[#1E1A3F] border border-[#322C63] rounded-xl py-3.5 px-4"
+              style={{ opacity: (!isReady || isGoogleLoading) ? 0.5 : 1 }}
+            >
+              {isGoogleLoading ? (
+                <ActivityIndicator size="small" color="#B8B3E0" />
+              ) : (
+                <>
+                  <Text className="text-[20px] mr-2.5">G</Text>
+                  <Text className="text-white text-[15px] font-semibold">
+                    Continue with Google
+                  </Text>
+                </>
+              )}
+            </TouchableOpacity>
 
             {role === "provider" || role === "admin" ? (
               <View className="mt-5 p-4 bg-[#1E1A3F] border border-[#322C63] rounded-2xl">

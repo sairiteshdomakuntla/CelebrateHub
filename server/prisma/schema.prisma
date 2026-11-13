@@ -169,6 +169,7 @@ model User {
   phone        String?      @unique
 
   passwordHash String?
+  googleId     String?      @unique
   authProvider AuthProvider @default(PASSWORD)
 
   role         Role         @default(CUSTOMER)
