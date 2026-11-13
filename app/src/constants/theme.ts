@@ -1,6 +1,7 @@
 /**
- * Below are the colors that are used in the app. The colors are defined in the light and dark mode.
- * There are many other ways to style your app. For example, [Nativewind](https://www.nativewind.dev/), [Tamagui](https://tamagui.dev/), [unistyles](https://reactnativeunistyles.vercel.app), etc.
+ * Below are the colors that are used in the app.
+ * Dark birthday theme: deep indigo background, violet-to-pink gradient,
+ * yellow accent highlights.
  */
 
 import '@/global.css';
@@ -9,18 +10,18 @@ import { Platform } from 'react-native';
 
 export const Colors = {
   light: {
-    text: '#1C1C1E',
-    background: '#F7F7F5',
-    backgroundElement: '#FFFFFF',
-    backgroundSelected: '#EFEDEA',
-    textSecondary: '#6E6E73',
+    text: '#FFFFFF',
+    background: '#120F2B',
+    backgroundElement: '#1E1A3F',
+    backgroundSelected: '#2A2460',
+    textSecondary: '#B8B3E0',
   },
   dark: {
-    text: '#1C1C1E',
-    background: '#F7F7F5',
-    backgroundElement: '#FFFFFF',
-    backgroundSelected: '#EFEDEA',
-    textSecondary: '#6E6E73',
+    text: '#FFFFFF',
+    background: '#120F2B',
+    backgroundElement: '#1E1A3F',
+    backgroundSelected: '#2A2460',
+    textSecondary: '#B8B3E0',
   },
 } as const;
 

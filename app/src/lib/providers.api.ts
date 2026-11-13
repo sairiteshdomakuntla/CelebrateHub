@@ -81,10 +81,10 @@ export const DAYS_OF_WEEK: { key: DayOfWeek; label: string; short: string }[] = 
 ];
 
 export const VERIFICATION_META: Record<VerificationStatus, { label: string; bg: string; text: string }> = {
-  PENDING:   { label: "Pending",   bg: "#FDF3E3", text: "#8A5E10" },
-  VERIFIED:  { label: "Verified",  bg: "#EAF6EE", text: "#1E7A3C" },
-  REJECTED:  { label: "Rejected",  bg: "#FBECEB", text: "#B3261E" },
-  SUSPENDED: { label: "Suspended", bg: "#F1EFEC", text: "#6E6E73" },
+  PENDING:   { label: "Pending Verification", bg: "#3D2F0F", text: "#FFC53D" },
+  VERIFIED:  { label: "Verified Partner",    bg: "#123B34", text: "#6EE7B7" },
+  REJECTED:  { label: "Rejected",            bg: "#3F1420", text: "#FF8FA3" },
+  SUSPENDED: { label: "Suspended",           bg: "#2A2460", text: "#B8B3E0" },
 };
 
 // ─── API ──────────────────────────────────────────────────────────────────────

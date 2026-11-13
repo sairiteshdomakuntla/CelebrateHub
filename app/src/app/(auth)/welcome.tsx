@@ -60,19 +60,19 @@ const ROLES = [
 ];
 
 const TONE_BG: Record<string, string> = {
-  accent: "#F9EFE9",
-  warning: "#FDF3E3",
-  info: "#EAF0FB",
+  accent: "#3D2F0F",
+  warning: "#3D2F0F",
+  info: "#1B2A55",
 };
 const TONE_ICON: Record<string, string> = {
-  accent: "#9A3B26",
-  warning: "#9A6A14",
-  info: "#2F54B8",
+  accent: "#FFC53D",
+  warning: "#FFC53D",
+  info: "#8FB4FF",
 };
 const TONE_BORDER: Record<string, string> = {
-  accent: "#EFD9CC",
-  warning: "#F0DFB8",
-  info: "#CCD9F2",
+  accent: "#5A4510",
+  warning: "#5A4510",
+  info: "#263D6E",
 };
 
 function RoleCard({ role, index }: { role: (typeof ROLES)[0]; index: number }) {
@@ -92,7 +92,7 @@ function RoleCard({ role, index }: { role: (typeof ROLES)[0]; index: number }) {
 
   return (
     <Animated.View style={animStyle} className="mb-3">
-      <View className="bg-white rounded-2xl border border-[#E8E6E1] overflow-hidden">
+      <View className="bg-[#1E1A3F] rounded-2xl border border-[#322C63] overflow-hidden">
         <TouchableOpacity
           activeOpacity={0.85}
           className="p-5"
@@ -114,32 +114,39 @@ function RoleCard({ role, index }: { role: (typeof ROLES)[0]; index: number }) {
               <AppIcon name={role.icon} size={22} color={TONE_ICON[role.tone]} />
             </View>
             <View className="flex-1">
-              <View className="bg-[#F4F2EE] self-start px-2.5 py-1 rounded-full mb-2 border border-[#E8E6E1]">
-                <Text className="text-[#6E6E73] text-[11px] font-semibold">
+              <View className="bg-[#2A2460] self-start px-2.5 py-1 rounded-full mb-2 border border-[#322C63]">
+                <Text className="text-[#B8B3E0] text-[11px] font-semibold">
                   {role.pill}
                 </Text>
               </View>
-              <Text className="text-[#1C1C1E] text-[17px] font-bold tracking-tight">
+              <Text className="text-white text-[17px] font-bold tracking-tight">
                 {role.title}
               </Text>
-              <Text className="text-[#6E6E73] text-[14px] leading-[20px] mt-1">
+              <Text className="text-[#B8B3E0] text-[14px] leading-[20px] mt-1">
                 {role.subtitle}
               </Text>
             </View>
             <View className="pt-1">
-              <AppIcon name="chevron-right" size={16} color="#A7A7AB" />
+              <AppIcon name="chevron-right" size={16} color="#7C77A6" />
             </View>
           </View>
-          <Text className="text-[#A7A7AB] text-[12px] mt-3">
+          <Text className="text-[#7C77A6] text-[12px] mt-3">
             {role.note}
           </Text>
         </TouchableOpacity>
 
-        <View className="flex-row items-center px-5 py-4 gap-3 border-t border-[#EFEEEA] bg-[#FAFAF8]">
+        <View className="flex-row items-center px-5 py-4 gap-3 border-t border-[#322C63] bg-[#17143A]">
           <TouchableOpacity
-            className="flex-1 bg-[#1C1C1E] rounded-xl py-3 items-center"
+            className="flex-1 bg-[#7C5CFF] rounded-xl py-3 items-center"
             onPress={() => router.push(role.href as any)}
             activeOpacity={0.85}
+            style={{
+              shadowColor: "#7C5CFF",
+              shadowOffset: { width: 0, height: 4 },
+              shadowOpacity: 0.3,
+              shadowRadius: 12,
+              elevation: 4,
+            }}
           >
             <Text className="text-white text-[14px] font-semibold">
               {role.ctaLabel}
@@ -152,7 +159,7 @@ function RoleCard({ role, index }: { role: (typeof ROLES)[0]; index: number }) {
               activeOpacity={0.7}
               className="px-2"
             >
-              <Text className="text-[#1C1C1E] text-[14px] font-semibold">
+              <Text className="text-[#B8B3E0] text-[14px] font-semibold">
                 {role.secondaryLabel}
               </Text>
             </TouchableOpacity>
@@ -175,8 +182,8 @@ export default function WelcomeScreen() {
   }));
 
   return (
-    <View className="flex-1 bg-[#F7F7F5]">
-      <StatusBar style="dark" />
+    <View className="flex-1 bg-[#120F2B]">
+      <StatusBar style="light" />
       <SafeAreaView className="flex-1">
         <ScrollView
           contentContainerStyle={{ paddingTop: 32, paddingBottom: 32, paddingHorizontal: 20 }}
@@ -184,29 +191,29 @@ export default function WelcomeScreen() {
         >
           <Animated.View className="items-start mb-8" style={headerStyle}>
             <BrandMark size={52} />
-            <Text className="text-[#1C1C1E] text-[32px] font-bold tracking-tight mt-5">
+            <Text className="text-white text-[32px] font-bold tracking-tight mt-5">
               CelebrateHub
             </Text>
-            <Text className="text-[#6E6E73] text-[15px] leading-[22px] mt-2 max-w-[320px]">
+            <Text className="text-[#B8B3E0] text-[15px] leading-[22px] mt-2 max-w-[320px]">
               India event services marketplace. Book trusted vendors for weddings, birthdays and corporate events.
             </Text>
             <View className="flex-row items-center gap-4 mt-5">
               <View className="flex-row items-center gap-1.5">
-                <AppIcon name="check-circle" size={15} color="#1E7A3C" />
-                <Text className="text-[#3A3A3C] text-[12px] font-medium">Verified vendors</Text>
+                <AppIcon name="check-circle" size={15} color="#6EE7B7" />
+                <Text className="text-[#B8B3E0] text-[12px] font-medium">Verified vendors</Text>
               </View>
               <View className="flex-row items-center gap-1.5">
-                <AppIcon name="star" size={14} color="#9A6A14" />
-                <Text className="text-[#3A3A3C] text-[12px] font-medium">Ratings & reviews</Text>
+                <AppIcon name="star" size={14} color="#FFC53D" />
+                <Text className="text-[#B8B3E0] text-[12px] font-medium">Ratings & reviews</Text>
               </View>
               <View className="flex-row items-center gap-1.5">
-                <AppIcon name="map-pin" size={15} color="#6E6E73" />
-                <Text className="text-[#3A3A3C] text-[12px] font-medium">Pan-India</Text>
+                <AppIcon name="map-pin" size={15} color="#B8B3E0" />
+                <Text className="text-[#B8B3E0] text-[12px] font-medium">Pan-India</Text>
               </View>
             </View>
           </Animated.View>
 
-          <Text className="text-[#6E6E73] text-[12px] font-semibold uppercase tracking-widest mb-3">
+          <Text className="text-[#7C77A6] text-[12px] font-semibold uppercase tracking-widest mb-3">
             Continue as
           </Text>
 
@@ -216,7 +223,7 @@ export default function WelcomeScreen() {
             ))}
           </View>
 
-          <Text className="text-[#A7A7AB] text-[12px] text-center mt-4 leading-[18px]">
+          <Text className="text-[#7C77A6] text-[12px] text-center mt-4 leading-[18px]">
             By continuing you agree to our Terms of Service and Privacy Policy.
           </Text>
         </ScrollView>

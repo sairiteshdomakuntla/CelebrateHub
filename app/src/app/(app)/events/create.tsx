@@ -39,11 +39,11 @@ function StepBar({ current }: { current: Step }) {
   const labels = ["Type", "Details", "Services", "Review"];
   const idx = STEPS.indexOf(current);
   return (
-    <View className="flex-row items-center gap-1 mb-6">
+    <View className="flex-row items-center gap-1.5 mb-6">
       {STEPS.map((s, i) => (
         <React.Fragment key={s}>
           <View
-            className={`h-1.5 rounded-full flex-1 ${i <= idx ? "bg-[#1C1C1E]" : "bg-[#E8E6E1]"}`}
+            className={`h-1.5 rounded-full flex-1 ${i <= idx ? "bg-[#7C5CFF]" : "bg-[#2A2460]"}`}
           />
         </React.Fragment>
       ))}
@@ -63,10 +63,10 @@ function TypeStep({
   const types = Object.entries(EVENT_TYPE_META) as [EventType, { label: string; emoji: string }][];
   return (
     <View>
-      <Text className="text-[#1C1C1E] text-[22px] font-bold tracking-tight mb-1">
+      <Text className="text-white text-[22px] font-bold tracking-tight mb-1">
         What are you celebrating?
       </Text>
-      <Text className="text-[#6E6E73] text-[14px] mb-5">Choose the type of your event.</Text>
+      <Text className="text-[#B8B3E0] text-[14px] mb-5">Choose the type of your event.</Text>
       <View className="flex-row flex-wrap gap-2.5">
         {types.map(([type, meta]) => {
           const active = selected === type;
@@ -77,14 +77,14 @@ function TypeStep({
               activeOpacity={0.78}
               className={`flex-row items-center gap-2 px-3.5 py-2.5 rounded-2xl border ${
                 active
-                  ? "bg-[#1C1C1E] border-[#1C1C1E]"
-                  : "bg-white border-[#E3E1DC]"
+                  ? "bg-[#7C5CFF] border-[#7C5CFF]"
+                  : "bg-[#1E1A3F] border-[#322C63]"
               }`}
             >
               <Text className="text-[18px]">{meta.emoji}</Text>
               <Text
                 className={`text-[13px] font-semibold ${
-                  active ? "text-white" : "text-[#3A3A3C]"
+                  active ? "text-white" : "text-[#B8B3E0]"
                 }`}
               >
                 {meta.label}
@@ -140,23 +140,23 @@ function DatePickerField({
 
   return (
     <View className="mb-4">
-      <Text className="text-[#3A3A3C] text-[13px] font-semibold mb-1.5">{label}</Text>
+      <Text className="text-[#B8B3E0] text-[13px] font-semibold mb-1.5">{label}</Text>
 
       <TouchableOpacity
         onPress={() => setShow(true)}
         activeOpacity={0.75}
-        className={`flex-row items-center bg-white border rounded-xl px-4 py-3.5 ${
-          error ? "border-red-400" : "border-[#E3E1DC]"
+        className={`flex-row items-center bg-[#1E1A3F] border rounded-xl px-4 py-3.5 ${
+          error ? "border-[#FF8FA3]" : "border-[#322C63]"
         }`}
       >
         <AppIcon
           name={mode === "date" ? "calendar" : "clock"}
           size={16}
-          color={hasValue ? "#1C1C1E" : "#C7C7CC"}
+          color={hasValue ? "#7C5CFF" : "#7C77A6"}
         />
         <Text
           className={`flex-1 ml-2.5 text-[14px] ${
-            hasValue ? "text-[#1C1C1E]" : "text-[#C7C7CC]"
+            hasValue ? "text-white" : "text-[#7C77A6]"
           }`}
         >
           {displayDate}
@@ -166,13 +166,13 @@ function DatePickerField({
             hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
             onPress={() => { /* clear not allowed for date — must select */ }}
           >
-            <AppIcon name="chevron-down" size={15} color="#A7A7AB" />
+            <AppIcon name="chevron-down" size={15} color="#B8B3E0" />
           </TouchableOpacity>
         )}
       </TouchableOpacity>
 
       {error && (
-        <Text className="text-red-500 text-[12px] mt-1">{error}</Text>
+        <Text className="text-[#FF8FA3] text-[12px] mt-1">{error}</Text>
       )}
 
       {/* Android: native modal dialog */}
@@ -195,13 +195,13 @@ function DatePickerField({
           animationType="slide"
           onRequestClose={() => setShow(false)}
         >
-          <View style={{ flex: 1, justifyContent: "flex-end", backgroundColor: "rgba(0,0,0,0.35)" }}>
-            <View className="bg-white rounded-t-3xl pb-8">
+          <View style={{ flex: 1, justifyContent: "flex-end", backgroundColor: "rgba(18,15,43,0.72)" }}>
+            <View className="bg-[#1E1A3F] border-t border-[#322C63] rounded-t-3xl pb-8">
               <View className="flex-row items-center justify-between px-5 pt-4 pb-2">
-                <Text className="text-[#1C1C1E] text-[16px] font-semibold">{label}</Text>
+                <Text className="text-white text-[16px] font-semibold">{label}</Text>
                 <TouchableOpacity
                   onPress={() => setShow(false)}
-                  className="bg-[#1C1C1E] px-4 py-1.5 rounded-full"
+                  className="bg-[#7C5CFF] px-4 py-1.5 rounded-full"
                 >
                   <Text className="text-white text-[13px] font-semibold">Done</Text>
                 </TouchableOpacity>
@@ -265,10 +265,10 @@ function DetailsStep({
 
   return (
     <KeyboardAvoidingView enabled={Platform.OS === "ios"} behavior="padding">
-      <Text className="text-[#1C1C1E] text-[22px] font-bold tracking-tight mb-1">
+      <Text className="text-white text-[22px] font-bold tracking-tight mb-1">
         Event details
       </Text>
-      <Text className="text-[#6E6E73] text-[14px] mb-5">Fill in the key information.</Text>
+      <Text className="text-[#B8B3E0] text-[14px] mb-5">Fill in the key information.</Text>
 
       <FormInput
         label="Event title (optional)"
@@ -295,31 +295,31 @@ function DetailsStep({
       {/* Location Input with Map Pin Drop CTA */}
       <View className="mb-4">
         <View className="flex-row items-center justify-between mb-1.5">
-          <Text className="text-[#1C1C1E] text-[13px] font-semibold">Location / Venue *</Text>
+          <Text className="text-[#B8B3E0] text-[13px] font-semibold">Location / Venue *</Text>
           <TouchableOpacity
             onPress={() => setShowLocationPicker(true)}
-            className="flex-row items-center gap-1 px-2.5 py-1 rounded-lg bg-[#8B5CF6]/15 border border-[#8B5CF6]/30"
+            className="flex-row items-center gap-1 px-2.5 py-1 rounded-lg bg-[#7C5CFF]/20 border border-[#7C5CFF]/40"
           >
-            <AppIcon name="map-pin" size={12} color="#7C3AED" />
-            <Text className="text-[#7C3AED] text-[11px] font-bold">Pin on Map</Text>
+            <AppIcon name="map-pin" size={12} color="#FFC53D" />
+            <Text className="text-[#FFC53D] text-[11px] font-bold">Pin on Map</Text>
           </TouchableOpacity>
         </View>
         <TextInput
           value={details.location}
           onChangeText={(v) => onChange("location", v)}
           placeholder="e.g. Palace Grounds, Bellary Rd, Bengaluru"
-          placeholderTextColor="#A7A7AB"
-          className={`bg-white border rounded-xl px-4 py-3 text-[15px] text-[#1C1C1E] ${
-            errors.location ? "border-[#FF3B30]" : "border-[#E8E6E1]"
+          placeholderTextColor="#7C77A6"
+          className={`bg-[#1E1A3F] border rounded-xl px-4 py-3 text-[15px] text-white ${
+            errors.location ? "border-[#FF8FA3]" : "border-[#322C63]"
           }`}
         />
         {errors.location && (
-          <Text className="text-[#FF3B30] text-[12px] mt-1">{errors.location}</Text>
+          <Text className="text-[#FF8FA3] text-[12px] mt-1">{errors.location}</Text>
         )}
         {hasCoords && (
           <View className="mt-1.5 flex-row items-center gap-1.5">
-            <AppIcon name="compass" size={11} color="#059669" />
-            <Text className="text-[#059669] text-[11px] font-mono font-medium">
+            <AppIcon name="compass" size={11} color="#6EE7B7" />
+            <Text className="text-[#6EE7B7] text-[11px] font-mono font-medium">
               Coordinates pinned: {Number(details.latitude).toFixed(4)},{" "}
               {Number(details.longitude).toFixed(4)}
             </Text>
@@ -368,16 +368,16 @@ function DetailsStep({
 
       {/* Requirements — plain TextInput (multi-line) */}
       <View className="mb-4">
-        <Text className="text-[#3A3A3C] text-[13px] font-semibold mb-1.5">Special requirements</Text>
-        <View className="bg-white border border-[#E3E1DC] rounded-xl px-4 py-3 min-h-[88px]">
+        <Text className="text-[#B8B3E0] text-[13px] font-semibold mb-1.5">Special requirements</Text>
+        <View className="bg-[#1E1A3F] border border-[#322C63] rounded-xl px-4 py-3 min-h-[88px]">
           <TextInput
             value={details.requirements}
             onChangeText={(v) => onChange("requirements", v)}
             placeholder="Any specific requests or notes..."
-            placeholderTextColor="#C7C7CC"
+            placeholderTextColor="#7C77A6"
             multiline
             textAlignVertical="top"
-            className="text-[#1C1C1E] text-[14px] leading-[20px]"
+            className="text-white text-[14px] leading-[20px]"
             style={{ minHeight: 64 }}
           />
         </View>
@@ -402,17 +402,17 @@ function ServicesStep({
   if (loadingCategories) {
     return (
       <View className="items-center py-12">
-        <ActivityIndicator color="#1C1C1E" />
+        <ActivityIndicator color="#7C5CFF" />
       </View>
     );
   }
 
   return (
     <View>
-      <Text className="text-[#1C1C1E] text-[22px] font-bold tracking-tight mb-1">
+      <Text className="text-white text-[22px] font-bold tracking-tight mb-1">
         Services needed
       </Text>
-      <Text className="text-[#6E6E73] text-[14px] mb-5">
+      <Text className="text-[#B8B3E0] text-[14px] mb-5">
         Select all that apply. You can add more later.
       </Text>
       <View className="flex-row flex-wrap gap-2.5">
@@ -424,17 +424,19 @@ function ServicesStep({
               onPress={() => onToggle(cat.id)}
               activeOpacity={0.78}
               className={`flex-row items-center gap-2 px-3.5 py-2.5 rounded-2xl border ${
-                active ? "bg-[#1C1C1E] border-[#1C1C1E]" : "bg-white border-[#E3E1DC]"
+                active
+                  ? "bg-[#7C5CFF] border-[#7C5CFF]"
+                  : "bg-[#1E1A3F] border-[#322C63]"
               }`}
             >
               <AppIcon
                 name={(cat.icon as any) || "briefcase"}
                 size={14}
-                color={active ? "#FFFFFF" : "#6E6E73"}
+                color={active ? "#FFFFFF" : "#B8B3E0"}
               />
               <Text
                 className={`text-[13px] font-semibold ${
-                  active ? "text-white" : "text-[#3A3A3C]"
+                  active ? "text-white" : "text-[#B8B3E0]"
                 }`}
               >
                 {cat.name}
@@ -444,7 +446,7 @@ function ServicesStep({
         })}
       </View>
       {selected.size > 0 && (
-        <Text className="text-[#1C1C1E] text-[13px] font-semibold mt-4">
+        <Text className="text-[#FFC53D] text-[13px] font-semibold mt-4">
           {selected.size} selected
         </Text>
       )}
@@ -472,9 +474,9 @@ function ReviewStep({
 
   function Row({ label, value }: { label: string; value: string }) {
     return (
-      <View className="flex-row justify-between py-2.5 border-b border-[#F0EEEA]">
-        <Text className="text-[#6E6E73] text-[13px]">{label}</Text>
-        <Text className="text-[#1C1C1E] text-[13px] font-medium flex-1 text-right ml-4" numberOfLines={2}>
+      <View className="flex-row justify-between py-2.5 border-b border-[#322C63]">
+        <Text className="text-[#B8B3E0] text-[13px]">{label}</Text>
+        <Text className="text-white text-[13px] font-medium flex-1 text-right ml-4" numberOfLines={2}>
           {value}
         </Text>
       </View>
@@ -483,10 +485,10 @@ function ReviewStep({
 
   return (
     <View>
-      <Text className="text-[#1C1C1E] text-[22px] font-bold tracking-tight mb-1">Review & confirm</Text>
-      <Text className="text-[#6E6E73] text-[14px] mb-5">Double-check your event details.</Text>
+      <Text className="text-white text-[22px] font-bold tracking-tight mb-1">Review & confirm</Text>
+      <Text className="text-[#B8B3E0] text-[14px] mb-5">Double-check your event details.</Text>
 
-      <View className="bg-white border border-[#E8E6E1] rounded-2xl px-4 py-2 mb-4">
+      <View className="bg-[#1E1A3F] border border-[#322C63] rounded-2xl px-4 py-2 mb-4">
         <Row label="Type" value={`${meta.emoji}  ${meta.label}`} />
         {details.title ? <Row label="Title" value={details.title} /> : null}
         <Row label="Date" value={details.eventDate ? details.eventDate.toLocaleDateString("en-IN", { weekday: "short", day: "numeric", month: "long", year: "numeric" }) : "—"} />
@@ -504,8 +506,8 @@ function ReviewStep({
         ) : null}
         {details.requirements ? (
           <View className="py-2.5">
-            <Text className="text-[#6E6E73] text-[13px] mb-1">Requirements</Text>
-            <Text className="text-[#1C1C1E] text-[13px]">{details.requirements}</Text>
+            <Text className="text-[#B8B3E0] text-[13px] mb-1">Requirements</Text>
+            <Text className="text-white text-[13px]">{details.requirements}</Text>
           </View>
         ) : null}
       </View>
@@ -660,19 +662,19 @@ export default function CreateEventScreen() {
   const isLast = step === "review";
 
   return (
-    <View className="flex-1 bg-[#F7F7F5]">
-      <StatusBar style="dark" />
+    <View className="flex-1 bg-[#120F2B]">
+      <StatusBar style="light" />
       <SafeAreaView className="flex-1">
         {/* Nav bar */}
         <View className="flex-row items-center px-5 pt-4 pb-2">
           <TouchableOpacity
             onPress={goBack}
-            className="w-9 h-9 rounded-full bg-white border border-[#E8E6E1] items-center justify-center mr-3"
+            className="w-9 h-9 rounded-full bg-[#1E1A3F] border border-[#322C63] items-center justify-center mr-3"
           >
-            <AppIcon name="arrow-left" size={16} color="#3A3A3C" />
+            <AppIcon name="arrow-left" size={16} color="#FFFFFF" />
           </TouchableOpacity>
-          <Text className="text-[#1C1C1E] text-[16px] font-bold flex-1">Create Event</Text>
-          <Text className="text-[#A7A7AB] text-[12px]">
+          <Text className="text-white text-[16px] font-bold flex-1">Create Event</Text>
+          <Text className="text-[#B8B3E0] text-[12px]">
             Step {STEPS.indexOf(step) + 1} / {STEPS.length}
           </Text>
         </View>

@@ -147,55 +147,55 @@ export default function ProviderLeadsScreen() {
   }
 
   return (
-    <View className="flex-1 bg-[#F7F7F5]">
-      <StatusBar style="dark" />
+    <View className="flex-1 bg-[#120F2B]">
+      <StatusBar style="light" />
       <SafeAreaView className="flex-1" edges={["top"]}>
         {/* Header */}
-        <View className="px-5 pt-3 pb-4 bg-[#F7F7F5] border-b border-[#EBEAE5] flex-row items-center justify-between">
+        <View className="px-5 pt-3 pb-4 bg-[#120F2B] border-b border-[#322C63] flex-row items-center justify-between">
           <View className="flex-row items-center gap-3">
             <TouchableOpacity
               onPress={() => router.back()}
-              className="w-10 h-10 rounded-full bg-white border border-[#E5E4E0] items-center justify-center shadow-xs"
+              className="w-10 h-10 rounded-full bg-[#1E1A3F] border border-[#322C63] items-center justify-center shadow-sm"
             >
-              <AppIcon name="arrow-left" size={18} color="#1C1C1E" />
+              <AppIcon name="arrow-left" size={18} color="#FFFFFF" />
             </TouchableOpacity>
             <View>
-              <Text className="text-[20px] font-bold text-[#1C1C1E] tracking-tight">
+              <Text className="text-[20px] font-bold text-white tracking-tight">
                 Qualified Leads
               </Text>
-              <Text className="text-[12px] text-[#6E6E73] mt-0.5">
-                First-come, first-served requests
+              <Text className="text-[12px] text-[#B8B3E0] mt-0.5">
+                First-come, first-served celebration requests
               </Text>
             </View>
           </View>
           <TouchableOpacity
             onPress={onRefresh}
-            className="w-10 h-10 rounded-full bg-white border border-[#E5E4E0] items-center justify-center shadow-xs"
+            className="w-10 h-10 rounded-full bg-[#1E1A3F] border border-[#322C63] items-center justify-center shadow-sm active:bg-[#2A2460]"
           >
-            <AppIcon name="refresh-cw" size={16} color="#1C1C1E" />
+            <AppIcon name="refresh-cw" size={16} color="#B8B3E0" />
           </TouchableOpacity>
         </View>
 
         {/* Tab Switcher */}
-        <View className="px-5 py-3 bg-[#F7F7F5]">
-          <View className="flex-row bg-[#ECEAE6] p-1 rounded-xl">
+        <View className="px-5 py-3 bg-[#120F2B]">
+          <View className="flex-row bg-[#1E1A3F] p-1 rounded-xl border border-[#322C63]">
             {/* Available */}
             <TouchableOpacity
               onPress={() => setTab("available")}
               className={`flex-1 py-2 rounded-lg items-center flex-row justify-center gap-1.5 ${
-                tab === "available" ? "bg-white shadow-xs" : ""
+                tab === "available" ? "bg-[#7C5CFF] shadow-sm" : ""
               }`}
             >
               <Text
                 className={`text-[13px] font-semibold ${
-                  tab === "available" ? "text-[#1C1C1E]" : "text-[#7C7C80]"
+                  tab === "available" ? "text-white" : "text-[#B8B3E0]"
                 }`}
               >
                 Available
               </Text>
               {stats.availableCount > 0 && (
-                <View className="bg-[#1C1C1E] rounded-full px-1.5 py-0.2 min-w-[18px] items-center justify-center">
-                  <Text className="text-[11px] font-bold text-white">
+                <View className="bg-[#FFC53D] rounded-full px-1.5 py-0.2 min-w-[18px] items-center justify-center">
+                  <Text className="text-[11px] font-bold text-[#120F2B]">
                     {stats.availableCount}
                   </Text>
                 </View>
@@ -206,19 +206,19 @@ export default function ProviderLeadsScreen() {
             <TouchableOpacity
               onPress={() => setTab("accepted")}
               className={`flex-1 py-2 rounded-lg items-center flex-row justify-center gap-1.5 ${
-                tab === "accepted" ? "bg-white shadow-xs" : ""
+                tab === "accepted" ? "bg-[#7C5CFF] shadow-sm" : ""
               }`}
             >
               <Text
                 className={`text-[13px] font-semibold ${
-                  tab === "accepted" ? "text-[#1C1C1E]" : "text-[#7C7C80]"
+                  tab === "accepted" ? "text-white" : "text-[#B8B3E0]"
                 }`}
               >
                 Bookings
               </Text>
               {stats.acceptedCount > 0 && (
-                <View className="bg-[#10B981] rounded-full px-1.5 py-0.2 min-w-[18px] items-center justify-center">
-                  <Text className="text-[11px] font-bold text-white">
+                <View className="bg-[#123B34] border border-[#6EE7B7]/40 rounded-full px-1.5 py-0.2 min-w-[18px] items-center justify-center">
+                  <Text className="text-[11px] font-bold text-[#6EE7B7]">
                     {stats.acceptedCount}
                   </Text>
                 </View>
@@ -229,12 +229,12 @@ export default function ProviderLeadsScreen() {
             <TouchableOpacity
               onPress={() => setTab("history")}
               className={`flex-1 py-2 rounded-lg items-center justify-center ${
-                tab === "history" ? "bg-white shadow-xs" : ""
+                tab === "history" ? "bg-[#7C5CFF] shadow-sm" : ""
               }`}
             >
               <Text
                 className={`text-[13px] font-semibold ${
-                  tab === "history" ? "text-[#1C1C1E]" : "text-[#7C7C80]"
+                  tab === "history" ? "text-white" : "text-[#B8B3E0]"
                 }`}
               >
                 History
@@ -246,34 +246,34 @@ export default function ProviderLeadsScreen() {
         {/* Content */}
         {loading ? (
           <View className="flex-1 items-center justify-center">
-            <ActivityIndicator size="large" color="#1C1C1E" />
-            <Text className="text-[#6E6E73] text-[13px] mt-3">Fetching qualified leads...</Text>
+            <ActivityIndicator size="large" color="#7C5CFF" />
+            <Text className="text-[#B8B3E0] text-[13px] mt-3">Fetching qualified leads...</Text>
           </View>
         ) : (
           <ScrollView
             className="flex-1 px-5"
             contentContainerStyle={{ paddingTop: 8, paddingBottom: 40 }}
             refreshControl={
-              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#1C1C1E" />
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#7C5CFF" />
             }
           >
             {leads.length === 0 ? (
               <View className="items-center justify-center py-16 px-6">
-                <View className="w-16 h-16 rounded-2xl bg-[#ECEAE5] items-center justify-center mb-4">
+                <View className="w-16 h-16 rounded-2xl bg-[#1E1A3F] border border-[#322C63] items-center justify-center mb-4">
                   <AppIcon
                     name={tab === "available" ? "inbox" : tab === "accepted" ? "check-circle" : "clock"}
                     size={28}
-                    color="#8E8E93"
+                    color="#7C5CFF"
                   />
                 </View>
-                <Text className="text-[#1C1C1E] text-[17px] font-semibold text-center">
+                <Text className="text-white text-[17px] font-semibold text-center">
                   {tab === "available"
                     ? "No Pending Leads"
                     : tab === "accepted"
                     ? "No Confirmed Bookings Yet"
                     : "No Past Leads"}
                 </Text>
-                <Text className="text-[#6E6E73] text-[13px] text-center mt-1.5 leading-relaxed">
+                <Text className="text-[#B8B3E0] text-[13px] text-center mt-1.5 leading-relaxed">
                   {tab === "available"
                     ? "When clients create celebrations matching your registered service categories, they'll appear here immediately."
                     : tab === "accepted"
@@ -284,10 +284,10 @@ export default function ProviderLeadsScreen() {
                 {tab === "available" && (
                   <TouchableOpacity
                     onPress={() => router.push("/provider-profile" as any)}
-                    className="mt-6 bg-white border border-[#E5E4E0] px-4 py-2.5 rounded-xl flex-row items-center gap-2 shadow-xs"
+                    className="mt-6 bg-[#1E1A3F] border border-[#322C63] px-4 py-2.5 rounded-xl flex-row items-center gap-2 shadow-sm active:bg-[#2A2460]"
                   >
-                    <AppIcon name="briefcase" size={14} color="#1C1C1E" />
-                    <Text className="text-[#1C1C1E] text-[13px] font-semibold">
+                    <AppIcon name="briefcase" size={14} color="#7C5CFF" />
+                    <Text className="text-white text-[13px] font-semibold">
                       Manage Service Categories
                     </Text>
                   </TouchableOpacity>
@@ -306,31 +306,31 @@ export default function ProviderLeadsScreen() {
                 return (
                   <View
                     key={item.leadProviderId}
-                    className="bg-white border border-[#E8E6E2] rounded-2xl p-4 mb-3.5 shadow-xs"
+                    className="bg-[#1E1A3F] border border-[#322C63] rounded-2xl p-4 mb-3.5 shadow-sm"
                   >
                     {/* Top Row: Service Category & Event Type Badge */}
-                    <View className="flex-row items-center justify-between pb-3 border-b border-[#F0EEEA]">
+                    <View className="flex-row items-center justify-between pb-3 border-b border-[#322C63]">
                       <View className="flex-row items-center gap-2">
-                        <View className="w-8 h-8 rounded-lg bg-[#F3F1EC] items-center justify-center">
+                        <View className="w-8 h-8 rounded-lg bg-[#2A2460] border border-[#322C63] items-center justify-center">
                           <AppIcon
                             name={(item.service.category.icon as any) || "briefcase"}
                             size={14}
-                            color="#1C1C1E"
+                            color="#7C5CFF"
                           />
                         </View>
                         <View>
-                          <Text className="text-[14px] font-bold text-[#1C1C1E]">
+                          <Text className="text-[14px] font-bold text-white">
                             {item.service.category.name}
                           </Text>
-                          <Text className="text-[11px] text-[#8E8E93]">
+                          <Text className="text-[11px] text-[#B8B3E0]">
                             Requested Service
                           </Text>
                         </View>
                       </View>
 
-                      <View className="flex-row items-center gap-1.5 bg-[#F7F7F5] border border-[#E8E6E1] px-2.5 py-1 rounded-full">
+                      <View className="flex-row items-center gap-1.5 bg-[#2A2460] border border-[#322C63] px-2.5 py-1 rounded-full">
                         <Text className="text-[12px]">{typeMeta.emoji}</Text>
-                        <Text className="text-[12px] font-medium text-[#3A3A3C]">
+                        <Text className="text-[12px] font-medium text-white">
                           {typeMeta.label}
                         </Text>
                       </View>
@@ -338,15 +338,15 @@ export default function ProviderLeadsScreen() {
 
                     {/* Event Title & Date/Location */}
                     <View className="mt-3">
-                      <Text className="text-[16px] font-semibold text-[#1C1C1E]" numberOfLines={1}>
+                      <Text className="text-[16px] font-semibold text-white" numberOfLines={1}>
                         {item.event.title || `${typeMeta.label} Celebration`}
                       </Text>
 
                       <View className="mt-2.5 gap-2">
                         {/* Date & Time */}
                         <View className="flex-row items-center gap-2">
-                          <AppIcon name="calendar" size={13} color="#6E6E73" />
-                          <Text className="text-[13px] text-[#3A3A3C] font-medium">
+                          <AppIcon name="calendar" size={13} color="#7C5CFF" />
+                          <Text className="text-[13px] text-[#B8B3E0] font-medium">
                             {formatDate(item.event.eventDate)}
                             {item.event.startTime && ` · ${item.event.startTime}`}
                           </Text>
@@ -354,8 +354,8 @@ export default function ProviderLeadsScreen() {
 
                         {/* Location */}
                         <View className="flex-row items-center gap-2">
-                          <AppIcon name="map-pin" size={13} color="#6E6E73" />
-                          <Text className="text-[13px] text-[#3A3A3C]" numberOfLines={1}>
+                          <AppIcon name="map-pin" size={13} color="#7C5CFF" />
+                          <Text className="text-[13px] text-[#B8B3E0]" numberOfLines={1}>
                             {item.event.location}
                           </Text>
                         </View>
@@ -364,8 +364,8 @@ export default function ProviderLeadsScreen() {
                         <View className="flex-row items-center gap-4 mt-0.5">
                           {item.event.guestCount ? (
                             <View className="flex-row items-center gap-1.5">
-                              <AppIcon name="users" size={13} color="#6E6E73" />
-                              <Text className="text-[13px] text-[#3A3A3C]">
+                              <AppIcon name="users" size={13} color="#7C5CFF" />
+                              <Text className="text-[13px] text-[#B8B3E0]">
                                 {item.event.guestCount} guests
                               </Text>
                             </View>
@@ -373,8 +373,8 @@ export default function ProviderLeadsScreen() {
 
                           {(item.event.budgetMin || item.event.budgetMax) && (
                             <View className="flex-row items-center gap-1.5">
-                              <AppIcon name="credit-card" size={13} color="#6E6E73" />
-                              <Text className="text-[13px] text-[#3A3A3C] font-medium">
+                              <AppIcon name="credit-card" size={13} color="#FFC53D" />
+                              <Text className="text-[13px] text-[#FFC53D] font-medium">
                                 {formatCurrency(item.event.budgetMin)} - {formatCurrency(item.event.budgetMax)}
                               </Text>
                             </View>
@@ -385,11 +385,11 @@ export default function ProviderLeadsScreen() {
 
                     {/* Requirements box if present */}
                     {(item.service.requirements || item.event.requirements) && (
-                      <View className="mt-3 p-2.5 rounded-xl bg-[#F7F7F5] border border-[#EBEAE6]">
-                        <Text className="text-[11px] font-semibold text-[#8E8E93] uppercase tracking-wide">
+                      <View className="mt-3 p-2.5 rounded-xl bg-[#2A2460] border border-[#322C63]">
+                        <Text className="text-[11px] font-semibold text-[#FFC53D] uppercase tracking-wide">
                           Client Notes
                         </Text>
-                        <Text className="text-[12px] text-[#3A3A3C] mt-1 leading-relaxed">
+                        <Text className="text-[12px] text-white mt-1 leading-relaxed">
                           {item.service.requirements || item.event.requirements}
                         </Text>
                       </View>
@@ -397,16 +397,16 @@ export default function ProviderLeadsScreen() {
 
                     {/* Accepted Booking Client Details Card */}
                     {isAcceptedTab && (
-                      <View className="mt-3.5 pt-3 border-t border-[#F0EEEA] bg-[#F9F9F8] rounded-xl p-3">
+                      <View className="mt-3.5 pt-3 border-t border-[#322C63] bg-[#123B34]/40 border border-[#6EE7B7]/20 rounded-xl p-3">
                         <View className="flex-row items-center justify-between">
                           <View className="flex-row items-center gap-1.5">
-                            <View className="w-2 h-2 rounded-full bg-[#10B981]" />
-                            <Text className="text-[12px] font-bold text-[#10B981] uppercase tracking-wide">
+                            <View className="w-2 h-2 rounded-full bg-[#6EE7B7]" />
+                            <Text className="text-[12px] font-bold text-[#6EE7B7] uppercase tracking-wide">
                               Booking Confirmed
                             </Text>
                           </View>
                           {item.booking?.agreedPrice ? (
-                            <Text className="text-[13px] font-bold text-[#1C1C1E]">
+                            <Text className="text-[13px] font-bold text-[#FFC53D]">
                               {formatCurrency(item.booking.agreedPrice)}
                             </Text>
                           ) : null}
@@ -414,11 +414,11 @@ export default function ProviderLeadsScreen() {
 
                         <View className="mt-2.5 flex-row items-center justify-between">
                           <View>
-                            <Text className="text-[14px] font-bold text-[#1C1C1E]">
+                            <Text className="text-[14px] font-bold text-white">
                               {item.event.customer.name}
                             </Text>
                             {item.booking?.customer?.phone || item.event.customer.phone ? (
-                              <Text className="text-[12px] text-[#6E6E73] mt-0.5">
+                              <Text className="text-[12px] text-[#B8B3E0] mt-0.5">
                                 {item.booking?.customer?.phone || item.event.customer.phone}
                               </Text>
                             ) : null}
@@ -431,7 +431,7 @@ export default function ProviderLeadsScreen() {
                                   const phone = item.booking?.customer?.phone || item.event.customer.phone;
                                   if (phone) Linking.openURL(`tel:${phone}`);
                                 }}
-                                className="w-9 h-9 rounded-full bg-[#10B981] items-center justify-center shadow-xs"
+                                className="w-9 h-9 rounded-full bg-[#10B981] items-center justify-center shadow-sm active:opacity-80"
                               >
                                 <AppIcon name="phone" size={15} color="#FFFFFF" />
                               </TouchableOpacity>
@@ -443,7 +443,7 @@ export default function ProviderLeadsScreen() {
                                   const email = item.booking?.customer?.email || item.event.customer.email;
                                   if (email) Linking.openURL(`mailto:${email}`);
                                 }}
-                                className="w-9 h-9 rounded-full bg-[#1C1C1E] items-center justify-center shadow-xs"
+                                className="w-9 h-9 rounded-full bg-[#7C5CFF] items-center justify-center shadow-sm active:opacity-80"
                               >
                                 <AppIcon name="mail" size={15} color="#FFFFFF" />
                               </TouchableOpacity>
@@ -455,13 +455,13 @@ export default function ProviderLeadsScreen() {
 
                     {/* Available Tab Action Buttons */}
                     {isAvailableTab && (
-                      <View className="mt-3.5 pt-3 border-t border-[#F0EEEA] flex-row items-center gap-2.5">
+                      <View className="mt-3.5 pt-3 border-t border-[#322C63] flex-row items-center gap-2.5">
                         <TouchableOpacity
                           disabled={isActing}
                           onPress={() => handleDecline(item)}
-                          className="flex-1 py-2.5 rounded-xl border border-[#DEDCD7] items-center justify-center active:bg-[#ECEAE6]"
+                          className="flex-1 py-2.5 rounded-xl border border-[#322C63] bg-[#2A2460] items-center justify-center active:bg-[#322C63]"
                         >
-                          <Text className="text-[13px] font-semibold text-[#6E6E73]">
+                          <Text className="text-[13px] font-semibold text-[#FF8FA3]">
                             Decline
                           </Text>
                         </TouchableOpacity>
@@ -469,13 +469,13 @@ export default function ProviderLeadsScreen() {
                         <TouchableOpacity
                           disabled={isActing}
                           onPress={() => setSelectedLeadForAccept(item)}
-                          className="flex-2 py-2.5 px-4 rounded-xl bg-[#1C1C1E] items-center justify-center flex-row gap-1.5 shadow-sm active:bg-black"
+                          className="flex-2 py-2.5 px-4 rounded-xl bg-[#7C5CFF] items-center justify-center flex-row gap-1.5 shadow-md active:bg-[#6848e0]"
                         >
                           {isActing ? (
                             <ActivityIndicator size="small" color="#FFFFFF" />
                           ) : (
                             <>
-                              <AppIcon name="zap" size={14} color="#FBBF24" />
+                              <AppIcon name="zap" size={14} color="#FFC53D" />
                               <Text className="text-[13px] font-bold text-white">
                                 Accept Request
                               </Text>
@@ -487,11 +487,11 @@ export default function ProviderLeadsScreen() {
 
                     {/* History Tab Status Tag */}
                     {tab === "history" && (
-                      <View className="mt-3 pt-2.5 border-t border-[#F0EEEA] flex-row items-center justify-between">
-                        <Text className="text-[12px] text-[#8E8E93]">
+                      <View className="mt-3 pt-2.5 border-t border-[#322C63] flex-row items-center justify-between">
+                        <Text className="text-[12px] text-[#B8B3E0]">
                           Status: {item.myStatus === "DECLINED" ? "Declined by you" : item.leadStatus}
                         </Text>
-                        <Text className="text-[11px] text-[#A7A7AB]">
+                        <Text className="text-[11px] text-[#6C6694]">
                           {formatDate(item.createdAt)}
                         </Text>
                       </View>
@@ -510,18 +510,18 @@ export default function ProviderLeadsScreen() {
           animationType="fade"
           onRequestClose={() => setSelectedLeadForAccept(null)}
         >
-          <View className="flex-1 bg-black/50 justify-center items-center px-5">
-            <View className="bg-white rounded-3xl p-6 w-full max-w-sm shadow-xl">
-              <View className="w-12 h-12 rounded-2xl bg-[#F0FDF4] border border-[#DCFCE7] items-center justify-center mb-3">
-                <AppIcon name="zap" size={24} color="#10B981" />
+          <View className="flex-1 bg-black/75 justify-center items-center px-5">
+            <View className="bg-[#1E1A3F] border border-[#322C63] rounded-3xl p-6 w-full max-w-sm shadow-2xl">
+              <View className="w-12 h-12 rounded-2xl bg-[#123B34] border border-[#6EE7B7]/30 items-center justify-center mb-3">
+                <AppIcon name="zap" size={24} color="#FFC53D" />
               </View>
 
-              <Text className="text-[18px] font-bold text-[#1C1C1E]">
+              <Text className="text-[18px] font-bold text-white">
                 Accept Service Lead
               </Text>
-              <Text className="text-[13px] text-[#6E6E73] mt-1 leading-relaxed">
+              <Text className="text-[13px] text-[#B8B3E0] mt-1 leading-relaxed">
                 Confirm your availability for{" "}
-                <Text className="font-semibold text-[#1C1C1E]">
+                <Text className="font-semibold text-white">
                   {selectedLeadForAccept?.service.category.name}
                 </Text>{" "}
                 at {selectedLeadForAccept?.event.location}.
@@ -529,7 +529,7 @@ export default function ProviderLeadsScreen() {
 
               {/* Price Quote Field (Optional) */}
               <View className="mt-4">
-                <Text className="text-[12px] font-semibold text-[#3A3A3C] mb-1.5">
+                <Text className="text-[12px] font-semibold text-[#B8B3E0] mb-1.5">
                   Proposed Quote / Rate (₹ Optional)
                 </Text>
                 <TextInput
@@ -537,14 +537,14 @@ export default function ProviderLeadsScreen() {
                   onChangeText={setQuotePrice}
                   placeholder="e.g. 15000"
                   keyboardType="numeric"
-                  placeholderTextColor="#A7A7AB"
-                  className="bg-[#F7F7F5] border border-[#E5E4E0] rounded-xl px-3.5 py-2.5 text-[14px] text-[#1C1C1E]"
+                  placeholderTextColor="#6C6694"
+                  className="bg-[#2A2460] border border-[#322C63] rounded-xl px-3.5 py-2.5 text-[14px] text-white"
                 />
               </View>
 
               {/* Notes Field (Optional) */}
               <View className="mt-3">
-                <Text className="text-[12px] font-semibold text-[#3A3A3C] mb-1.5">
+                <Text className="text-[12px] font-semibold text-[#B8B3E0] mb-1.5">
                   Message for Client (Optional)
                 </Text>
                 <TextInput
@@ -553,17 +553,17 @@ export default function ProviderLeadsScreen() {
                   placeholder="e.g. Looking forward to making your day special!"
                   multiline
                   numberOfLines={2}
-                  placeholderTextColor="#A7A7AB"
-                  className="bg-[#F7F7F5] border border-[#E5E4E0] rounded-xl px-3.5 py-2.5 text-[14px] text-[#1C1C1E]"
+                  placeholderTextColor="#6C6694"
+                  className="bg-[#2A2460] border border-[#322C63] rounded-xl px-3.5 py-2.5 text-[14px] text-white"
                 />
               </View>
 
               <View className="mt-6 flex-row gap-2.5">
                 <TouchableOpacity
                   onPress={() => setSelectedLeadForAccept(null)}
-                  className="flex-1 py-3 rounded-xl border border-[#DEDCD7] items-center justify-center"
+                  className="flex-1 py-3 rounded-xl border border-[#322C63] bg-[#2A2460] items-center justify-center active:bg-[#322C63]"
                 >
-                  <Text className="text-[14px] font-semibold text-[#6E6E73]">
+                  <Text className="text-[14px] font-semibold text-[#B8B3E0]">
                     Cancel
                   </Text>
                 </TouchableOpacity>
@@ -571,7 +571,7 @@ export default function ProviderLeadsScreen() {
                 <TouchableOpacity
                   disabled={actingLeadId != null}
                   onPress={handleConfirmAccept}
-                  className="flex-1 py-3 rounded-xl bg-[#1C1C1E] items-center justify-center flex-row gap-1.5 shadow-md"
+                  className="flex-1 py-3 rounded-xl bg-[#7C5CFF] items-center justify-center flex-row gap-1.5 shadow-md active:bg-[#6848e0]"
                 >
                   {actingLeadId != null ? (
                     <ActivityIndicator size="small" color="#FFFFFF" />

@@ -235,20 +235,20 @@ export default function SubscriptionsScreen() {
 
   if (role === "ADMIN") {
     return (
-      <View className="flex-1 bg-[#F7F7F5] items-center justify-center p-6">
-        <StatusBar style="dark" />
-        <View className="w-16 h-16 rounded-3xl bg-[#1C1C1E] items-center justify-center mb-4 shadow-sm">
-          <AppIcon name="shield" size={28} color="#FFFFFF" />
+      <View className="flex-1 bg-[#120F2B] items-center justify-center p-6">
+        <StatusBar style="light" />
+        <View className="w-16 h-16 rounded-3xl bg-[#1E1A3F] border border-[#322C63] items-center justify-center mb-4 shadow-sm">
+          <AppIcon name="shield" size={28} color="#7C5CFF" />
         </View>
-        <Text className="text-[20px] font-bold text-[#1C1C1E] text-center mb-2">
+        <Text className="text-[20px] font-bold text-white text-center mb-2">
           Administrator Account
         </Text>
-        <Text className="text-[14px] text-[#6E6E73] text-center mb-6 leading-relaxed max-w-xs">
+        <Text className="text-[14px] text-[#B8B3E0] text-center mb-6 leading-relaxed max-w-xs">
           As the platform owner, you have full unrestricted access to all features. Personal subscriptions and memberships are not applicable.
         </Text>
         <TouchableOpacity
           onPress={() => router.back()}
-          className="bg-[#1C1C1E] px-6 py-3.5 rounded-2xl shadow-sm active:bg-black"
+          className="bg-[#7C5CFF] px-6 py-3.5 rounded-2xl shadow-sm active:bg-[#6848e0]"
         >
           <Text className="text-white font-bold text-[14px]">Return to Dashboard</Text>
         </TouchableOpacity>
@@ -257,58 +257,58 @@ export default function SubscriptionsScreen() {
   }
 
   return (
-    <View className="flex-1 bg-[#F7F7F5]">
-      <StatusBar style="dark" />
+    <View className="flex-1 bg-[#120F2B]">
+      <StatusBar style="light" />
       <SafeAreaView className="flex-1" edges={["top"]}>
         {/* Header */}
-        <View className="px-5 pt-3 pb-4 bg-[#F7F7F5] border-b border-[#EBEAE5] flex-row items-center justify-between">
+        <View className="px-5 pt-3 pb-4 bg-[#120F2B] border-b border-[#322C63] flex-row items-center justify-between">
           <View className="flex-row items-center gap-3">
             <TouchableOpacity
               onPress={() => router.back()}
-              className="w-10 h-10 rounded-full bg-white border border-[#E5E4E0] items-center justify-center shadow-xs"
+              className="w-10 h-10 rounded-full bg-[#1E1A3F] border border-[#322C63] items-center justify-center shadow-sm active:bg-[#2A2460]"
             >
-              <AppIcon name="arrow-left" size={18} color="#1C1C1E" />
+              <AppIcon name="arrow-left" size={18} color="#FFFFFF" />
             </TouchableOpacity>
             <View>
-              <Text className="text-[20px] font-bold text-[#1C1C1E] tracking-tight">
+              <Text className="text-[20px] font-bold text-white tracking-tight">
                 Plans & Billing
               </Text>
-              <Text className="text-[12px] text-[#6E6E73] mt-0.5">
+              <Text className="text-[12px] text-[#B8B3E0] mt-0.5">
                 {role === "PROVIDER" ? "Boost leads & bookings" : "VIP celebration planning"}
               </Text>
             </View>
           </View>
           <TouchableOpacity
             onPress={onRefresh}
-            className="w-10 h-10 rounded-full bg-white border border-[#E5E4E0] items-center justify-center shadow-xs"
+            className="w-10 h-10 rounded-full bg-[#1E1A3F] border border-[#322C63] items-center justify-center shadow-sm active:bg-[#2A2460]"
           >
-            <AppIcon name="refresh-cw" size={16} color="#1C1C1E" />
+            <AppIcon name="refresh-cw" size={16} color="#B8B3E0" />
           </TouchableOpacity>
         </View>
 
         {loading ? (
           <View className="flex-1 items-center justify-center">
-            <ActivityIndicator size="large" color="#1C1C1E" />
-            <Text className="text-[#6E6E73] text-[13px] mt-3">Loading membership plans...</Text>
+            <ActivityIndicator size="large" color="#7C5CFF" />
+            <Text className="text-[#B8B3E0] text-[13px] mt-3">Loading membership plans...</Text>
           </View>
         ) : (
           <ScrollView
             className="flex-1 px-5"
             contentContainerStyle={{ paddingTop: 16, paddingBottom: 40 }}
             refreshControl={
-              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#1C1C1E" />
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#7C5CFF" />
             }
           >
             {/* Active Subscription Banner */}
             {activeSub ? (
-              <View className="bg-[#1C1C1E] rounded-3xl p-5 mb-6 shadow-md">
+              <View className="bg-[#1E1A3F] border border-[#322C63] rounded-3xl p-5 mb-6 shadow-sm">
                 <View className="flex-row items-center justify-between">
                   <View className="flex-row items-center gap-2">
-                    <View className="w-8 h-8 rounded-full bg-[#10B981]/20 items-center justify-center">
-                      <AppIcon name="check" size={16} color="#10B981" />
+                    <View className="w-8 h-8 rounded-full bg-[#123B34] border border-[#6EE7B7]/30 items-center justify-center">
+                      <AppIcon name="check" size={16} color="#6EE7B7" />
                     </View>
                     <View>
-                      <Text className="text-white/60 text-[11px] font-semibold uppercase tracking-wider">
+                      <Text className="text-[#B8B3E0] text-[11px] font-semibold uppercase tracking-wider">
                         Current Plan
                       </Text>
                       <Text className="text-white text-[17px] font-bold">
@@ -316,22 +316,22 @@ export default function SubscriptionsScreen() {
                       </Text>
                     </View>
                   </View>
-                  <View className="bg-[#10B981] px-2.5 py-1 rounded-full">
-                    <Text className="text-white text-[11px] font-bold uppercase tracking-wider">
+                  <View className="bg-[#123B34] border border-[#6EE7B7]/40 px-2.5 py-1 rounded-full">
+                    <Text className="text-[#6EE7B7] text-[11px] font-bold uppercase tracking-wider">
                       {activeSub.status}
                     </Text>
                   </View>
                 </View>
 
-                <View className="mt-4 pt-3.5 border-t border-white/10 flex-row items-center justify-between">
+                <View className="mt-4 pt-3.5 border-t border-[#322C63] flex-row items-center justify-between">
                   <View>
-                    <Text className="text-white/50 text-[11px]">Valid Until</Text>
+                    <Text className="text-[#B8B3E0] text-[11px]">Valid Until</Text>
                     <Text className="text-white text-[13px] font-semibold mt-0.5">
                       {formatDate(activeSub.endDate || "")}
                     </Text>
                   </View>
                   <View>
-                    <Text className="text-white/50 text-[11px]">Billing</Text>
+                    <Text className="text-[#B8B3E0] text-[11px]">Billing</Text>
                     <Text className="text-white text-[13px] font-semibold mt-0.5">
                       {formatPrice(activeSub.plan.price)} / {activeSub.plan.interval.toLowerCase()}
                     </Text>
@@ -339,9 +339,9 @@ export default function SubscriptionsScreen() {
                   {activeSub.plan.price > 0 && activeSub.autoRenew && (
                     <TouchableOpacity
                       onPress={handleCancelAutoRenew}
-                      className="bg-white/10 px-3 py-1.5 rounded-xl border border-white/15"
+                      className="bg-[#2A2460] px-3 py-1.5 rounded-xl border border-[#322C63] active:bg-[#322C63]"
                     >
-                      <Text className="text-white/80 text-[11px] font-semibold">
+                      <Text className="text-[#FF8FA3] text-[11px] font-semibold">
                         Cancel Renew
                       </Text>
                     </TouchableOpacity>
@@ -352,16 +352,16 @@ export default function SubscriptionsScreen() {
 
             {/* Monthly / Annual Toggle */}
             <View className="flex-row items-center justify-center mb-6">
-              <View className="flex-row bg-[#ECEAE6] p-1 rounded-2xl w-full max-w-xs">
+              <View className="flex-row bg-[#1E1A3F] border border-[#322C63] p-1 rounded-2xl w-full max-w-xs">
                 <TouchableOpacity
                   onPress={() => setInterval("MONTHLY")}
-                  className={`flex-1 py-2.5 rounded-xl items-center justify-center ${
-                    interval === "MONTHLY" ? "bg-white shadow-xs" : ""
+                  className={`flex-1 py-2.5 rounded-xl items-center justify-center transition-all ${
+                    interval === "MONTHLY" ? "bg-[#7C5CFF] shadow-sm" : ""
                   }`}
                 >
                   <Text
                     className={`text-[13px] font-semibold ${
-                      interval === "MONTHLY" ? "text-[#1C1C1E]" : "text-[#7C7C80]"
+                      interval === "MONTHLY" ? "text-white" : "text-[#B8B3E0]"
                     }`}
                   >
                     Monthly
@@ -370,20 +370,20 @@ export default function SubscriptionsScreen() {
 
                 <TouchableOpacity
                   onPress={() => setInterval("YEARLY")}
-                  className={`flex-1 py-2.5 rounded-xl items-center justify-center flex-row gap-1.5 ${
-                    interval === "YEARLY" ? "bg-white shadow-xs" : ""
+                  className={`flex-1 py-2.5 rounded-xl items-center justify-center flex-row gap-1.5 transition-all ${
+                    interval === "YEARLY" ? "bg-[#7C5CFF] shadow-sm" : ""
                   }`}
                 >
                   <Text
                     className={`text-[13px] font-semibold ${
-                      interval === "MONTHLY" ? "text-[#1C1C1E]" : "text-[#7C7C80]"
+                      interval === "YEARLY" ? "text-white" : "text-[#B8B3E0]"
                     }`}
                   >
                     Annual
                   </Text>
                   {annualSavingsPct !== null && annualSavingsPct > 0 && (
-                    <View className="bg-[#10B981] px-1.5 py-0.5 rounded-md">
-                      <Text className="text-white text-[9px] font-bold">
+                    <View className="bg-[#FFC53D] px-1.5 py-0.5 rounded-md">
+                      <Text className="text-[#120F2B] text-[9px] font-black">
                         SAVE {annualSavingsPct}%
                       </Text>
                     </View>
@@ -407,23 +407,23 @@ export default function SubscriptionsScreen() {
                 return (
                   <View
                     key={plan.id}
-                    className={`bg-white rounded-3xl p-5 border ${
+                    className={`bg-[#1E1A3F] rounded-3xl p-5 border ${
                       isCurrent
-                        ? "border-[#10B981] shadow-sm"
+                        ? "border-[#6EE7B7] shadow-lg shadow-emerald-500/10"
                         : isPaid
-                        ? "border-[#1C1C1E] shadow-sm"
-                        : "border-[#E5E4E0]"
+                        ? "border-[#7C5CFF] shadow-lg shadow-purple-500/10"
+                        : "border-[#322C63]"
                     }`}
                   >
                     {isCurrent ? (
-                      <View className="self-start bg-[#10B981] px-3 py-1 rounded-full mb-3 flex-row items-center gap-1.5">
-                        <AppIcon name="check" size={11} color="#FFFFFF" />
-                        <Text className="text-white text-[10px] font-bold uppercase tracking-wider">
+                      <View className="self-start bg-[#123B34] border border-[#6EE7B7]/40 px-3 py-1 rounded-full mb-3 flex-row items-center gap-1.5">
+                        <AppIcon name="check" size={11} color="#6EE7B7" />
+                        <Text className="text-[#6EE7B7] text-[10px] font-bold uppercase tracking-wider">
                           Your Current Plan
                         </Text>
                       </View>
                     ) : isRecommended ? (
-                      <View className="self-start bg-[#1C1C1E] px-3 py-1 rounded-full mb-3">
+                      <View className="self-start bg-[#7C5CFF] px-3 py-1 rounded-full mb-3">
                         <Text className="text-white text-[10px] font-bold uppercase tracking-wider">
                           Recommended
                         </Text>
@@ -432,20 +432,20 @@ export default function SubscriptionsScreen() {
 
                     <View className="flex-row items-baseline justify-between">
                       <View>
-                        <Text className="text-[18px] font-bold text-[#1C1C1E]">
+                        <Text className="text-[18px] font-bold text-white">
                           {plan.name}
                         </Text>
-                        <Text className="text-[12px] text-[#6E6E73] mt-0.5 leading-relaxed max-w-[240px]">
+                        <Text className="text-[12px] text-[#B8B3E0] mt-0.5 leading-relaxed max-w-[240px]">
                           {plan.description}
                         </Text>
                       </View>
 
                       <View className="items-end">
-                        <Text className="text-[24px] font-extrabold text-[#1C1C1E]">
+                        <Text className="text-[24px] font-extrabold text-white">
                           {formatPrice(plan.price)}
                         </Text>
                         {isPaid && (
-                          <Text className="text-[11px] text-[#8E8E93]">
+                          <Text className="text-[11px] text-[#B8B3E0]">
                             /{plan.interval === "YEARLY" ? "year" : "month"}
                           </Text>
                         )}
@@ -453,21 +453,23 @@ export default function SubscriptionsScreen() {
                     </View>
 
                     {/* Features List */}
-                    <View className="mt-4 pt-4 border-t border-[#F0EEEA] gap-2.5">
+                    <View className="mt-4 pt-4 border-t border-[#322C63] gap-2.5">
                       {features.map((f, i) => (
                         <View key={i} className="flex-row items-center gap-2.5">
                           <View
                             className={`w-5 h-5 rounded-full items-center justify-center ${
-                              isCurrent || isPaid ? "bg-[#10B981]/15" : "bg-[#ECEAE6]"
+                              isCurrent || isPaid
+                                ? "bg-[#123B34] border border-[#6EE7B7]/30"
+                                : "bg-[#2A2460] border border-[#322C63]"
                             }`}
                           >
                             <AppIcon
                               name="check"
                               size={12}
-                              color={isCurrent || isPaid ? "#10B981" : "#7C7C80"}
+                              color={isCurrent || isPaid ? "#6EE7B7" : "#B8B3E0"}
                             />
                           </View>
-                          <Text className="text-[13px] text-[#3A3A3C] font-medium flex-1">
+                          <Text className="text-[13px] text-[#B8B3E0] font-medium flex-1">
                             {f}
                           </Text>
                         </View>
@@ -478,18 +480,18 @@ export default function SubscriptionsScreen() {
                     <TouchableOpacity
                       disabled={isCurrent || initiatingOrder}
                       onPress={() => handleSelectPlan(plan)}
-                      className={`mt-5 py-3.5 rounded-2xl items-center justify-center flex-row gap-2 ${
+                      className={`mt-5 py-3.5 rounded-2xl items-center justify-center flex-row gap-2 transition-all ${
                         isCurrent
-                          ? "bg-[#ECEAE6]"
+                          ? "bg-[#2A2460] border border-[#322C63]"
                           : isPaid
-                          ? "bg-[#1C1C1E] shadow-sm active:bg-black"
-                          : "bg-white border border-[#D5D3CE] active:bg-[#F7F7F5]"
+                          ? "bg-[#7C5CFF] shadow-md active:bg-[#6848e0]"
+                          : "bg-[#2A2460] border border-[#322C63] active:bg-[#322C63]"
                       }`}
                     >
                       {initiatingOrder && selectedPlanForCheckout?.id === plan.id ? (
                         <ActivityIndicator
                           size="small"
-                          color={isPaid ? "#FFFFFF" : "#1C1C1E"}
+                          color="#FFFFFF"
                         />
                       ) : (
                         <>
@@ -499,10 +501,8 @@ export default function SubscriptionsScreen() {
                           <Text
                             className={`text-[14px] font-bold ${
                               isCurrent
-                                ? "text-[#8E8E93]"
-                                : isPaid
-                                ? "text-white"
-                                : "text-[#1C1C1E]"
+                                ? "text-[#B8B3E0]"
+                                : "text-white"
                             }`}
                           >
                             {isCurrent
@@ -521,8 +521,8 @@ export default function SubscriptionsScreen() {
 
             {/* Razorpay Trust Badge */}
             <View className="mt-8 items-center justify-center flex-row gap-2">
-              <AppIcon name="shield" size={16} color="#6E6E73" />
-              <Text className="text-[12px] text-[#6E6E73] font-medium">
+              <AppIcon name="shield" size={16} color="#7C5CFF" />
+              <Text className="text-[12px] text-[#B8B3E0] font-medium">
                 Encrypted 256-bit payments powered by Razorpay
               </Text>
             </View>

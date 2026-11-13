@@ -127,37 +127,37 @@ export default function AdminAnalyticsScreen() {
   const hasData = Boolean(stats || analytics);
 
   return (
-    <SafeAreaView className="flex-1 bg-[#F7F7F5]" edges={["top", "bottom"]}>
-      <StatusBar style="dark" />
+    <SafeAreaView className="flex-1 bg-[#120F2B]" edges={["top", "bottom"]}>
+      <StatusBar style="light" />
 
       {/* Header */}
-      <View className="px-5 pt-3 pb-4 border-b border-[#E8E6E1] flex-row items-center justify-between">
+      <View className="px-5 pt-3 pb-4 border-b border-[#322C63] flex-row items-center justify-between bg-[#120F2B]">
         <View className="flex-row items-center gap-3">
           <TouchableOpacity
             onPress={() => router.back()}
-            className="w-10 h-10 rounded-full bg-white items-center justify-center border border-[#E8E6E1]"
+            className="w-10 h-10 rounded-full bg-[#1E1A3F] items-center justify-center border border-[#322C63]"
             activeOpacity={0.7}
           >
-            <AppIcon name="arrow-left" size={18} color="#1C1C1E" />
+            <AppIcon name="arrow-left" size={18} color="#FFFFFF" />
           </TouchableOpacity>
           <View>
-            <Text className="text-[20px] font-bold text-[#1C1C1E] tracking-tight">Platform Analytics</Text>
-            <Text className="text-[12px] text-[#6E6E73]">Financials, conversion & dispatch rules</Text>
+            <Text className="text-[20px] font-bold text-white tracking-tight">Platform Analytics</Text>
+            <Text className="text-[12px] text-[#B8B3E0]">Financials, conversion & dispatch rules</Text>
           </View>
         </View>
 
         <TouchableOpacity
           onPress={onRefresh}
-          className="w-10 h-10 rounded-full bg-white items-center justify-center border border-[#E8E6E1]"
+          className="w-10 h-10 rounded-full bg-[#1E1A3F] items-center justify-center border border-[#322C63]"
           activeOpacity={0.7}
         >
-          <AppIcon name="refresh-cw" size={16} color="#1C1C1E" />
+          <AppIcon name="refresh-cw" size={16} color="#FFFFFF" />
         </TouchableOpacity>
       </View>
 
       {/* View Switcher Tabs */}
       <View className="px-5 pt-3 pb-2">
-        <View className="flex-row p-1 bg-[#EFEDEA] rounded-2xl">
+        <View className="flex-row p-1 bg-[#1E1A3F] border border-[#322C63] rounded-2xl">
           {TABS.map((tab) => {
             const active = activeTab === tab.key;
             return (
@@ -166,12 +166,12 @@ export default function AdminAnalyticsScreen() {
                 onPress={() => setActiveTab(tab.key)}
                 activeOpacity={0.8}
                 className={`flex-1 py-2 rounded-xl flex-row items-center justify-center gap-1.5 ${
-                  active ? "bg-white shadow-xs" : "bg-transparent"
+                  active ? "bg-[#7C5CFF]" : "bg-transparent"
                 }`}
               >
-                <AppIcon name={tab.icon} size={14} color={active ? "#1C1C1E" : "#6E6E73"} />
+                <AppIcon name={tab.icon} size={14} color={active ? "#FFFFFF" : "#B8B3E0"} />
                 <Text
-                  className={`text-[12px] font-bold ${active ? "text-[#1C1C1E]" : "text-[#6E6E73]"}`}
+                  className={`text-[12px] font-bold ${active ? "text-white" : "text-[#B8B3E0]"}`}
                   numberOfLines={1}
                 >
                   {tab.label}
@@ -184,22 +184,22 @@ export default function AdminAnalyticsScreen() {
 
       {loading ? (
         <View className="flex-1 items-center justify-center">
-          <ActivityIndicator size="large" color="#1C1C1E" />
-          <Text className="text-[#6E6E73] text-[13px] mt-3">Compiling platform metrics...</Text>
+          <ActivityIndicator size="large" color="#7C5CFF" />
+          <Text className="text-[#B8B3E0] text-[13px] mt-3">Compiling platform metrics...</Text>
         </View>
       ) : loadError && !hasData ? (
         <View className="flex-1 items-center justify-center gap-2 px-8">
-          <View className="w-14 h-14 rounded-2xl bg-[#FBECEB] border border-[#F2C7C3] items-center justify-center mb-1">
-            <AppIcon name="info" size={22} color="#B3261E" />
+          <View className="w-14 h-14 rounded-2xl bg-[#3F1420] border border-[#FF8FA3]/30 items-center justify-center mb-1">
+            <AppIcon name="info" size={22} color="#FF8FA3" />
           </View>
-          <Text className="text-[#1C1C1E] text-[16px] font-semibold text-center">
+          <Text className="text-white text-[16px] font-semibold text-center">
             Could not load platform analytics
           </Text>
-          <Text className="text-[#6E6E73] text-[13px] text-center mb-2">{loadError}</Text>
+          <Text className="text-[#B8B3E0] text-[13px] text-center mb-2">{loadError}</Text>
           <TouchableOpacity
             onPress={retry}
             activeOpacity={0.8}
-            className="bg-[#1C1C1E] px-5 py-3 rounded-xl"
+            className="bg-[#7C5CFF] px-5 py-3 rounded-xl"
           >
             <Text className="text-white text-[14px] font-semibold">Retry</Text>
           </TouchableOpacity>
@@ -210,17 +210,17 @@ export default function AdminAnalyticsScreen() {
           contentContainerStyle={{ paddingTop: 16, paddingBottom: 40 }}
           showsVerticalScrollIndicator={false}
           refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#1C1C1E" />
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#7C5CFF" />
           }
         >
           {loadError && (
             <TouchableOpacity
               onPress={retry}
               activeOpacity={0.8}
-              className="flex-row items-center justify-center gap-2 py-2.5 px-3 rounded-xl bg-[#FBECEB] border border-[#F2C7C3] mb-4"
+              className="flex-row items-center justify-center gap-2 py-2.5 px-3 rounded-xl bg-[#3F1420] border border-[#FF8FA3]/30 mb-4"
             >
-              <AppIcon name="info" size={14} color="#B3261E" />
-              <Text className="text-[#B3261E] text-[12px] font-semibold">
+              <AppIcon name="info" size={14} color="#FF8FA3" />
+              <Text className="text-[#FF8FA3] text-[12px] font-semibold">
                 Refresh failed — tap to retry
               </Text>
             </TouchableOpacity>
@@ -232,44 +232,44 @@ export default function AdminAnalyticsScreen() {
           {activeTab === "METRICS" && (
             <View className="gap-4">
               {/* Highlight Hero Card: Gross Marketplace Volume */}
-              <View className="bg-[#1C1C1E] p-5 rounded-3xl shadow-md">
+              <View className="bg-[#1E1A3F] p-5 rounded-3xl border border-[#322C63] shadow-md">
                 <View className="flex-row items-center justify-between mb-2">
                   <View className="flex-row items-center gap-2">
-                    <View className="w-8 h-8 rounded-full bg-white/10 items-center justify-center">
-                      <AppIcon name="dollar-sign" size={16} color="#F5D0A9" />
+                    <View className="w-8 h-8 rounded-full bg-[#2A2460] border border-[#322C63] items-center justify-center">
+                      <AppIcon name="dollar-sign" size={16} color="#FFC53D" />
                     </View>
-                    <Text className="text-[#C9C9CE] text-[13px] font-medium uppercase tracking-wider">
+                    <Text className="text-[#B8B3E0] text-[13px] font-medium uppercase tracking-wider">
                       Gross Marketplace Volume (GMV)
                     </Text>
                   </View>
-                  <View className="bg-[#34D399]/15 px-2.5 py-1 rounded-full border border-[#34D399]/30">
-                    <Text className="text-[#34D399] text-[11px] font-bold">100% SECURE</Text>
+                  <View className="bg-[#123B34] px-2.5 py-1 rounded-full border border-[#6EE7B7]/40">
+                    <Text className="text-[#6EE7B7] text-[11px] font-bold">100% SECURE</Text>
                   </View>
                 </View>
 
                 <Text className="text-white text-[32px] font-extrabold tracking-tight">
                   ₹{(stats?.grossMerchandiseValue || 0).toLocaleString("en-IN")}
                 </Text>
-                <Text className="text-[#A7A7AB] text-[12px] mt-1">
+                <Text className="text-[#B8B3E0] text-[12px] mt-1">
                   Cumulative celebration service booking value agreed on CelebrateHub
                 </Text>
 
                 {/* Sub-metrics breakdown */}
-                <View className="flex-row items-center justify-between mt-5 pt-4 border-t border-white/10">
+                <View className="flex-row items-center justify-between mt-5 pt-4 border-t border-[#322C63]">
                   <View>
-                    <Text className="text-[#A7A7AB] text-[11px]">Platform Commission Earned</Text>
-                    <Text className="text-[#34D399] text-[16px] font-bold">
+                    <Text className="text-[#B8B3E0] text-[11px]">Platform Commission Earned</Text>
+                    <Text className="text-[#6EE7B7] text-[16px] font-bold">
                       ₹{(stats?.totalCommissions || 0).toLocaleString("en-IN")}
                     </Text>
                   </View>
                   <View>
-                    <Text className="text-[#A7A7AB] text-[11px]">Subscription MRR</Text>
-                    <Text className="text-[#FBBF24] text-[16px] font-bold">
+                    <Text className="text-[#B8B3E0] text-[11px]">Subscription MRR</Text>
+                    <Text className="text-[#FFC53D] text-[16px] font-bold">
                       ₹{(stats?.mrr || 0).toLocaleString("en-IN")}/mo
                     </Text>
                   </View>
                   <View>
-                    <Text className="text-[#A7A7AB] text-[11px]">Active Plans</Text>
+                    <Text className="text-[#B8B3E0] text-[11px]">Active Plans</Text>
                     <Text className="text-white text-[16px] font-bold">
                       {stats?.activeSubscriptions || 0} active
                     </Text>
@@ -279,88 +279,88 @@ export default function AdminAnalyticsScreen() {
 
               {/* 2x2 Grid of Core Metrics */}
               <View className="flex-row gap-3">
-                <View className="flex-1 bg-white p-4 rounded-2xl border border-[#E8E6E1]">
+                <View className="flex-1 bg-[#1E1A3F] p-4 rounded-2xl border border-[#322C63]">
                   <View className="flex-row items-center justify-between mb-2">
-                    <AppIcon name="calendar" size={16} color="#2563EB" />
-                    <Text className="text-[#2563EB] text-[11px] font-bold">EVENTS</Text>
+                    <AppIcon name="calendar" size={16} color="#7C5CFF" />
+                    <Text className="text-[#7C5CFF] text-[11px] font-bold">EVENTS</Text>
                   </View>
-                  <Text className="text-[#1C1C1E] text-[22px] font-bold">{stats?.totalEvents || 0}</Text>
-                  <Text className="text-[#6E6E73] text-[11px] mt-0.5">
+                  <Text className="text-white text-[22px] font-bold">{stats?.totalEvents || 0}</Text>
+                  <Text className="text-[#B8B3E0] text-[11px] mt-0.5">
                     {stats?.activeEvents || 0} in progress
                   </Text>
                 </View>
 
-                <View className="flex-1 bg-white p-4 rounded-2xl border border-[#E8E6E1]">
+                <View className="flex-1 bg-[#1E1A3F] p-4 rounded-2xl border border-[#322C63]">
                   <View className="flex-row items-center justify-between mb-2">
-                    <AppIcon name="inbox" size={16} color="#D97706" />
-                    <Text className="text-[#D97706] text-[11px] font-bold">LEAD CONV.</Text>
+                    <AppIcon name="inbox" size={16} color="#FFC53D" />
+                    <Text className="text-[#FFC53D] text-[11px] font-bold">LEAD CONV.</Text>
                   </View>
-                  <Text className="text-[#1C1C1E] text-[22px] font-bold">
+                  <Text className="text-white text-[22px] font-bold">
                     {stats?.leadConversionRate || 0}%
                   </Text>
-                  <Text className="text-[#6E6E73] text-[11px] mt-0.5">
+                  <Text className="text-[#B8B3E0] text-[11px] mt-0.5">
                     {stats?.acceptedLeads || 0} of {stats?.totalLeads || 0} accepted
                   </Text>
                 </View>
               </View>
 
               <View className="flex-row gap-3">
-                <View className="flex-1 bg-white p-4 rounded-2xl border border-[#E8E6E1]">
+                <View className="flex-1 bg-[#1E1A3F] p-4 rounded-2xl border border-[#322C63]">
                   <View className="flex-row items-center justify-between mb-2">
-                    <AppIcon name="check-circle" size={16} color="#059669" />
-                    <Text className="text-[#059669] text-[11px] font-bold">BOOKINGS</Text>
+                    <AppIcon name="check-circle" size={16} color="#6EE7B7" />
+                    <Text className="text-[#6EE7B7] text-[11px] font-bold">BOOKINGS</Text>
                   </View>
-                  <Text className="text-[#1C1C1E] text-[22px] font-bold">{stats?.totalBookings || 0}</Text>
-                  <Text className="text-[#6E6E73] text-[11px] mt-0.5">
+                  <Text className="text-white text-[22px] font-bold">{stats?.totalBookings || 0}</Text>
+                  <Text className="text-[#B8B3E0] text-[11px] mt-0.5">
                     {stats?.completedBookings || 0} fulfilled
                   </Text>
                 </View>
 
-                <View className="flex-1 bg-white p-4 rounded-2xl border border-[#E8E6E1]">
+                <View className="flex-1 bg-[#1E1A3F] p-4 rounded-2xl border border-[#322C63]">
                   <View className="flex-row items-center justify-between mb-2">
-                    <AppIcon name="users" size={16} color="#5B5BD6" />
-                    <Text className="text-[#5B5BD6] text-[11px] font-bold">COMMUNITY</Text>
+                    <AppIcon name="users" size={16} color="#D6307F" />
+                    <Text className="text-[#D6307F] text-[11px] font-bold">COMMUNITY</Text>
                   </View>
-                  <Text className="text-[#1C1C1E] text-[22px] font-bold">{stats?.totalUsers || 0}</Text>
-                  <Text className="text-[#6E6E73] text-[11px] mt-0.5">
+                  <Text className="text-white text-[22px] font-bold">{stats?.totalUsers || 0}</Text>
+                  <Text className="text-[#B8B3E0] text-[11px] mt-0.5">
                     {stats?.providersCount || 0} providers / {stats?.customersCount || 0} hosts
                   </Text>
                 </View>
               </View>
 
               {/* Recent High-Value Bookings & Commission Ledger */}
-              <View className="bg-white p-4 rounded-2xl border border-[#E8E6E1] mt-2">
+              <View className="bg-[#1E1A3F] p-4 rounded-2xl border border-[#322C63] mt-2">
                 <View className="flex-row items-center justify-between mb-3">
-                  <Text className="text-[#1C1C1E] text-[15px] font-bold">Recent Bookings & Commissions</Text>
-                  <Text className="text-[#6E6E73] text-[11px]">Latest transactions</Text>
+                  <Text className="text-white text-[15px] font-bold">Recent Bookings & Commissions</Text>
+                  <Text className="text-[#B8B3E0] text-[11px]">Latest transactions</Text>
                 </View>
 
                 {!analytics?.recentBookings || analytics.recentBookings.length === 0 ? (
                   <View className="py-8 items-center justify-center">
-                    <AppIcon name="inbox" size={28} color="#A7A7AB" />
-                    <Text className="text-[#6E6E73] text-[13px] mt-2">No bookings recorded yet</Text>
+                    <AppIcon name="inbox" size={28} color="#7C77A8" />
+                    <Text className="text-[#B8B3E0] text-[13px] mt-2">No bookings recorded yet</Text>
                   </View>
                 ) : (
                   analytics.recentBookings.slice(0, 5).map((b, idx, arr) => (
                     <View
                       key={b.id}
                       className={`py-3 flex-row items-center justify-between ${
-                        idx < arr.length - 1 ? "border-b border-[#F0EEEA]" : ""
+                        idx < arr.length - 1 ? "border-b border-[#322C63]" : ""
                       }`}
                     >
                       <View className="flex-1 pr-3">
-                        <Text className="text-[#1C1C1E] text-[13px] font-semibold">
+                        <Text className="text-white text-[13px] font-semibold">
                           {b.providerName || "Provider"}
                         </Text>
-                        <Text className="text-[#6E6E73] text-[11px]">
+                        <Text className="text-[#B8B3E0] text-[11px]">
                           Host: {b.customerName || "Customer"}
                         </Text>
                       </View>
                       <View className="items-end">
-                        <Text className="text-[#1C1C1E] text-[14px] font-bold">
+                        <Text className="text-white text-[14px] font-bold">
                           ₹{Number(b.agreedPrice || 0).toLocaleString("en-IN")}
                         </Text>
-                        <Text className="text-[#059669] text-[11px] font-medium">
+                        <Text className="text-[#6EE7B7] text-[11px] font-medium">
                           +₹{Number(b.commissionAmount || 0).toLocaleString("en-IN")} commission
                         </Text>
                       </View>
@@ -376,28 +376,28 @@ export default function AdminAnalyticsScreen() {
           {/* ============================================================ */}
           {activeTab === "CONTROLS" && (
             <View className="gap-4">
-              <View className="bg-white p-4 rounded-2xl border border-[#E8E6E1]">
+              <View className="bg-[#1E1A3F] p-4 rounded-2xl border border-[#322C63]">
                 <View className="flex-row items-center gap-2 mb-1">
-                  <AppIcon name="shield" size={16} color="#1C1C1E" />
-                  <Text className="text-[#1C1C1E] text-[14px] font-bold">Admin Platform Policy Engine</Text>
+                  <AppIcon name="shield" size={16} color="#7C5CFF" />
+                  <Text className="text-white text-[14px] font-bold">Admin Platform Policy Engine</Text>
                 </View>
-                <Text className="text-[#6E6E73] text-[12px] leading-4">
+                <Text className="text-[#B8B3E0] text-[12px] leading-4">
                   Adjust dispatch quotas, take rates, and automation rules in real time. Changes take
                   effect on all upcoming leads and bookings immediately.
                 </Text>
               </View>
 
               {/* CONTROL 1: Max Providers Per Lead */}
-              <View className="bg-white p-5 rounded-2xl border border-[#E8E6E1]">
+              <View className="bg-[#1E1A3F] p-5 rounded-2xl border border-[#322C63]">
                 <View className="flex-row items-center justify-between mb-2">
                   <View className="flex-1 pr-2">
-                    <Text className="text-[#1C1C1E] text-[15px] font-bold">Max Providers Per Lead</Text>
-                    <Text className="text-[#6E6E73] text-[12px] mt-0.5">
+                    <Text className="text-white text-[15px] font-bold">Max Providers Per Lead</Text>
+                    <Text className="text-[#B8B3E0] text-[12px] mt-0.5">
                       How many eligible vendors receive each instant lead dispatch notification.
                     </Text>
                   </View>
-                  <View className="w-12 h-12 rounded-2xl bg-[#F7F7F5] items-center justify-center border border-[#E8E6E1]">
-                    <Text className="text-[#1C1C1E] text-[20px] font-extrabold">{maxProviders}</Text>
+                  <View className="w-12 h-12 rounded-2xl bg-[#2A2460] items-center justify-center border border-[#322C63]">
+                    <Text className="text-white text-[20px] font-extrabold">{maxProviders}</Text>
                   </View>
                 </View>
 
@@ -405,24 +405,24 @@ export default function AdminAnalyticsScreen() {
                 <View className="flex-row items-center gap-3 mt-3">
                   <TouchableOpacity
                     onPress={() => setMaxProviders((prev) => Math.max(1, prev - 1))}
-                    className="w-12 h-11 rounded-xl bg-white items-center justify-center border border-[#E3E1DC]"
+                    className="w-12 h-11 rounded-xl bg-[#2A2460] items-center justify-center border border-[#322C63]"
                     activeOpacity={0.7}
                   >
-                    <AppIcon name="minus" size={18} color="#1C1C1E" />
+                    <AppIcon name="minus" size={18} color="#FFFFFF" />
                   </TouchableOpacity>
 
-                  <View className="flex-1 bg-[#F7F7F5] h-11 rounded-xl items-center justify-center border border-[#E8E6E1]">
-                    <Text className="text-[#1C1C1E] text-[14px] font-bold">
+                  <View className="flex-1 bg-[#2A2460] h-11 rounded-xl items-center justify-center border border-[#322C63]">
+                    <Text className="text-white text-[14px] font-bold">
                       {maxProviders} {maxProviders === 1 ? "vendor" : "vendors"} alerted
                     </Text>
                   </View>
 
                   <TouchableOpacity
                     onPress={() => setMaxProviders((prev) => Math.min(20, prev + 1))}
-                    className="w-12 h-11 rounded-xl bg-white items-center justify-center border border-[#E3E1DC]"
+                    className="w-12 h-11 rounded-xl bg-[#2A2460] items-center justify-center border border-[#322C63]"
                     activeOpacity={0.7}
                   >
-                    <AppIcon name="plus" size={18} color="#1C1C1E" />
+                    <AppIcon name="plus" size={18} color="#FFFFFF" />
                   </TouchableOpacity>
 
                   <TouchableOpacity
@@ -434,7 +434,7 @@ export default function AdminAnalyticsScreen() {
                         "Max Providers Per Lead"
                       )
                     }
-                    className="px-4 h-11 rounded-xl bg-[#1C1C1E] items-center justify-center"
+                    className="px-4 h-11 rounded-xl bg-[#7C5CFF] items-center justify-center"
                     activeOpacity={0.85}
                   >
                     {savingSetting === "MAX_PROVIDERS_PER_LEAD" ? (
@@ -444,22 +444,22 @@ export default function AdminAnalyticsScreen() {
                     )}
                   </TouchableOpacity>
                 </View>
-                <Text className="text-[#8E8E93] text-[11px] mt-2 italic">
+                <Text className="text-[#7C77A8] text-[11px] mt-2 italic">
                   Default: 5 providers. First vendor to accept wins the celebration lead.
                 </Text>
               </View>
 
               {/* CONTROL 2: Platform Commission Rate (%) */}
-              <View className="bg-white p-5 rounded-2xl border border-[#E8E6E1]">
+              <View className="bg-[#1E1A3F] p-5 rounded-2xl border border-[#322C63]">
                 <View className="flex-row items-center justify-between mb-2">
                   <View className="flex-1 pr-2">
-                    <Text className="text-[#1C1C1E] text-[15px] font-bold">Platform Commission Rate (%)</Text>
-                    <Text className="text-[#6E6E73] text-[12px] mt-0.5">
+                    <Text className="text-white text-[15px] font-bold">Platform Commission Rate (%)</Text>
+                    <Text className="text-[#B8B3E0] text-[12px] mt-0.5">
                       Take-rate retained by CelebrateHub on confirmed customer service bookings.
                     </Text>
                   </View>
-                  <View className="w-12 h-12 rounded-2xl bg-[#E7F4EC] items-center justify-center border border-[#BFE3CD]">
-                    <Text className="text-[#059669] text-[18px] font-extrabold">{commissionRate}%</Text>
+                  <View className="w-12 h-12 rounded-2xl bg-[#123B34] items-center justify-center border border-[#6EE7B7]/40">
+                    <Text className="text-[#6EE7B7] text-[18px] font-extrabold">{commissionRate}%</Text>
                   </View>
                 </View>
 
@@ -472,13 +472,13 @@ export default function AdminAnalyticsScreen() {
                       activeOpacity={0.8}
                       className={`flex-1 py-2 rounded-lg items-center justify-center border ${
                         commissionRate === rate
-                          ? "bg-[#1C1C1E] border-[#1C1C1E]"
-                          : "bg-white border-[#E3E1DC]"
+                          ? "bg-[#7C5CFF] border-[#7C5CFF]"
+                          : "bg-[#2A2460] border-[#322C63]"
                       }`}
                     >
                       <Text
                         className={`text-[12px] font-bold ${
-                          commissionRate === rate ? "text-white" : "text-[#6E6E73]"
+                          commissionRate === rate ? "text-white" : "text-[#B8B3E0]"
                         }`}
                       >
                         {rate}%
@@ -496,7 +496,7 @@ export default function AdminAnalyticsScreen() {
                       "Platform Commission Rate"
                     )
                   }
-                  className="w-full h-11 rounded-xl bg-[#1C1C1E] items-center justify-center mt-1"
+                  className="w-full h-11 rounded-xl bg-[#7C5CFF] items-center justify-center mt-1"
                   activeOpacity={0.85}
                 >
                   {savingSetting === "PLATFORM_COMMISSION_PCT" ? (
@@ -508,7 +508,7 @@ export default function AdminAnalyticsScreen() {
                   )}
                 </TouchableOpacity>
 
-                <Text className="text-[#8E8E93] text-[11px] mt-2 italic">
+                <Text className="text-[#7C77A8] text-[11px] mt-2 italic">
                   Example: On a ₹50,000 catering booking, platform takes ₹
                   {((50000 * commissionRate) / 100).toLocaleString("en-IN")}, provider receives ₹
                   {(50000 - (50000 * commissionRate) / 100).toLocaleString("en-IN")}.
@@ -516,10 +516,10 @@ export default function AdminAnalyticsScreen() {
               </View>
 
               {/* CONTROL 3: Instant Dispatch Toggle */}
-              <View className="bg-white p-4 rounded-2xl border border-[#E8E6E1] flex-row items-center justify-between">
+              <View className="bg-[#1E1A3F] p-4 rounded-2xl border border-[#322C63] flex-row items-center justify-between">
                 <View className="flex-1 pr-3">
-                  <Text className="text-[#1C1C1E] text-[14px] font-semibold">Instant Lead Distribution</Text>
-                  <Text className="text-[#6E6E73] text-[11px]">
+                  <Text className="text-white text-[14px] font-semibold">Instant Lead Distribution</Text>
+                  <Text className="text-[#B8B3E0] text-[11px]">
                     Alert matching vendors within 3 seconds of customer posting.
                   </Text>
                 </View>
@@ -529,16 +529,16 @@ export default function AdminAnalyticsScreen() {
                     setInstantMatching(val);
                     handleSaveSetting("INSTANT_LEAD_MATCHING", String(val), "Instant Lead Matching");
                   }}
-                  trackColor={{ false: "#D6D3CE", true: "#1C1C1E" }}
+                  trackColor={{ false: "#322C63", true: "#10B981" }}
                   thumbColor="#FFFFFF"
                 />
               </View>
 
               {/* CONTROL 4: Auto Approve Verified KYC */}
-              <View className="bg-white p-4 rounded-2xl border border-[#E8E6E1] flex-row items-center justify-between">
+              <View className="bg-[#1E1A3F] p-4 rounded-2xl border border-[#322C63] flex-row items-center justify-between">
                 <View className="flex-1 pr-3">
-                  <Text className="text-[#1C1C1E] text-[14px] font-semibold">Auto-Approve Verified KYC</Text>
-                  <Text className="text-[#6E6E73] text-[11px]">
+                  <Text className="text-white text-[14px] font-semibold">Auto-Approve Verified KYC</Text>
+                  <Text className="text-[#B8B3E0] text-[11px]">
                     Skip manual review if business GSTIN and bank proofs match.
                   </Text>
                 </View>
@@ -552,13 +552,13 @@ export default function AdminAnalyticsScreen() {
                       "Auto-Approve Verified KYC"
                     );
                   }}
-                  trackColor={{ false: "#D6D3CE", true: "#1C1C1E" }}
+                  trackColor={{ false: "#322C63", true: "#10B981" }}
                   thumbColor="#FFFFFF"
                 />
               </View>
 
               {settings.length === 0 && (
-                <Text className="text-[#8E8E93] text-[11px] text-center italic mt-1">
+                <Text className="text-[#7C77A8] text-[11px] text-center italic mt-1">
                   No saved platform settings found — defaults are in effect.
                 </Text>
               )}
@@ -571,9 +571,9 @@ export default function AdminAnalyticsScreen() {
           {activeTab === "FUNNEL" && (
             <View className="gap-4">
               {/* Lead Conversion Funnel */}
-              <View className="bg-white p-5 rounded-2xl border border-[#E8E6E1]">
-                <Text className="text-[#1C1C1E] text-[15px] font-bold mb-1">Lead Conversion Funnel</Text>
-                <Text className="text-[#6E6E73] text-[12px] mb-4">
+              <View className="bg-[#1E1A3F] p-5 rounded-2xl border border-[#322C63]">
+                <Text className="text-white text-[15px] font-bold mb-1">Lead Conversion Funnel</Text>
+                <Text className="text-[#B8B3E0] text-[12px] mb-4">
                   Provider response lifecycle from lead dispatch to confirmed booking
                 </Text>
 
@@ -581,21 +581,21 @@ export default function AdminAnalyticsScreen() {
                   {/* Step 1: Dispatched */}
                   <View>
                     <View className="flex-row items-center justify-between mb-1">
-                      <Text className="text-[#3A3A3C] text-[12px] font-medium">1. Leads Dispatched</Text>
-                      <Text className="text-[#1C1C1E] text-[12px] font-bold">
+                      <Text className="text-[#B8B3E0] text-[12px] font-medium">1. Leads Dispatched</Text>
+                      <Text className="text-white text-[12px] font-bold">
                         {analytics?.funnel?.totalDispatched || 0}
                       </Text>
                     </View>
-                    <View className="h-2 rounded-full bg-[#EFEDEA] overflow-hidden">
-                      <View className="h-full bg-[#1C1C1E] rounded-full w-full" />
+                    <View className="h-2 rounded-full bg-[#2A2460] overflow-hidden">
+                      <View className="h-full bg-[#7C5CFF] rounded-full w-full" />
                     </View>
                   </View>
 
                   {/* Step 2: Viewed */}
                   <View>
                     <View className="flex-row items-center justify-between mb-1">
-                      <Text className="text-[#3A3A3C] text-[12px] font-medium">2. Viewed by Vendor</Text>
-                      <Text className="text-[#1C1C1E] text-[12px] font-bold">
+                      <Text className="text-[#B8B3E0] text-[12px] font-medium">2. Viewed by Vendor</Text>
+                      <Text className="text-white text-[12px] font-bold">
                         {analytics?.funnel?.viewedCount || 0} (
                         {analytics?.funnel?.totalDispatched
                           ? Math.round(
@@ -607,9 +607,9 @@ export default function AdminAnalyticsScreen() {
                         %)
                       </Text>
                     </View>
-                    <View className="h-2 rounded-full bg-[#EFEDEA] overflow-hidden">
+                    <View className="h-2 rounded-full bg-[#2A2460] overflow-hidden">
                       <View
-                        className="h-full bg-[#5B5BD6] rounded-full"
+                        className="h-full bg-[#FFC53D] rounded-full"
                         style={{
                           width: `${
                             analytics?.funnel?.totalDispatched
@@ -631,8 +631,8 @@ export default function AdminAnalyticsScreen() {
                   {/* Step 3: Accepted */}
                   <View>
                     <View className="flex-row items-center justify-between mb-1">
-                      <Text className="text-[#3A3A3C] text-[12px] font-medium">3. Accepted (Winner)</Text>
-                      <Text className="text-[#1C1C1E] text-[12px] font-bold">
+                      <Text className="text-[#B8B3E0] text-[12px] font-medium">3. Accepted (Winner)</Text>
+                      <Text className="text-white text-[12px] font-bold">
                         {analytics?.funnel?.acceptedCount || 0} (
                         {analytics?.funnel?.totalDispatched
                           ? Math.round(
@@ -644,9 +644,9 @@ export default function AdminAnalyticsScreen() {
                         %)
                       </Text>
                     </View>
-                    <View className="h-2 rounded-full bg-[#EFEDEA] overflow-hidden">
+                    <View className="h-2 rounded-full bg-[#2A2460] overflow-hidden">
                       <View
-                        className="h-full bg-[#059669] rounded-full"
+                        className="h-full bg-[#6EE7B7] rounded-full"
                         style={{
                           width: `${
                             analytics?.funnel?.totalDispatched
@@ -668,15 +668,15 @@ export default function AdminAnalyticsScreen() {
               </View>
 
               {/* Category Demand vs Supply Balance */}
-              <View className="bg-white p-5 rounded-2xl border border-[#E8E6E1]">
-                <Text className="text-[#1C1C1E] text-[15px] font-bold mb-1">Category Demand & Supply</Text>
-                <Text className="text-[#6E6E73] text-[12px] mb-4">
+              <View className="bg-[#1E1A3F] p-5 rounded-2xl border border-[#322C63]">
+                <Text className="text-white text-[15px] font-bold mb-1">Category Demand & Supply</Text>
+                <Text className="text-[#B8B3E0] text-[12px] mb-4">
                   Event service requests vs registered providers across categories
                 </Text>
 
                 {!analytics?.categoryStats || analytics.categoryStats.length === 0 ? (
                   <View className="py-6 items-center">
-                    <Text className="text-[#6E6E73] text-[13px]">No categories catalogued</Text>
+                    <Text className="text-[#B8B3E0] text-[13px]">No categories catalogued</Text>
                   </View>
                 ) : (
                   analytics.categoryStats.map((cat, idx, arr) => {
@@ -686,12 +686,12 @@ export default function AdminAnalyticsScreen() {
                       <View
                         key={cat.slug || cat.name}
                         className={`py-3 flex-row items-center justify-between ${
-                          idx < arr.length - 1 ? "border-b border-[#F0EEEA]" : ""
+                          idx < arr.length - 1 ? "border-b border-[#322C63]" : ""
                         }`}
                       >
                         <View className="flex-1 pr-2">
-                          <Text className="text-[#1C1C1E] text-[14px] font-medium">{cat.name}</Text>
-                          <Text className="text-[#6E6E73] text-[11px]">
+                          <Text className="text-white text-[14px] font-medium">{cat.name}</Text>
+                          <Text className="text-[#B8B3E0] text-[11px]">
                             {cat.leadsCount || 0} requests • {cat.providersCount || 0} providers
                           </Text>
                         </View>
@@ -699,13 +699,13 @@ export default function AdminAnalyticsScreen() {
                         <View
                           className={`px-2.5 py-1 rounded-full border ${
                             isHighDemand
-                              ? "bg-[#FBECEB] border-[#F2C7C3]"
-                              : "bg-[#E7F4EC] border-[#BFE3CD]"
+                              ? "bg-[#3F1420] border-[#FF8FA3]/30"
+                              : "bg-[#123B34] border-[#6EE7B7]/40"
                           }`}
                         >
                           <Text
                             className={`text-[10px] font-bold ${
-                              isHighDemand ? "text-[#B3261E]" : "text-[#059669]"
+                              isHighDemand ? "text-[#FF8FA3]" : "text-[#6EE7B7]"
                             }`}
                           >
                             {isHighDemand ? "HIGH DEMAND" : "BALANCED"}

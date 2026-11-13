@@ -8,35 +8,42 @@ module.exports = {
     extend: {
       colors: {
         bg: {
-          DEFAULT: "#F7F7F5",
-          card: "#FFFFFF",
-          input: "#FFFFFF",
-          muted: "#EFEDEA",
+          DEFAULT: "#120F2B",
+          card: "#1E1A3F",
+          input: "#1E1A3F",
+          muted: "#2A2460",
         },
-        rose: {
-          brand: "#1C1C1E",
-          dim: "rgba(28,28,30,0.06)",
-          glow: "rgba(28,28,30,0.12)",
+        surface: {
+          DEFAULT: "#1E1A3F",
+          raised: "#2A2460",
         },
-        accent: {
-          DEFAULT: "#9A3B26",
-          soft: "#F9EFE9",
-          muted: "#C97B5D",
-        },
-        purple: {
-          brand: "#5B5BD6",
+        brand: {
+          primary: "#7C5CFF",
+          secondary: "#D6307F",
+          accent: "#FFC53D",
         },
         border: {
-          subtle: "#E8E6E1",
-          faint: "#EFEEEA",
-          rose: "rgba(28,28,30,0.16)",
+          subtle: "#322C63",
+          faint: "#2A2460",
+          focus: "#7C5CFF",
         },
         text: {
-          primary: "#1C1C1E",
-          secondary: "#3A3A3C",
-          muted: "#6E6E73",
-          dim: "#A7A7AB",
-          error: "#B3261E",
+          primary: "#FFFFFF",
+          secondary: "#B8B3E0",
+          muted: "#B8B3E0",
+          dim: "#7C77A6",
+          error: "#FF8FA3",
+          onAccent: "#1D1745",
+        },
+        status: {
+          success: "#6EE7B7",
+          "success-bg": "#123B34",
+          warning: "#FFC53D",
+          "warning-bg": "#3D2F0F",
+          error: "#FF8FA3",
+          "error-bg": "#3F1420",
+          info: "#8FB4FF",
+          "info-bg": "#1B2A55",
         },
       },
       borderRadius: {

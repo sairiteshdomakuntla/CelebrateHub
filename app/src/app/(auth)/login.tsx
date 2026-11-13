@@ -84,8 +84,8 @@ export default function LoginScreen() {
   }
 
   return (
-    <View className="flex-1 bg-[#F7F7F5]">
-      <StatusBar style="dark" />
+    <View className="flex-1 bg-[#120F2B]">
+      <StatusBar style="light" />
       <SafeAreaView className="flex-1">
         <KeyboardAvoidingView
           behavior="padding"
@@ -101,39 +101,39 @@ export default function LoginScreen() {
               className="mb-6 self-start flex-row items-center gap-1 py-2"
               hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
             >
-              <AppIcon name="chevron-left" size={17} color="#1C1C1E" />
-              <Text className="text-[#1C1C1E] text-[15px] font-medium">Back</Text>
+              <AppIcon name="chevron-left" size={17} color="#B8B3E0" />
+              <Text className="text-[#B8B3E0] text-[15px] font-medium">Back</Text>
             </TouchableOpacity>
 
             <View className="mb-7">
               <BrandMark size={48} />
-              <View className="bg-white self-start px-3 py-1.5 rounded-full mt-5 border border-[#E8E6E1]">
-                <Text className="text-[#6E6E73] text-[12px] font-semibold">
+              <View className="bg-[#1E1A3F] self-start px-3 py-1.5 rounded-full mt-5 border border-[#322C63]">
+                <Text className="text-[#B8B3E0] text-[12px] font-semibold">
                   {meta.pill}
                 </Text>
               </View>
-              <Text className="text-[#1C1C1E] text-[28px] font-bold tracking-tight mt-3">
+              <Text className="text-white text-[28px] font-bold tracking-tight mt-3">
                 {meta.title}
               </Text>
-              <Text className="text-[#6E6E73] text-[15px] mt-1.5 leading-[22px]">
+              <Text className="text-[#B8B3E0] text-[15px] mt-1.5 leading-[22px]">
                 {meta.subtitle}
               </Text>
             </View>
 
             <View className="mb-6">
-              <View className="flex-row bg-[#ECEAE6] rounded-xl p-1">
+              <View className="flex-row bg-[#1E1A3F] rounded-xl p-1 border border-[#322C63]">
                 {(["email", "phone"] as LoginMethod[]).map((m) => (
                   <TouchableOpacity
                     key={m}
                     className={`flex-1 py-2.5 items-center rounded-lg ${
-                      method === m ? "bg-white border border-[#E0DED8]" : ""
+                      method === m ? "bg-[#2A2460] border border-[#322C63]" : ""
                     }`}
                     onPress={() => { setMethod(m); setErrors({}); }}
                     activeOpacity={0.8}
                   >
                     <Text
                       className={`text-[14px] font-semibold capitalize ${
-                        method === m ? "text-[#1C1C1E]" : "text-[#6E6E73]"
+                        method === m ? "text-white" : "text-[#7C77A6]"
                       }`}
                     >
                       {m}
@@ -143,7 +143,7 @@ export default function LoginScreen() {
               </View>
             </View>
 
-            <View className="bg-white rounded-2xl border border-[#E8E6E1] p-5 mb-4">
+            <View className="bg-[#1E1A3F] rounded-2xl border border-[#322C63] p-5 mb-4">
               {method === "email" ? (
                 <FormInput
                   label="Email address"
@@ -175,7 +175,7 @@ export default function LoginScreen() {
               />
 
               <TouchableOpacity className="self-end mt-1">
-                <Text className="text-[#1C1C1E] text-[13px] font-semibold">
+                <Text className="text-[#7C5CFF] text-[13px] font-semibold">
                   Forgot password?
                 </Text>
               </TouchableOpacity>
@@ -190,14 +190,14 @@ export default function LoginScreen() {
             />
 
             {role === "provider" || role === "admin" ? (
-              <View className="mt-5 p-4 bg-white border border-[#E8E6E1] rounded-2xl">
+              <View className="mt-5 p-4 bg-[#1E1A3F] border border-[#322C63] rounded-2xl">
                 <View className="flex-row items-center gap-2 mb-1">
-                  <AppIcon name="info" size={15} color="#6E6E73" />
-                  <Text className="text-[#1C1C1E] font-semibold text-[13px]">
+                  <AppIcon name="info" size={15} color="#8FB4FF" />
+                  <Text className="text-white font-semibold text-[13px]">
                     {role === "provider" ? "New service provider?" : "Need admin access?"}
                   </Text>
                 </View>
-                <Text className="text-[#6E6E73] text-[13px] leading-[19px]">
+                <Text className="text-[#B8B3E0] text-[13px] leading-[19px]">
                   {role === "provider"
                     ? "Provider accounts are created and verified by CelebrateHub administration. Contact support to get onboarded."
                     : "Admin accounts are provisioned by platform owners. Self-registration is disabled."}
@@ -206,14 +206,14 @@ export default function LoginScreen() {
             ) : (
               <View className="items-center mt-6">
                 <View className="flex-row items-center justify-center">
-                  <Text className="text-[#6E6E73] text-[14px]">New to CelebrateHub? </Text>
+                  <Text className="text-[#B8B3E0] text-[14px]">New to CelebrateHub? </Text>
                   <TouchableOpacity onPress={() => router.push("/(auth)/register" as any)}>
-                    <Text className="text-[#1C1C1E] text-[14px] font-semibold underline">
+                    <Text className="text-[#7C5CFF] text-[14px] font-semibold underline">
                       Create account
                     </Text>
                   </TouchableOpacity>
                 </View>
-                <Text className="text-[#A7A7AB] text-[12px] text-center mt-2 leading-[17px]">
+                <Text className="text-[#7C77A6] text-[12px] text-center mt-2 leading-[17px]">
                   Registration is for customers only. Providers and admins are onboarded by our team.
                 </Text>
               </View>

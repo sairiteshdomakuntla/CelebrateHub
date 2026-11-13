@@ -356,7 +356,7 @@ export function LocationPickerModal({
         <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
         <style>
           * { box-sizing: border-box; }
-          body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #F4F3EF; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+          body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #120F2B; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
           #map { width: 100%; height: 100%; }
           
           /* Custom celebratory marker */
@@ -375,11 +375,11 @@ export function LocationPickerModal({
           .custom-pin {
             width: 30px;
             height: 30px;
-            background: linear-gradient(135deg, #A855F7 0%, #7C3AED 100%);
+            background: linear-gradient(135deg, #7C5CFF 0%, #D6307F 100%);
             border-radius: 50% 50% 50% 0;
             transform: rotate(-45deg);
             border: 3px solid #FFFFFF;
-            box-shadow: 0 4px 14px rgba(124, 58, 237, 0.55);
+            box-shadow: 0 4px 14px rgba(124, 92, 255, 0.65);
             cursor: grab;
             display: flex;
             align-items: center;
@@ -398,7 +398,7 @@ export function LocationPickerModal({
             width: 44px;
             height: 44px;
             border-radius: 50%;
-            background: rgba(139, 92, 246, 0.35);
+            background: rgba(124, 92, 255, 0.4);
             animation: pulse-ring 2s infinite ease-out;
             pointer-events: none;
           }
@@ -407,18 +407,18 @@ export function LocationPickerModal({
             100% { transform: scale(1.6); opacity: 0; }
           }
           .leaflet-bar a {
-            background-color: #FFFFFF !important;
-            color: #1C1C1E !important;
-            border-color: #E8E6E1 !important;
+            background-color: #1E1A3F !important;
+            color: #FFFFFF !important;
+            border-color: #322C63 !important;
             font-size: 16px !important;
           }
           .leaflet-bar a:hover {
-            background-color: #F7F7F5 !important;
-            color: #7C3AED !important;
+            background-color: #2A2460 !important;
+            color: #7C5CFF !important;
           }
           .leaflet-control-attribution {
-            background: rgba(255, 255, 255, 0.8) !important;
-            color: #8E8E93 !important;
+            background: rgba(18, 15, 43, 0.8) !important;
+            color: #B8B3E0 !important;
             font-size: 9px !important;
           }
         </style>
@@ -531,7 +531,7 @@ export function LocationPickerModal({
 
   return (
     <Modal visible={visible} animationType="slide" transparent>
-      <View className="flex-1 bg-black/60 justify-end">
+      <View className="flex-1 bg-black/75 justify-end">
         {/* Backdrop Dismiss touchable */}
         <TouchableOpacity
           activeOpacity={1}
@@ -542,24 +542,24 @@ export function LocationPickerModal({
         {/* Modal Card with explicit height to prevent flex collapse */}
         <View
           style={{ height: sheetHeight }}
-          className="bg-white rounded-t-3xl border-t border-[#E8E6E1] flex-col overflow-hidden shadow-2xl"
+          className="bg-[#1E1A3F] rounded-t-3xl border-t border-[#322C63] flex-col overflow-hidden shadow-2xl"
         >
           {/* Top Sheet Drag Indicator */}
           <View className="items-center pt-2.5 pb-1">
-            <View className="w-10 h-1.5 rounded-full bg-[#D1D1D6]" />
+            <View className="w-10 h-1.5 rounded-full bg-[#322C63]" />
           </View>
 
           {/* Header */}
-          <View className="px-5 pt-2 pb-3.5 border-b border-[#F0EFEA] flex-row items-center justify-between bg-white">
+          <View className="px-5 pt-2 pb-3.5 border-b border-[#322C63] flex-row items-center justify-between bg-[#1E1A3F]">
             <View className="flex-row items-center gap-3 flex-1 pr-2">
-              <View className="w-10 h-10 rounded-full bg-[#F3EEFD] items-center justify-center border border-[#E9DFFC]">
-                <AppIcon name="map-pin" size={18} color="#7C3AED" />
+              <View className="w-10 h-10 rounded-full bg-[#2A2460] items-center justify-center border border-[#322C63]">
+                <AppIcon name="map-pin" size={18} color="#7C5CFF" />
               </View>
               <View className="flex-1">
-                <Text className="text-[#1C1C1E] text-[16px] font-bold" numberOfLines={1}>
+                <Text className="text-white text-[16px] font-bold" numberOfLines={1}>
                   {title || (mode === "SERVICE_RADIUS" ? "Coverage & Service Radius" : "Select Celebration Venue")}
                 </Text>
-                <Text className="text-[#6E6E73] text-[12px]" numberOfLines={1}>
+                <Text className="text-[#B8B3E0] text-[12px]" numberOfLines={1}>
                   {mode === "SERVICE_RADIUS"
                     ? "Tap map to set hub & customize delivery perimeter"
                     : "Tap map or drag pin to select your venue"}
@@ -569,39 +569,39 @@ export function LocationPickerModal({
 
             <TouchableOpacity
               onPress={onClose}
-              className="w-8 h-8 rounded-full bg-[#F2F1ED] items-center justify-center border border-[#E5E5EA] active:bg-[#EBEAE5]"
+              className="w-8 h-8 rounded-full bg-[#2A2460] items-center justify-center border border-[#322C63] active:bg-[#322C63]"
             >
-              <AppIcon name="x" size={16} color="#3A3A3C" />
+              <AppIcon name="x" size={16} color="#B8B3E0" />
             </TouchableOpacity>
           </View>
 
           <ScrollView className="flex-1 px-5 pt-3" showsVerticalScrollIndicator={false}>
             {/* Address Search Bar */}
             <View className="mb-3">
-              <Text className="text-[#3A3A3C] text-[12px] font-semibold mb-1">
+              <Text className="text-[#B8B3E0] text-[12px] font-semibold mb-1">
                 {mode === "SERVICE_RADIUS" ? "Search Base Hub / Area" : "Search Venue, Landmark, or Address"}
               </Text>
-              <View className="flex-row items-center bg-[#F7F7F5] rounded-xl px-3 border border-[#E8E6E1] gap-2">
-                <AppIcon name="search" size={15} color="#7C3AED" />
+              <View className="flex-row items-center bg-[#2A2460] rounded-xl px-3 border border-[#322C63] gap-2">
+                <AppIcon name="search" size={15} color="#7C5CFF" />
                 <TextInput
                   value={searchQuery}
                   onChangeText={setSearchQuery}
                   onSubmitEditing={handleSearch}
                   placeholder="e.g. Palace Grounds, Indiranagar, or BKC"
-                  placeholderTextColor="#9CA3AF"
-                  className="flex-1 py-3 text-[#1C1C1E] text-[14px]"
+                  placeholderTextColor="#6C6694"
+                  className="flex-1 py-3 text-white text-[14px]"
                   returnKeyType="search"
                 />
                 {searchQuery.length > 0 && (
                   <TouchableOpacity onPress={() => setSearchQuery("")} className="p-1">
-                    <AppIcon name="x" size={14} color="#9CA3AF" />
+                    <AppIcon name="x" size={14} color="#B8B3E0" />
                   </TouchableOpacity>
                 )}
                 <TouchableOpacity
                   onPress={handleSearch}
                   disabled={isSearching || !searchQuery.trim()}
                   className={`px-3 py-1.5 rounded-lg flex-row items-center gap-1 ${
-                    searchQuery.trim() ? "bg-[#7C3AED]" : "bg-[#E8E6E1]"
+                    searchQuery.trim() ? "bg-[#7C5CFF]" : "bg-[#322C63]"
                   }`}
                 >
                   {isSearching ? (
@@ -609,7 +609,7 @@ export function LocationPickerModal({
                   ) : (
                     <Text
                       className={`text-[12px] font-bold ${
-                        searchQuery.trim() ? "text-white" : "text-[#8E8E93]"
+                        searchQuery.trim() ? "text-white" : "text-[#B8B3E0]"
                       }`}
                     >
                       Search
@@ -620,21 +620,21 @@ export function LocationPickerModal({
 
               {/* Search Suggestions Dropdown */}
               {searchResults.length > 0 && (
-                <View className="mt-1.5 bg-white border border-[#E8E6E1] rounded-xl overflow-hidden shadow-lg z-20">
-                  <View className="px-3 py-1.5 bg-[#F7F7F5] border-b border-[#E8E6E1] flex-row justify-between items-center">
-                    <Text className="text-[#6E6E73] text-[11px] font-semibold">Matching Places</Text>
+                <View className="mt-1.5 bg-[#1E1A3F] border border-[#322C63] rounded-xl overflow-hidden shadow-lg z-20">
+                  <View className="px-3 py-1.5 bg-[#2A2460] border-b border-[#322C63] flex-row justify-between items-center">
+                    <Text className="text-[#B8B3E0] text-[11px] font-semibold">Matching Places</Text>
                     <TouchableOpacity onPress={() => setSearchResults([])}>
-                      <Text className="text-[#7C3AED] text-[11px] font-bold">Close</Text>
+                      <Text className="text-[#7C5CFF] text-[11px] font-bold">Close</Text>
                     </TouchableOpacity>
                   </View>
                   {searchResults.map((item) => (
                     <TouchableOpacity
                       key={item.place_id}
                       onPress={() => handleSelectSearchResult(item)}
-                      className="px-3 py-2.5 border-b border-[#F0EFEA] flex-row items-start gap-2 active:bg-[#F9F8F6]"
+                      className="px-3 py-2.5 border-b border-[#322C63] flex-row items-start gap-2 active:bg-[#2A2460]"
                     >
-                      <AppIcon name="map-pin" size={13} color="#7C3AED" />
-                      <Text className="text-[#1C1C1E] text-[12px] flex-1 leading-4" numberOfLines={2}>
+                      <AppIcon name="map-pin" size={13} color="#7C5CFF" />
+                      <Text className="text-white text-[12px] flex-1 leading-4" numberOfLines={2}>
                         {item.display_name}
                       </Text>
                     </TouchableOpacity>
@@ -644,25 +644,25 @@ export function LocationPickerModal({
             </View>
 
             {/* Selected Location / Address Card */}
-            <View className="mb-3 bg-[#F9F8F6] rounded-xl p-3 border border-[#E8E6E1]">
+            <View className="mb-3 bg-[#2A2460] rounded-xl p-3 border border-[#322C63]">
               <View className="flex-row items-center justify-between mb-1">
                 <View className="flex-row items-center gap-1.5">
-                  <AppIcon name="check-circle" size={13} color="#059669" />
-                  <Text className="text-[#059669] text-[11px] font-bold uppercase tracking-wider">
+                  <AppIcon name="check-circle" size={13} color="#6EE7B7" />
+                  <Text className="text-[#6EE7B7] text-[11px] font-bold uppercase tracking-wider">
                     Selected Location
                   </Text>
                 </View>
                 <TouchableOpacity
                   onPress={handleLocateMe}
                   disabled={isLocating}
-                  className="bg-[#F3EEFD] px-2.5 py-1 rounded-lg border border-[#E9DFFC] flex-row items-center gap-1 active:opacity-80"
+                  className="bg-[#7C5CFF]/20 px-2.5 py-1 rounded-lg border border-[#7C5CFF]/30 flex-row items-center gap-1 active:opacity-80"
                 >
                   {isLocating ? (
-                    <ActivityIndicator size="small" color="#7C3AED" />
+                    <ActivityIndicator size="small" color="#7C5CFF" />
                   ) : (
                     <>
-                      <AppIcon name="crosshair" size={12} color="#7C3AED" />
-                      <Text className="text-[#7C3AED] text-[11px] font-bold">Use Current GPS</Text>
+                      <AppIcon name="crosshair" size={12} color="#7C5CFF" />
+                      <Text className="text-[#7C5CFF] text-[11px] font-bold">Use Current GPS</Text>
                     </>
                   )}
                 </TouchableOpacity>
@@ -671,25 +671,25 @@ export function LocationPickerModal({
               <View className="mt-1">
                 {isGeocoding ? (
                   <View className="flex-row items-center gap-2 py-1">
-                    <ActivityIndicator size="small" color="#7C3AED" />
-                    <Text className="text-[#6E6E73] text-[12px] italic">Finding address from pin...</Text>
+                    <ActivityIndicator size="small" color="#7C5CFF" />
+                    <Text className="text-[#B8B3E0] text-[12px] italic">Finding address from pin...</Text>
                   </View>
                 ) : (
                   <TextInput
                     value={address}
                     onChangeText={setAddress}
                     placeholder="Address name..."
-                    placeholderTextColor="#9CA3AF"
+                    placeholderTextColor="#6C6694"
                     multiline
-                    className="text-[#1C1C1E] text-[13px] font-medium leading-5 py-1"
+                    className="text-white text-[13px] font-medium leading-5 py-1"
                   />
                 )}
               </View>
             </View>
 
             {/* Interactive Map Visualizer */}
-            <View className="mb-3 rounded-2xl overflow-hidden border border-[#E8E6E1] bg-[#F4F3EF] shadow-sm">
-              <View className="w-full h-64 relative bg-[#F4F3EF]">
+            <View className="mb-3 rounded-2xl overflow-hidden border border-[#322C63] bg-[#120F2B] shadow-sm">
+              <View className="w-full h-64 relative bg-[#120F2B]">
                 {Platform.OS === "web" ? (
                   <iframe
                     ref={iframeRef}
@@ -711,19 +711,19 @@ export function LocationPickerModal({
                 )}
 
                 {/* Floating Action Badge */}
-                <View className="absolute top-2.5 left-2.5 bg-white/95 backdrop-blur-md px-3 py-1.5 rounded-full border border-black/10 flex-row items-center gap-1.5 shadow-sm">
-                  <View className="w-2 h-2 rounded-full bg-[#10B981]" />
-                  <Text className="text-[#1C1C1E] text-[11px] font-semibold">
+                <View className="absolute top-2.5 left-2.5 bg-[#1E1A3F]/95 backdrop-blur-md px-3 py-1.5 rounded-full border border-[#322C63] flex-row items-center gap-1.5 shadow-sm">
+                  <View className="w-2 h-2 rounded-full bg-[#6EE7B7]" />
+                  <Text className="text-white text-[11px] font-semibold">
                     Tap map or drag pin to select
                   </Text>
                 </View>
               </View>
 
               {/* Coordinates & Google Maps Preview Bar */}
-              <View className="flex-row items-center justify-between px-3.5 py-2.5 bg-white border-t border-[#E8E6E1]">
+              <View className="flex-row items-center justify-between px-3.5 py-2.5 bg-[#1E1A3F] border-t border-[#322C63]">
                 <View className="flex-row items-center gap-1.5">
-                  <AppIcon name="compass" size={13} color="#059669" />
-                  <Text className="text-[#3A3A3C] text-[11px] font-mono">
+                  <AppIcon name="compass" size={13} color="#6EE7B7" />
+                  <Text className="text-[#B8B3E0] text-[11px] font-mono">
                     {latitude.toFixed(4)}, {longitude.toFixed(4)}
                   </Text>
                 </View>
@@ -731,24 +731,24 @@ export function LocationPickerModal({
                   onPress={handleOpenGoogleMapsPreview}
                   className="flex-row items-center gap-1"
                 >
-                  <Text className="text-[#2563EB] text-[11px] font-semibold">Preview in Google Maps</Text>
-                  <AppIcon name="external-link" size={12} color="#2563EB" />
+                  <Text className="text-[#8FB4FF] text-[11px] font-semibold">Preview in Google Maps</Text>
+                  <AppIcon name="external-link" size={12} color="#8FB4FF" />
                 </TouchableOpacity>
               </View>
             </View>
 
             {/* Service Radius Slider (Only in SERVICE_RADIUS mode) */}
             {mode === "SERVICE_RADIUS" && (
-              <View className="mb-4 bg-[#F9F8F6] p-3.5 rounded-2xl border border-[#E8E6E1]">
+              <View className="mb-4 bg-[#2A2460] p-3.5 rounded-2xl border border-[#322C63]">
                 <View className="flex-row items-center justify-between mb-2">
                   <View>
-                    <Text className="text-[#1C1C1E] text-[13px] font-bold">Service Coverage Perimeter</Text>
-                    <Text className="text-[#6E6E73] text-[11px]">
+                    <Text className="text-white text-[13px] font-bold">Service Coverage Perimeter</Text>
+                    <Text className="text-[#B8B3E0] text-[11px]">
                       Max distance you travel for celebrations
                     </Text>
                   </View>
-                  <View className="bg-[#F3EEFD] px-3 py-1 rounded-full border border-[#E9DFFC]">
-                    <Text className="text-[#7C3AED] text-[13px] font-extrabold">{radiusKm} km</Text>
+                  <View className="bg-[#7C5CFF]/20 px-3 py-1 rounded-full border border-[#7C5CFF]/30">
+                    <Text className="text-[#FFC53D] text-[13px] font-extrabold">{radiusKm} km</Text>
                   </View>
                 </View>
 
@@ -760,13 +760,13 @@ export function LocationPickerModal({
                       onPress={() => handleRadiusChange(r)}
                       className={`flex-1 py-2 rounded-xl items-center justify-center border transition-all ${
                         radiusKm === r
-                          ? "bg-[#7C3AED] border-[#7C3AED] shadow-sm"
-                          : "bg-white border-[#E8E6E1]"
+                          ? "bg-[#7C5CFF] border-[#7C5CFF] shadow-sm"
+                          : "bg-[#1E1A3F] border-[#322C63]"
                       }`}
                     >
                       <Text
                         className={`text-[12px] font-bold ${
-                          radiusKm === r ? "text-white" : "text-[#3A3A3C]"
+                          radiusKm === r ? "text-white" : "text-[#B8B3E0]"
                         }`}
                       >
                         {r} km
@@ -775,7 +775,7 @@ export function LocationPickerModal({
                   ))}
                 </View>
 
-                <Text className="text-[#6E6E73] text-[11px] mt-2 italic">
+                <Text className="text-[#B8B3E0] text-[11px] mt-2 italic">
                   Live circle on the map visualizes ~
                   {Math.round(Math.PI * radiusKm * radiusKm).toLocaleString("en-IN")} km² coverage
                   area around your hub.
@@ -786,8 +786,8 @@ export function LocationPickerModal({
             {/* Quick Hub Selector */}
             <View className="mb-4">
               <View className="flex-row items-center justify-between mb-2">
-                <Text className="text-[#1C1C1E] text-[13px] font-bold">Popular Indian Celebration Hubs</Text>
-                <Text className="text-[#6E6E73] text-[11px]">One-tap pin drop</Text>
+                <Text className="text-white text-[13px] font-bold">Popular Indian Celebration Hubs</Text>
+                <Text className="text-[#B8B3E0] text-[11px]">One-tap pin drop</Text>
               </View>
 
               {/* City Filter Pills */}
@@ -799,13 +799,13 @@ export function LocationPickerModal({
                       onPress={() => setFilterCity(city)}
                       className={`px-3 py-1 rounded-full border ${
                         filterCity === city
-                          ? "bg-[#7C3AED] border-[#7C3AED]"
-                          : "bg-white border-[#E8E6E1]"
+                          ? "bg-[#7C5CFF] border-[#7C5CFF]"
+                          : "bg-[#2A2460] border-[#322C63]"
                       }`}
                     >
                       <Text
                         className={`text-[11px] font-medium ${
-                          filterCity === city ? "text-white" : "text-[#6E6E73]"
+                          filterCity === city ? "text-white" : "text-[#B8B3E0]"
                         }`}
                       >
                         {city}
@@ -821,21 +821,21 @@ export function LocationPickerModal({
                   <TouchableOpacity
                     key={hub.name}
                     onPress={() => handleSelectHub(hub)}
-                    className="p-2.5 rounded-xl bg-white border border-[#E8E6E1] flex-row items-center justify-between active:bg-[#F9F8F6]"
+                    className="p-2.5 rounded-xl bg-[#2A2460] border border-[#322C63] flex-row items-center justify-between active:bg-[#322C63]"
                   >
                     <View className="flex-row items-center gap-2.5 flex-1 pr-2">
-                      <View className="w-7 h-7 rounded-full bg-[#F3EEFD] items-center justify-center border border-[#E9DFFC]">
-                        <AppIcon name="map-pin" size={12} color="#7C3AED" />
+                      <View className="w-7 h-7 rounded-full bg-[#1E1A3F] items-center justify-center border border-[#322C63]">
+                        <AppIcon name="map-pin" size={12} color="#7C5CFF" />
                       </View>
                       <View className="flex-1">
-                        <Text className="text-[#1C1C1E] text-[12px] font-semibold" numberOfLines={1}>
+                        <Text className="text-white text-[12px] font-semibold" numberOfLines={1}>
                           {hub.name}
                         </Text>
-                        <Text className="text-[#6E6E73] text-[10px]">{hub.city}</Text>
+                        <Text className="text-[#B8B3E0] text-[10px]">{hub.city}</Text>
                       </View>
                     </View>
-                    <View className="bg-[#F3EEFD] px-2.5 py-1 rounded-lg">
-                      <Text className="text-[#7C3AED] text-[10px] font-semibold">Select</Text>
+                    <View className="bg-[#7C5CFF]/20 px-2.5 py-1 rounded-lg">
+                      <Text className="text-[#7C5CFF] text-[10px] font-semibold">Select</Text>
                     </View>
                   </TouchableOpacity>
                 ))}
@@ -844,17 +844,17 @@ export function LocationPickerModal({
           </ScrollView>
 
           {/* Bottom Confirmation Bar */}
-          <View className="border-t border-[#F0EFEA] bg-white px-4 pt-3 pb-6 flex-row gap-3">
+          <View className="border-t border-[#322C63] bg-[#1E1A3F] px-4 pt-3 pb-6 flex-row gap-3">
             <TouchableOpacity
               onPress={onClose}
-              className="flex-1 py-3.5 rounded-xl bg-[#F2F1ED] items-center justify-center border border-[#E5E5EA] active:bg-[#EBEAE5]"
+              className="flex-1 py-3.5 rounded-xl bg-[#2A2460] items-center justify-center border border-[#322C63] active:bg-[#322C63]"
             >
-              <Text className="text-[#3A3A3C] text-[13px] font-semibold">Cancel</Text>
+              <Text className="text-[#B8B3E0] text-[13px] font-semibold">Cancel</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
               onPress={handleConfirm}
-              className="flex-[2] py-3.5 rounded-xl bg-[#7C3AED] items-center justify-center shadow-lg shadow-purple-500/20 active:bg-[#6D28D9]"
+              className="flex-[2] py-3.5 rounded-xl bg-[#7C5CFF] items-center justify-center shadow-lg shadow-purple-500/20 active:bg-[#6848e0]"
             >
               <Text className="text-white text-[13px] font-bold">
                 {mode === "SERVICE_RADIUS" ? "Confirm Coverage Zone" : "Set Venue Location"}

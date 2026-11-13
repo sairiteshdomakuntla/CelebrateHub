@@ -188,8 +188,8 @@ export default function RegisterScreen() {
   }
 
   return (
-    <View className="flex-1 bg-[#F7F7F5]">
-      <StatusBar style="dark" />
+    <View className="flex-1 bg-[#120F2B]">
+      <StatusBar style="light" />
       <SafeAreaView className="flex-1">
         <KeyboardAvoidingView behavior="padding" className="flex-1">
           <ScrollView
@@ -203,17 +203,17 @@ export default function RegisterScreen() {
               className="mb-4 self-start flex-row items-center gap-1 py-2"
               hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
             >
-              <AppIcon name="chevron-left" size={17} color="#1C1C1E" />
-              <Text className="text-[#1C1C1E] text-[15px] font-medium">Back</Text>
+              <AppIcon name="chevron-left" size={17} color="#B8B3E0" />
+              <Text className="text-[#B8B3E0] text-[15px] font-medium">Back</Text>
             </TouchableOpacity>
 
             {/* Header */}
             <View className="mb-5">
               <BrandMark size={44} />
-              <Text className="text-[#1C1C1E] text-[26px] font-extrabold tracking-tight mt-3">
+              <Text className="text-white text-[26px] font-extrabold tracking-tight mt-3">
                 {selectedRole === "PROVIDER" ? "Partner with CelebrateHub" : "Create your account"}
               </Text>
-              <Text className="text-[#6E6E73] text-[14px] mt-1 leading-[20px]">
+              <Text className="text-[#B8B3E0] text-[14px] mt-1 leading-[20px]">
                 {selectedRole === "PROVIDER"
                   ? "Grow your celebration business, receive real-time leads, and connect with event hosts."
                   : "Join CelebrateHub to discover vendors, plan events, and manage gift circles."}
@@ -221,7 +221,7 @@ export default function RegisterScreen() {
             </View>
 
             {/* Role Switcher Pill Bar */}
-            <View className="flex-row p-1 bg-[#EBE8E3] rounded-2xl mb-5">
+            <View className="flex-row p-1 bg-[#1E1A3F] rounded-2xl mb-5 border border-[#322C63]">
               <TouchableOpacity
                 onPress={() => {
                   setSelectedRole("CUSTOMER");
@@ -229,7 +229,7 @@ export default function RegisterScreen() {
                 }}
                 className={`flex-1 flex-row items-center justify-center gap-2 py-2.5 rounded-xl ${
                   selectedRole === "CUSTOMER"
-                    ? "bg-white shadow-xs"
+                    ? "bg-[#2A2460]"
                     : "bg-transparent"
                 }`}
                 activeOpacity={0.8}
@@ -237,11 +237,11 @@ export default function RegisterScreen() {
                 <AppIcon
                   name="user"
                   size={15}
-                  color={selectedRole === "CUSTOMER" ? "#1C1C1E" : "#6E6E73"}
+                  color={selectedRole === "CUSTOMER" ? "#FFFFFF" : "#7C77A6"}
                 />
                 <Text
                   className={`text-[13px] font-bold ${
-                    selectedRole === "CUSTOMER" ? "text-[#1C1C1E]" : "text-[#6E6E73]"
+                    selectedRole === "CUSTOMER" ? "text-white" : "text-[#7C77A6]"
                   }`}
                 >
                   Event Host
@@ -255,7 +255,7 @@ export default function RegisterScreen() {
                 }}
                 className={`flex-1 flex-row items-center justify-center gap-2 py-2.5 rounded-xl ${
                   selectedRole === "PROVIDER"
-                    ? "bg-[#1C1C1E] shadow-xs"
+                    ? "bg-[#7C5CFF]"
                     : "bg-transparent"
                 }`}
                 activeOpacity={0.8}
@@ -263,11 +263,11 @@ export default function RegisterScreen() {
                 <AppIcon
                   name="briefcase"
                   size={15}
-                  color={selectedRole === "PROVIDER" ? "#FFFFFF" : "#6E6E73"}
+                  color={selectedRole === "PROVIDER" ? "#FFFFFF" : "#7C77A6"}
                 />
                 <Text
                   className={`text-[13px] font-bold ${
-                    selectedRole === "PROVIDER" ? "text-white" : "text-[#6E6E73]"
+                    selectedRole === "PROVIDER" ? "text-white" : "text-[#7C77A6]"
                   }`}
                 >
                   Service Vendor
@@ -277,15 +277,15 @@ export default function RegisterScreen() {
 
             {/* Provider Welcome Pill */}
             {selectedRole === "PROVIDER" && (
-              <View className="bg-[#FFFBEB] border border-[#FDE68A] rounded-2xl p-4 mb-4 flex-row items-start gap-3">
-                <View className="w-8 h-8 rounded-full bg-[#FEF3C7] items-center justify-center mt-0.5">
-                  <AppIcon name="zap" size={16} color="#B45309" />
+              <View className="bg-[#3D2F0F] border border-[#5A4510] rounded-2xl p-4 mb-4 flex-row items-start gap-3">
+                <View className="w-8 h-8 rounded-full bg-[#5A4510] items-center justify-center mt-0.5">
+                  <AppIcon name="zap" size={16} color="#FFC53D" />
                 </View>
                 <View className="flex-1">
-                  <Text className="text-[#92400E] text-[13px] font-bold">
+                  <Text className="text-[#FFC53D] text-[13px] font-bold">
                     Vendor Onboarding Flow
                   </Text>
-                  <Text className="text-[#B45309] text-[12px] leading-[17px] mt-0.5">
+                  <Text className="text-[#B8A060] text-[12px] leading-[17px] mt-0.5">
                     Your profile will be created with instant lead matching. You can update pricing, portfolio images, and subscriptions anytime.
                   </Text>
                 </View>
@@ -293,8 +293,8 @@ export default function RegisterScreen() {
             )}
 
             {/* Form Section 1: Contact & Login Credentials */}
-            <View className="bg-white rounded-2xl border border-[#E8E6E1] p-5 mb-4 shadow-xs">
-              <Text className="text-[#1C1C1E] text-[15px] font-bold mb-3">
+            <View className="bg-[#1E1A3F] rounded-2xl border border-[#322C63] p-5 mb-4">
+              <Text className="text-white text-[15px] font-bold mb-3">
                 {selectedRole === "PROVIDER" ? "1. Contact & Account Info" : "Account Details"}
               </Text>
 
@@ -346,10 +346,10 @@ export default function RegisterScreen() {
                   <View
                     key={r.label}
                     className={`px-2.5 py-1 rounded-full border ${
-                      r.ok ? "bg-[#EAF6EE] border-[#CDE8D5]" : "bg-[#F4F2EE] border-[#E8E6E1]"
+                      r.ok ? "bg-[#123B34] border-[#1A5447]" : "bg-[#2A2460] border-[#322C63]"
                     }`}
                   >
-                    <Text className={`text-[11px] font-medium ${r.ok ? "text-[#1E7A3C]" : "text-[#A7A7AB]"}`}>
+                    <Text className={`text-[11px] font-medium ${r.ok ? "text-[#6EE7B7]" : "text-[#7C77A6]"}`}>
                       {r.ok ? "✓ " : ""}{r.label}
                     </Text>
                   </View>
@@ -368,8 +368,8 @@ export default function RegisterScreen() {
 
             {/* Form Section 2: Provider Business & Services Details */}
             {selectedRole === "PROVIDER" && (
-              <View className="bg-white rounded-2xl border border-[#E8E6E1] p-5 mb-4 shadow-xs">
-                <Text className="text-[#1C1C1E] text-[15px] font-bold mb-3">
+              <View className="bg-[#1E1A3F] rounded-2xl border border-[#322C63] p-5 mb-4">
+                <Text className="text-white text-[15px] font-bold mb-3">
                   2. Business & Service Setup
                 </Text>
 
@@ -384,27 +384,27 @@ export default function RegisterScreen() {
 
                 {/* Primary Category Selector */}
                 <View className="mb-4">
-                  <Text className="text-[#1C1C1E] text-[13px] font-semibold mb-1">
+                  <Text className="text-white text-[13px] font-semibold mb-1">
                     Select Your Service Categories *
                   </Text>
-                  <Text className="text-[#6E6E73] text-[12px] mb-2.5">
+                  <Text className="text-[#B8B3E0] text-[12px] mb-2.5">
                     Choose what services you provide to match relevant client leads.
                   </Text>
 
                   <View className="flex-row flex-wrap gap-2">
                     {categoriesLoading ? (
                       <View className="flex-row items-center gap-2 py-2">
-                        <ActivityIndicator size="small" color="#1C1C1E" />
-                        <Text className="text-[#6E6E73] text-[12px]">Loading categories…</Text>
+                        <ActivityIndicator size="small" color="#7C5CFF" />
+                        <Text className="text-[#B8B3E0] text-[12px]">Loading categories…</Text>
                       </View>
                     ) : categoriesError ? (
                       <View className="w-full">
-                        <Text className="text-[#B3261E] text-[12px] font-medium">
+                        <Text className="text-[#FF8FA3] text-[12px] font-medium">
                           We could not load service categories. Check your connection and retry.
                         </Text>
                         <TouchableOpacity
                           onPress={retryCategories}
-                          className="self-start mt-2 px-3 py-2 rounded-xl bg-[#1C1C1E]"
+                          className="self-start mt-2 px-3 py-2 rounded-xl bg-[#7C5CFF]"
                           activeOpacity={0.8}
                         >
                           <Text className="text-white text-[12px] font-semibold">Retry</Text>
@@ -419,19 +419,19 @@ export default function RegisterScreen() {
                             onPress={() => toggleCategory(cat.id)}
                             className={`flex-row items-center gap-1.5 px-3 py-2 rounded-xl border ${
                               isSelected
-                                ? "bg-[#1C1C1E] border-[#1C1C1E]"
-                                : "bg-[#F7F7F5] border-[#E3E1DC]"
+                                ? "bg-[#7C5CFF] border-[#7C5CFF]"
+                                : "bg-[#2A2460] border-[#322C63]"
                             }`}
                             activeOpacity={0.7}
                           >
                             <AppIcon
                               name={(cat.icon as any) || "briefcase"}
                               size={12}
-                              color={isSelected ? "#FFFFFF" : "#6E6E73"}
+                              color={isSelected ? "#FFFFFF" : "#B8B3E0"}
                             />
                             <Text
                               className={`text-[12px] font-semibold ${
-                                isSelected ? "text-white" : "text-[#3A3A3C]"
+                                isSelected ? "text-white" : "text-[#B8B3E0]"
                               }`}
                             >
                               {cat.name}
@@ -442,7 +442,7 @@ export default function RegisterScreen() {
                     )}
                   </View>
                   {errors.categories ? (
-                    <Text className="text-[#B3261E] text-[12px] mt-1.5 font-medium">
+                    <Text className="text-[#FF8FA3] text-[12px] mt-1.5 font-medium">
                       {errors.categories}
                     </Text>
                   ) : null}
@@ -453,10 +453,10 @@ export default function RegisterScreen() {
                   rightAction={
                     <TouchableOpacity
                       onPress={() => setShowLocationPicker(true)}
-                      className="flex-row items-center gap-1 px-2.5 py-1 rounded-lg bg-[#8B5CF6]/15 border border-[#8B5CF6]/30 active:opacity-80"
+                      className="flex-row items-center gap-1 px-2.5 py-1 rounded-lg bg-[#7C5CFF]/20 border border-[#7C5CFF]/40 active:opacity-80"
                     >
-                      <AppIcon name="map-pin" size={12} color="#7C3AED" />
-                      <Text className="text-[#7C3AED] text-[11px] font-bold">Pick on Map</Text>
+                      <AppIcon name="map-pin" size={12} color="#7C5CFF" />
+                      <Text className="text-[#7C5CFF] text-[11px] font-bold">Pick on Map</Text>
                     </TouchableOpacity>
                   }
                   placeholder="e.g. Mumbai, Navi Mumbai & Pune"
@@ -467,13 +467,13 @@ export default function RegisterScreen() {
                 />
                 {latitude && longitude && (
                   <View className="-mt-2 mb-4 flex-row items-center gap-2">
-                    <View className="bg-[#8B5CF6]/15 px-2 py-0.5 rounded-md border border-[#8B5CF6]/30">
-                      <Text className="text-[#7C3AED] text-[10px] font-mono font-bold">
+                    <View className="bg-[#7C5CFF]/20 px-2 py-0.5 rounded-md border border-[#7C5CFF]/40">
+                      <Text className="text-[#7C5CFF] text-[10px] font-mono font-bold">
                         GPS: {latitude.toFixed(4)}, {longitude.toFixed(4)}
                       </Text>
                     </View>
-                    <View className="bg-[#10B981]/15 px-2 py-0.5 rounded-md border border-[#10B981]/30">
-                      <Text className="text-[#059669] text-[10px] font-bold">{serviceRadiusKm} km coverage</Text>
+                    <View className="bg-[#123B34] px-2 py-0.5 rounded-md border border-[#1A5447]">
+                      <Text className="text-[#6EE7B7] text-[10px] font-bold">{serviceRadiusKm} km coverage</Text>
                     </View>
                   </View>
                 )}
@@ -502,10 +502,15 @@ export default function RegisterScreen() {
             <TouchableOpacity
               onPress={handleRegister}
               disabled={isLoading}
-              className={`py-4 rounded-xl items-center justify-center mb-4 ${
-                selectedRole === "PROVIDER" ? "bg-[#1C1C1E]" : "bg-[#4F46E5]"
-              }`}
+              className="py-4 rounded-[14px] items-center justify-center mb-4 bg-[#7C5CFF]"
               activeOpacity={0.85}
+              style={{
+                shadowColor: "#7C5CFF",
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.3,
+                shadowRadius: 12,
+                elevation: 4,
+              }}
             >
               {isLoading ? (
                 <ActivityIndicator color="#FFFFFF" size="small" />
@@ -520,7 +525,7 @@ export default function RegisterScreen() {
 
             {/* Sign in alternative link */}
             <View className="flex-row justify-center items-center py-2">
-              <Text className="text-[#6E6E73] text-[14px]">Already have an account? </Text>
+              <Text className="text-[#B8B3E0] text-[14px]">Already have an account? </Text>
               <TouchableOpacity
                 onPress={() =>
                   router.push(
@@ -530,7 +535,7 @@ export default function RegisterScreen() {
                   )
                 }
               >
-                <Text className="text-[#1C1C1E] text-[14px] font-bold underline">
+                <Text className="text-[#7C5CFF] text-[14px] font-bold underline">
                   Sign in
                 </Text>
               </TouchableOpacity>

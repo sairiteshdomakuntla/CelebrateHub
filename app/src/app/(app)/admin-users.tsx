@@ -23,15 +23,15 @@ const ROLE_FILTERS = ["ALL", "CUSTOMER", "PROVIDER", "ADMIN"] as const;
 type RoleFilter = (typeof ROLE_FILTERS)[number];
 
 const ROLE_STYLE: Record<string, { bg: string; text: string }> = {
-  ADMIN: { bg: "#EAF0FB", text: "#2F54B8" },
-  PROVIDER: { bg: "#FDF3E3", text: "#8A5E10" },
-  CUSTOMER: { bg: "#EAF6EE", text: "#1E7A3C" },
+  ADMIN: { bg: "#7C5CFF", text: "#FFFFFF" },
+  PROVIDER: { bg: "#FFC53D", text: "#120F2B" },
+  CUSTOMER: { bg: "#123B34", text: "#6EE7B7" },
 };
 
 const STATUS_STYLE: Record<string, { bg: string; text: string }> = {
-  ACTIVE: { bg: "#EAF6EE", text: "#1E7A3C" },
-  INACTIVE: { bg: "#F1EFEC", text: "#6E6E73" },
-  SUSPENDED: { bg: "#FBECEB", text: "#B3261E" },
+  ACTIVE: { bg: "#123B34", text: "#6EE7B7" },
+  INACTIVE: { bg: "#2A2460", text: "#B8B3E0" },
+  SUSPENDED: { bg: "#3F1420", text: "#FF8FA3" },
 };
 
 function CreateUserSheet({
@@ -110,25 +110,17 @@ function CreateUserSheet({
       statusBarTranslucent
       onRequestClose={handleClose}
     >
-      {/* Backdrop. Plain View on purpose: a pressable backdrop swallows and
-          re-fires taps around the focused inputs, which fights the keyboard
-          for focus. Dismiss via X or the Android back button. */}
       <View
-        style={{ flex: 1, justifyContent: "flex-end", backgroundColor: "rgba(0,0,0,0.45)" }}
+        style={{ flex: 1, justifyContent: "flex-end", backgroundColor: "rgba(0,0,0,0.75)" }}
       >
         <View style={{ maxHeight: "92%" }}>
-          {/* KeyboardAvoidingView is iOS-only here ON PURPOSE. On Android the
-              window soft-resize already lifts this flex-end sheet above the
-              keyboard in a single layout pass. Adding KAV height-adjustment on
-              top makes the layout bounce while the keyboard animates, and
-              Android chases the moving fields — the focus loop. */}
           <KeyboardAvoidingView
             enabled={Platform.OS === "ios"}
             behavior="padding"
           >
-            <View className="bg-white rounded-t-3xl border-t border-[#E8E6E1]">
+            <View className="bg-[#1E1A3F] rounded-t-3xl border-t border-[#322C63]">
               <View className="items-center pt-3 pb-2">
-                <View className="w-10 h-1 rounded-full bg-[#E0DED8]" />
+                <View className="w-10 h-1 rounded-full bg-[#322C63]" />
               </View>
 
               <ScrollView
@@ -136,82 +128,82 @@ function CreateUserSheet({
                 keyboardShouldPersistTaps="handled"
                 showsVerticalScrollIndicator={false}
               >
-          <View className="flex-row justify-between items-start mb-5">
-            <View className="flex-1 mr-3">
-              <Text className="text-[#1C1C1E] text-[20px] font-bold tracking-tight">
-                {role === "ADMIN" ? "New administrator" : role === "PROVIDER" ? "New provider" : "New customer"}
-              </Text>
-              <Text className="text-[#6E6E73] text-[13px] mt-1">
-                {role === "ADMIN"
-                  ? "Full platform access"
-                  : role === "PROVIDER"
-                  ? "Receives leads and bookings"
-                  : "Plans events and hires providers"}
-              </Text>
-            </View>
-            <TouchableOpacity
-              onPress={handleClose}
-              className="w-9 h-9 rounded-full bg-[#F4F2EE] items-center justify-center"
-            >
-              <AppIcon name="x" size={15} color="#3A3A3C" />
-            </TouchableOpacity>
-          </View>
+                <View className="flex-row justify-between items-start mb-5">
+                  <View className="flex-1 mr-3">
+                    <Text className="text-white text-[20px] font-bold tracking-tight">
+                      {role === "ADMIN" ? "New administrator" : role === "PROVIDER" ? "New provider" : "New customer"}
+                    </Text>
+                    <Text className="text-[#B8B3E0] text-[13px] mt-1">
+                      {role === "ADMIN"
+                        ? "Full platform access"
+                        : role === "PROVIDER"
+                        ? "Receives leads and bookings"
+                        : "Plans events and hires providers"}
+                    </Text>
+                  </View>
+                  <TouchableOpacity
+                    onPress={handleClose}
+                    className="w-9 h-9 rounded-full bg-[#2A2460] border border-[#322C63] items-center justify-center active:bg-[#322C63]"
+                  >
+                    <AppIcon name="x" size={15} color="#B8B3E0" />
+                  </TouchableOpacity>
+                </View>
 
-          <Text className="text-[#3A3A3C] text-[13px] font-semibold mb-2">
-            Account role
-          </Text>
-          <View className="flex-row gap-2 mb-5">
-            {[
-              { r: "CUSTOMER", label: "Customer", icon: "user" as const },
-              { r: "PROVIDER", label: "Provider", icon: "briefcase" as const },
-              { r: "ADMIN", label: "Admin", icon: "shield" as const },
-            ].map(({ r, label, icon }) => (
-              <TouchableOpacity
-                key={r}
-                onPress={() => setRole(r as any)}
-                className={`flex-1 py-3 rounded-xl items-center border flex-row justify-center gap-1.5 ${
-                  role === r ? "bg-[#1C1C1E] border-[#1C1C1E]" : "bg-white border-[#E3E1DC]"
-                }`}
-              >
-                <AppIcon name={icon} size={14} color={role === r ? "#FFFFFF" : "#6E6E73"} />
-                <Text className={`text-[13px] font-semibold ${role === r ? "text-white" : "text-[#6E6E73]"}`}>
-                  {label}
+                <Text className="text-[#B8B3E0] text-[13px] font-semibold mb-2">
+                  Account role
                 </Text>
-              </TouchableOpacity>
-            ))}
-          </View>
+                <View className="flex-row gap-2 mb-5">
+                  {[
+                    { r: "CUSTOMER", label: "Customer", icon: "user" as const },
+                    { r: "PROVIDER", label: "Provider", icon: "briefcase" as const },
+                    { r: "ADMIN", label: "Admin", icon: "shield" as const },
+                  ].map(({ r, label, icon }) => (
+                    <TouchableOpacity
+                      key={r}
+                      onPress={() => setRole(r as any)}
+                      className={`flex-1 py-3 rounded-xl items-center border flex-row justify-center gap-1.5 transition-all ${
+                        role === r ? "bg-[#7C5CFF] border-[#7C5CFF] shadow-sm" : "bg-[#2A2460] border-[#322C63]"
+                      }`}
+                    >
+                      <AppIcon name={icon} size={14} color={role === r ? "#FFFFFF" : "#B8B3E0"} />
+                      <Text className={`text-[13px] font-semibold ${role === r ? "text-white font-bold" : "text-[#B8B3E0]"}`}>
+                        {label}
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
 
-          <FormInput label="Full name" placeholder="Priya Sharma" value={name}
-            onChangeText={(t) => { setName(t); setErrors(e => ({...e, name:""})); }} error={errors.name} />
-          <FormInput label="Email" placeholder="user@example.com" keyboardType="email-address"
-            value={email} onChangeText={(t) => { setEmail(t); setErrors(e => ({...e, email:""})); }}
-            error={errors.email} />
-          <FormInput label="Phone (optional)" placeholder="+91 98765 43210"
-            keyboardType="phone-pad" value={phone} onChangeText={setPhone} />
-          <FormInput label="Password" placeholder="Minimum 8 characters"
-            isPassword value={password}
-            onChangeText={(t) => { setPassword(t); setErrors(e => ({...e, password:""})); }}
-            error={errors.password} />
+                <FormInput label="Full name" placeholder="Priya Sharma" value={name}
+                  onChangeText={(t) => { setName(t); setErrors(e => ({...e, name:""})); }} error={errors.name} />
+                <FormInput label="Email" placeholder="user@example.com" keyboardType="email-address"
+                  value={email} onChangeText={(t) => { setEmail(t); setErrors(e => ({...e, email:""})); }}
+                  error={errors.email} />
+                <FormInput label="Phone (optional)" placeholder="+91 98765 43210"
+                  keyboardType="phone-pad" value={phone} onChangeText={setPhone} />
+                <FormInput label="Password" placeholder="Minimum 8 characters"
+                  isPassword value={password}
+                  onChangeText={(t) => { setPassword(t); setErrors(e => ({...e, password:""})); }}
+                  error={errors.password} />
 
-          {role === "PROVIDER" && (
-            <>
-              <FormInput label="Business name" placeholder="Meera Wedding Photography"
-                value={businessName}
-                onChangeText={(t) => { setBusinessName(t); setErrors(e => ({...e, businessName:""})); }}
-                error={errors.businessName} />
-              <FormInput label="Service area (optional)" placeholder="e.g. Hyderabad, Telangana"
-                value={serviceArea}
-                onChangeText={setServiceArea} />
-            </>
-          )}
+                {role === "PROVIDER" && (
+                  <>
+                    <FormInput label="Business name" placeholder="Meera Wedding Photography"
+                      value={businessName}
+                      onChangeText={(t) => { setBusinessName(t); setErrors(e => ({...e, businessName:""})); }}
+                      error={errors.businessName} />
+                    <FormInput label="Service area (optional)" placeholder="e.g. Hyderabad, Telangana"
+                      value={serviceArea}
+                      onChangeText={setServiceArea} />
+                  </>
+                )}
 
-          <Button
-            label={role === "ADMIN" ? "Create admin" : role === "PROVIDER" ? "Create provider" : "Create customer"}
-            onPress={handleCreate}
-            fullWidth
-            size="lg"
-            loading={loading}
-          />
+                <Button
+                  label={role === "ADMIN" ? "Create admin" : role === "PROVIDER" ? "Create provider" : "Create customer"}
+                  onPress={handleCreate}
+                  fullWidth
+                  size="lg"
+                  loading={loading}
+                />
               </ScrollView>
             </View>
           </KeyboardAvoidingView>
@@ -239,40 +231,40 @@ function UserCard({
   );
 
   return (
-    <View className="bg-white border border-[#E8E6E1] rounded-2xl p-4 mb-2.5">
+    <View className="bg-[#1E1A3F] border border-[#322C63] rounded-2xl p-4 mb-2.5 shadow-sm">
       <View className="flex-row items-start gap-3">
-        <View className="w-11 h-11 rounded-full bg-[#F1EFEC] border border-[#E8E6E1] items-center justify-center">
-          <Text className="text-[#1C1C1E] text-[16px] font-bold">
+        <View className="w-11 h-11 rounded-full bg-[#2A2460] border border-[#322C63] items-center justify-center">
+          <Text className="text-white text-[16px] font-bold">
             {user.name?.[0]?.toUpperCase()}
           </Text>
         </View>
 
         <View className="flex-1 min-w-0">
           <View className="flex-row items-center gap-2 flex-wrap">
-            <Text className="text-[#1C1C1E] text-[15px] font-semibold" numberOfLines={1}>
+            <Text className="text-white text-[15px] font-semibold" numberOfLines={1}>
               {user.name}
             </Text>
-            <View style={{ backgroundColor: roleStyle.bg }} className="px-2 py-0.5 rounded-full">
-              <Text style={{ color: roleStyle.text }} className="text-[10px] font-semibold uppercase tracking-wide">
+            <View style={{ backgroundColor: roleStyle.bg }} className="px-2 py-0.5 rounded-full border border-white/10">
+              <Text style={{ color: roleStyle.text }} className="text-[10px] font-bold uppercase tracking-wide">
                 {user.role}
               </Text>
             </View>
           </View>
-          <Text className="text-[#6E6E73] text-[13px] mt-0.5" numberOfLines={1}>
+          <Text className="text-[#B8B3E0] text-[13px] mt-0.5" numberOfLines={1}>
             {user.email ?? user.phone ?? "—"}
           </Text>
           {user.provider?.businessName && (
-            <Text className="text-[#6E6E73] text-[12px] mt-0.5" numberOfLines={1}>
+            <Text className="text-[#FFC53D] text-[12px] mt-0.5 font-medium" numberOfLines={1}>
               {user.provider.businessName}
             </Text>
           )}
           <View className="flex-row items-center gap-2 mt-2">
-            <View style={{ backgroundColor: statusStyle.bg }} className="px-2 py-0.5 rounded-full">
-              <Text style={{ color: statusStyle.text }} className="text-[10px] font-semibold uppercase tracking-wide">
+            <View style={{ backgroundColor: statusStyle.bg }} className="px-2 py-0.5 rounded-full border border-white/10">
+              <Text style={{ color: statusStyle.text }} className="text-[10px] font-bold uppercase tracking-wide">
                 {user.status}
               </Text>
             </View>
-            <Text className="text-[#A7A7AB] text-[11px]">
+            <Text className="text-[#6C6694] text-[11px]">
               {new Date(user.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
             </Text>
           </View>
@@ -280,30 +272,30 @@ function UserCard({
 
         <TouchableOpacity
           onPress={() => setMenuOpen(v => !v)}
-          className="w-9 h-9 rounded-full bg-[#F4F2EE] items-center justify-center"
+          className="w-9 h-9 rounded-full bg-[#2A2460] border border-[#322C63] items-center justify-center active:bg-[#322C63]"
         >
-          <AppIcon name="more-horizontal" size={15} color="#3A3A3C" />
+          <AppIcon name="more-horizontal" size={15} color="#B8B3E0" />
         </TouchableOpacity>
       </View>
 
       {menuOpen && (
-        <View className="mt-3 pt-3 border-t border-[#EFEEEA] gap-2">
+        <View className="mt-3 pt-3 border-t border-[#322C63] gap-2">
           {statusActions.map((s) => (
             <TouchableOpacity
               key={s}
               onPress={() => { setMenuOpen(false); onStatusChange(user.id, s); }}
-              className="py-2.5 px-3 rounded-xl items-center bg-[#F7F7F5] border border-[#E8E6E1]"
+              className="py-2.5 px-3 rounded-xl items-center bg-[#2A2460] border border-[#322C63] active:bg-[#322C63]"
             >
-              <Text className="text-[13px] font-semibold text-[#1C1C1E]">
+              <Text className="text-[13px] font-semibold text-white">
                 Mark as {s.toLowerCase()}
               </Text>
             </TouchableOpacity>
           ))}
           <TouchableOpacity
             onPress={() => { setMenuOpen(false); onDelete(user.id, user.name); }}
-            className="py-2.5 px-3 rounded-xl items-center bg-[#FBECEB] border border-[#F2C7C3]"
+            className="py-2.5 px-3 rounded-xl items-center bg-[#3F1420] border border-[#FF8FA3]/30 active:bg-[#521a2a]"
           >
-            <Text className="text-[13px] font-semibold text-[#B3261E]">Delete user</Text>
+            <Text className="text-[13px] font-semibold text-[#FF8FA3]">Delete user</Text>
           </TouchableOpacity>
         </View>
       )}
@@ -416,35 +408,35 @@ export default function AdminUsersScreen() {
   }
 
   return (
-    <View className="flex-1 bg-[#F7F7F5]">
-      <StatusBar style="dark" />
+    <View className="flex-1 bg-[#120F2B]">
+      <StatusBar style="light" />
       <SafeAreaView className="flex-1">
-        <View className="px-5 pt-4 pb-3">
+        <View className="px-5 pt-4 pb-3 border-b border-[#322C63]">
           <View className="flex-row items-center justify-between mb-1">
-            <Text className="text-[#1C1C1E] text-[24px] font-bold tracking-tight">
-              Users
+            <Text className="text-white text-[24px] font-bold tracking-tight">
+              Users Management
             </Text>
             <TouchableOpacity
               onPress={() => setShowCreate(true)}
-              className="bg-[#1C1C1E] px-4 py-2.5 rounded-xl flex-row items-center gap-1.5"
+              className="bg-[#7C5CFF] px-4 py-2.5 rounded-xl flex-row items-center gap-1.5 shadow-sm active:bg-[#6848e0]"
               activeOpacity={0.85}
             >
               <AppIcon name="plus" size={14} color="#FFFFFF" />
               <Text className="text-white text-[13px] font-semibold">New user</Text>
             </TouchableOpacity>
           </View>
-          <Text className="text-[#6E6E73] text-[13px]">
+          <Text className="text-[#B8B3E0] text-[13px]">
             {total} registered account{total !== 1 ? "s" : ""}
           </Text>
         </View>
 
-        <View className="px-5 mb-3">
-          <View className="flex-row items-center bg-white border border-[#E3E1DC] rounded-xl px-3.5 gap-2">
-            <AppIcon name="search" size={16} color="#A7A7AB" />
+        <View className="px-5 my-3">
+          <View className="flex-row items-center bg-[#1E1A3F] border border-[#322C63] rounded-xl px-3.5 gap-2">
+            <AppIcon name="search" size={16} color="#7C5CFF" />
             <TextInput
-              className="flex-1 text-[#1C1C1E] text-[14px] py-3"
+              className="flex-1 text-white text-[14px] py-3"
               placeholder="Search name, email, phone"
-              placeholderTextColor="#A7A7AB"
+              placeholderTextColor="#6C6694"
               value={search}
               onChangeText={setSearch}
               autoCapitalize="none"
@@ -453,28 +445,26 @@ export default function AdminUsersScreen() {
             />
             {search.length > 0 && (
               <TouchableOpacity onPress={() => setSearch("")}>
-                <AppIcon name="x-circle" size={17} color="#A7A7AB" />
+                <AppIcon name="x-circle" size={17} color="#B8B3E0" />
               </TouchableOpacity>
             )}
           </View>
         </View>
 
-        {/* Role filter — fixed segmented row (4 equal pills, fixed height).
-            A horizontal ScrollView stretches its children vertically here,
-            which rendered the pills as giant clipped capsules. */}
+        {/* Role filter — fixed segmented row */}
         <View className="px-5 mb-4 flex-row gap-2">
           {ROLE_FILTERS.map((r) => (
             <TouchableOpacity
               key={r}
               onPress={() => setRoleFilter(r)}
               activeOpacity={0.8}
-              className={`flex-1 h-10 rounded-full border items-center justify-center ${
-                roleFilter === r ? "bg-[#1C1C1E] border-[#1C1C1E]" : "bg-white border-[#E3E1DC]"
+              className={`flex-1 h-10 rounded-full border items-center justify-center transition-all ${
+                roleFilter === r ? "bg-[#7C5CFF] border-[#7C5CFF] shadow-sm" : "bg-[#1E1A3F] border-[#322C63]"
               }`}
             >
               <Text
                 className={`text-[12px] font-semibold capitalize ${
-                  roleFilter === r ? "text-white" : "text-[#6E6E73]"
+                  roleFilter === r ? "text-white font-bold" : "text-[#B8B3E0]"
                 }`}
                 numberOfLines={1}
               >
@@ -486,47 +476,47 @@ export default function AdminUsersScreen() {
 
         {loading && users.length === 0 ? (
           <View className="flex-1 items-center justify-center">
-            <ActivityIndicator color="#1C1C1E" size="large" />
+            <ActivityIndicator color="#7C5CFF" size="large" />
           </View>
         ) : loadError && users.length === 0 ? (
           <View className="flex-1 items-center justify-center gap-2 px-8">
-            <View className="w-14 h-14 rounded-2xl bg-[#FBECEB] border border-[#F2C7C3] items-center justify-center mb-1">
-              <AppIcon name="info" size={22} color="#B3261E" />
+            <View className="w-14 h-14 rounded-2xl bg-[#3F1420] border border-[#FF8FA3]/30 items-center justify-center mb-1">
+              <AppIcon name="info" size={22} color="#FF8FA3" />
             </View>
-            <Text className="text-[#1C1C1E] text-[16px] font-semibold text-center">Could not load users</Text>
-            <Text className="text-[#6E6E73] text-[13px] text-center mb-2">{loadError}</Text>
+            <Text className="text-white text-[16px] font-semibold text-center">Could not load users</Text>
+            <Text className="text-[#B8B3E0] text-[13px] text-center mb-2">{loadError}</Text>
             <TouchableOpacity
               onPress={reload}
               activeOpacity={0.8}
-              className="bg-[#1C1C1E] px-5 py-3 rounded-xl"
+              className="bg-[#7C5CFF] px-5 py-3 rounded-xl active:bg-[#6848e0]"
             >
               <Text className="text-white text-[14px] font-semibold">Retry</Text>
             </TouchableOpacity>
           </View>
         ) : users.length === 0 ? (
           <View className="flex-1 items-center justify-center gap-2 px-8">
-            <View className="w-14 h-14 rounded-2xl bg-white border border-[#E8E6E1] items-center justify-center mb-1">
-              <AppIcon name="user" size={22} color="#A7A7AB" />
+            <View className="w-14 h-14 rounded-2xl bg-[#1E1A3F] border border-[#322C63] items-center justify-center mb-1 shadow-sm">
+              <AppIcon name="user" size={22} color="#7C5CFF" />
             </View>
-            <Text className="text-[#1C1C1E] text-[16px] font-semibold">No users found</Text>
-            <Text className="text-[#6E6E73] text-[13px] text-center">Try a different search or filter.</Text>
+            <Text className="text-white text-[16px] font-semibold">No users found</Text>
+            <Text className="text-[#B8B3E0] text-[13px] text-center">Try a different search or filter.</Text>
           </View>
         ) : (
           <ScrollView
             contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 32 }}
             showsVerticalScrollIndicator={false}
             refreshControl={
-              <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor="#1C1C1E" />
+              <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor="#7C5CFF" />
             }
           >
             {loadError && (
               <TouchableOpacity
                 onPress={reload}
                 activeOpacity={0.8}
-                className="flex-row items-center justify-center gap-2 py-2.5 px-3 rounded-xl bg-[#FBECEB] border border-[#F2C7C3] mb-2.5"
+                className="flex-row items-center justify-center gap-2 py-2.5 px-3 rounded-xl bg-[#3F1420] border border-[#FF8FA3]/30 mb-2.5"
               >
-                <AppIcon name="info" size={14} color="#B3261E" />
-                <Text className="text-[#B3261E] text-[12px] font-semibold">
+                <AppIcon name="info" size={14} color="#FF8FA3" />
+                <Text className="text-[#FF8FA3] text-[12px] font-semibold">
                   Refresh failed — tap to retry
                 </Text>
               </TouchableOpacity>
@@ -543,9 +533,9 @@ export default function AdminUsersScreen() {
             {page < totalPages && (
               <TouchableOpacity
                 onPress={() => fetchUsers(page + 1, true)}
-                className="mt-2 py-3.5 items-center bg-white border border-[#E8E6E1] rounded-2xl"
+                className="mt-2 py-3.5 items-center bg-[#1E1A3F] border border-[#322C63] rounded-2xl active:bg-[#2A2460]"
               >
-                <Text className="text-[#1C1C1E] text-[14px] font-semibold">Load more</Text>
+                <Text className="text-white text-[14px] font-semibold">Load more</Text>
               </TouchableOpacity>
             )}
           </ScrollView>

@@ -135,34 +135,34 @@ export function VenueMapCard({
     : "";
 
   return (
-    <View className="bg-white border border-[#E8E6E1] rounded-2xl overflow-hidden mb-4 shadow-xs">
+    <View className="bg-[#1E1A3F] border border-[#322C63] rounded-2xl overflow-hidden mb-4 shadow-sm">
       {/* Map Header */}
       <View className="p-4 pb-3 flex-row items-center justify-between">
         <View className="flex-row items-center gap-2.5 flex-1 pr-2">
-          <View className="w-8 h-8 rounded-full bg-[#F3EEFD] items-center justify-center border border-[#E9DFFC]">
-            <AppIcon name="map-pin" size={15} color="#7C3AED" />
+          <View className="w-8 h-8 rounded-full bg-[#2A2460] items-center justify-center border border-[#322C63]">
+            <AppIcon name="map-pin" size={15} color="#7C5CFF" />
           </View>
           <View className="flex-1">
-            <Text className="text-[#1C1C1E] text-[14px] font-bold" numberOfLines={1}>
+            <Text className="text-white text-[14px] font-bold" numberOfLines={1}>
               {location}
             </Text>
-            <Text className="text-[#6E6E73] text-[11px]">Celebration Location & Navigation</Text>
+            <Text className="text-[#B8B3E0] text-[11px]">Celebration Location & Navigation</Text>
           </View>
         </View>
 
         {canEdit && onEditPress && (
           <TouchableOpacity
             onPress={onEditPress}
-            className="px-2.5 py-1.5 rounded-lg bg-[#F3EEFD] border border-[#E9DFFC] flex-row items-center gap-1 active:opacity-80"
+            className="px-2.5 py-1.5 rounded-lg bg-[#2A2460] border border-[#322C63] flex-row items-center gap-1 active:opacity-80"
           >
-            <AppIcon name="edit-2" size={11} color="#7C3AED" />
-            <Text className="text-[#7C3AED] text-[11px] font-bold">Change Venue</Text>
+            <AppIcon name="edit-2" size={11} color="#7C5CFF" />
+            <Text className="text-[#7C5CFF] text-[11px] font-bold">Change Venue</Text>
           </TouchableOpacity>
         )}
       </View>
 
       {/* Visual Map Canvas / Preview */}
-      <View className="w-full h-40 bg-[#F4F3EF] relative overflow-hidden border-y border-[#E8E6E1]">
+      <View className="w-full h-40 bg-[#120F2B] relative overflow-hidden border-y border-[#322C63]">
         {hasCoords ? (
           <TouchableOpacity
             activeOpacity={0.9}
@@ -184,52 +184,52 @@ export function VenueMapCard({
               />
             )}
             {/* Overlay hint */}
-            <View className="absolute top-2.5 right-2.5 bg-white/95 backdrop-blur-md px-2.5 py-1 rounded-full border border-black/10 flex-row items-center gap-1 shadow-xs">
-              <AppIcon name="check-circle" size={10} color="#10B981" />
-              <Text className="text-[#1C1C1E] text-[10px] font-semibold">Map Pin Verified</Text>
+            <View className="absolute top-2.5 right-2.5 bg-[#120F2B]/90 backdrop-blur-md px-2.5 py-1 rounded-full border border-[#322C63] flex-row items-center gap-1 shadow-xs">
+              <AppIcon name="check-circle" size={10} color="#6EE7B7" />
+              <Text className="text-white text-[10px] font-semibold">Map Pin Verified</Text>
             </View>
           </TouchableOpacity>
         ) : (
-          <View className="w-full h-full items-center justify-center relative">
+          <View className="w-full h-full items-center justify-center relative bg-[#120F2B]">
             {/* Subtle grid background */}
             <View className="absolute inset-0 opacity-10">
               <View className="flex-1 flex-row">
                 {[...Array(8)].map((_, i) => (
-                  <View key={i} className="flex-1 border-r border-[#7C3AED]/30" />
+                  <View key={i} className="flex-1 border-r border-[#7C5CFF]/30" />
                 ))}
               </View>
             </View>
 
             {/* Center Target Marker */}
             <View className="items-center z-10">
-              <View className="w-10 h-10 rounded-full bg-[#F3EEFD] items-center justify-center border-2 border-[#7C3AED] shadow-sm">
-                <AppIcon name="map-pin" size={18} color="#7C3AED" />
+              <View className="w-10 h-10 rounded-full bg-[#2A2460] items-center justify-center border-2 border-[#7C5CFF] shadow-sm">
+                <AppIcon name="map-pin" size={18} color="#FFC53D" />
               </View>
-              <View className="w-2.5 h-1 rounded-full bg-black/20 mt-1" />
+              <View className="w-2.5 h-1 rounded-full bg-black/40 mt-1" />
             </View>
           </View>
         )}
 
         {/* Floating coordinates badge */}
         {hasCoords && (
-          <View className="absolute bottom-2.5 left-3 bg-white/95 backdrop-blur-md px-2.5 py-1 rounded-full border border-black/10 flex-row items-center gap-1 shadow-xs">
-            <AppIcon name="compass" size={11} color="#059669" />
-            <Text className="text-[#059669] text-[10px] font-mono font-bold">
+          <View className="absolute bottom-2.5 left-3 bg-[#120F2B]/90 backdrop-blur-md px-2.5 py-1 rounded-full border border-[#322C63] flex-row items-center gap-1 shadow-xs">
+            <AppIcon name="compass" size={11} color="#6EE7B7" />
+            <Text className="text-[#6EE7B7] text-[10px] font-mono font-bold">
               {latNum.toFixed(4)}, {lngNum.toFixed(4)}
             </Text>
           </View>
         )}
 
-        <View className="absolute bottom-2.5 right-3 bg-white/95 backdrop-blur-md px-2.5 py-1 rounded-full border border-black/10 shadow-xs">
-          <Text className="text-[#6E6E73] text-[10px] font-medium">Google Maps Ready</Text>
+        <View className="absolute bottom-2.5 right-3 bg-[#120F2B]/90 backdrop-blur-md px-2.5 py-1 rounded-full border border-[#322C63] shadow-xs">
+          <Text className="text-[#B8B3E0] text-[10px] font-medium">Google Maps Ready</Text>
         </View>
       </View>
 
       {/* Action Footer */}
-      <View className="p-3 bg-[#FBFBF9] flex-row gap-2">
+      <View className="p-3 bg-[#1E1A3F] border-t border-[#322C63] flex-row gap-2">
         <TouchableOpacity
           onPress={handleOpenDirections}
-          className="flex-1 py-2.5 rounded-xl bg-[#7C3AED] flex-row items-center justify-center gap-1.5 shadow-sm active:bg-[#6D28D9]"
+          className="flex-1 py-2.5 rounded-xl bg-[#7C5CFF] flex-row items-center justify-center gap-1.5 shadow-sm active:opacity-90"
         >
           <AppIcon name="navigation" size={14} color="#FFFFFF" />
           <Text className="text-white text-[12px] font-bold">Get Directions</Text>
@@ -237,10 +237,10 @@ export function VenueMapCard({
 
         <TouchableOpacity
           onPress={handleShareLocation}
-          className="px-3.5 py-2.5 rounded-xl bg-white border border-[#E8E6E1] flex-row items-center justify-center gap-1.5 active:bg-[#F7F7F5]"
+          className="px-3.5 py-2.5 rounded-xl bg-[#2A2460] border border-[#322C63] flex-row items-center justify-center gap-1.5 active:opacity-90"
         >
-          <AppIcon name="share-2" size={13} color="#6E6E73" />
-          <Text className="text-[#3A3A3C] text-[12px] font-medium">Share</Text>
+          <AppIcon name="share-2" size={13} color="#B8B3E0" />
+          <Text className="text-white text-[12px] font-medium">Share</Text>
         </TouchableOpacity>
       </View>
     </View>
